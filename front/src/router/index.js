@@ -4,7 +4,6 @@ import Login from '@/views/Login.vue'
 import Register from '@/views/Register.vue'
 import NotFound from '@/views/NotFound.vue'
 
-
 const routes = [
     {
         name : 'Home',
