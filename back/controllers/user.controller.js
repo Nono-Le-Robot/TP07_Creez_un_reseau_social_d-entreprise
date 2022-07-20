@@ -45,6 +45,8 @@ module.exports.deleteUser = async (req, res) => {
     catch(err){if(err) return res.status(500).json({message : err})}
 }
 
+
+//mettre la condition pour verifier de ne pas s'auto follow
 module.exports.follow = async (req, res) => {
     if(!ObjectId.isValid(req.params.id) || !ObjectId.isValid(req.body.idToFollow))
     return res.status(400).send('ID unknown : ' + req.params.id)
@@ -68,7 +70,7 @@ module.exports.follow = async (req, res) => {
     }
     catch(err){}
 }
-
+//mettre la condition pour verifier de ne pas s'auto follow
 module.exports.unfollow = async (req, res) => {
     if(!ObjectId.isValid(req.params.id)|| !ObjectId.isValid(req.body.idToUnfollow))
     return res.status(400).send('ID unknown : ' + req.params.id)

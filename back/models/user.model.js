@@ -57,4 +57,19 @@ userSchema.pre("save", async function(next) {
     next()
 })
 
-module.exports = mongoose.model('User', userSchema)
+
+userSchema.statics.login = async function(email, password){
+    const user = await this.findOne({ email })
+    if(user){
+        const auth = await bcrypt.compare(password, user.password)
+        if(auth){
+            return user;
+        }
+        throw Error('wrong password')
+    }
+    throw Error('wrong email')
+}
+
+
+const  UserModel = mongoose.model('User', userSchema)
+module.exports = UserModel
