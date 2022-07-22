@@ -1,4 +1,3 @@
-const { registerCustomQueryHandler } = require("puppeteer");
 const PostModel = require("../models/post.model");
 const UserModel = require("../models/user.model");
 const ObjectId = require("mongoose").Types.ObjectId;
@@ -7,7 +6,7 @@ module.exports.readPost = (req, res) => {
   PostModel.find((err, docs) => {
     if (!err) res.send(docs);
     else console.log("Error to get data : " + err);
-  });
+  }).sort({ createdAt : -1 })
 };
 
 module.exports.createPost = async (req, res) => {
@@ -103,3 +102,58 @@ module.exports.unlikePost = async (req, res) => {
     );
   } catch {}
 };
+
+module.exports.commentPost =  async (req,res) => {
+  if (!ObjectId.isValid(req.params.id)) {
+    return res.status(400).send("ID unknown : " + req.params.id);
+  }
+  try{
+    await PostModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        $push : {
+          comments: {
+            commenterId : req.body.commenterId,
+            commenterFirstname : req.body.commenterFirstname,
+            commenterLastname : req.body.commenterLastname,
+            text : req.body.text,
+            timestamp: new Date().getTime()
+          }
+        }
+      },
+      { new : true },
+      (err, docs) => {
+        res.status(201).send("commentaire posté : " + req.body.text)
+      }
+      )
+  }
+  catch{}
+}
+
+module.exports.editCommentPost = async (req,res)=> {
+  if (!ObjectId.isValid(req.params.id)) {
+    return res.status(400).send("ID unknown : " + req.params.id);
+  }
+  try{
+    await PostModel.findById(
+      req.params.id,
+      {},
+      {new : true},
+      (err, docs) => {
+        if(!err) return res.send(docs);
+        else return res.stratus(400).send(err)
+      }
+    )
+  }
+  catch{
+
+  }
+}
+
+module.exports.deleteCommentPost = async (req,res)=> {
+  if (!ObjectId.isValid(req.params.id)) {
+    return res.status(400).send("ID unknown : " + req.params.id);
+  }
+}
+
+  //3:28:12

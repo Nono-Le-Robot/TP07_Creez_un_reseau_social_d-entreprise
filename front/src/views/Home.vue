@@ -1,11 +1,16 @@
 <template>
-  <h1>Description du projet + Photos</h1>
+  <div>
+    <linknav />
+  </div>
 </template>
 
 <script>
-export default {
-
-}
+  import Linknav from '../components/Linknav'
+  export default {
+    components: {
+      Linknav
+    },
+  }
 </script>
 
 <style>

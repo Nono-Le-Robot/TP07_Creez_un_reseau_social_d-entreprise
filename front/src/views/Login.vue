@@ -1,13 +1,18 @@
 <template>
-  <h1>Connexion</h1>
+  <div>
+    <linknav />
+  </div>
 </template>
 
 <script>
-export default {
-
-}
+  import Linknav from '../components/Linknav'
+  export default {
+    components: {
+      Linknav
+    },
+  }
 </script>
 
 <style>
 
-</style>
+</style> 
