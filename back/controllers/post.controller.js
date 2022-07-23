@@ -1,3 +1,4 @@
+const { response } = require("express");
 const PostModel = require("../models/post.model");
 const UserModel = require("../models/user.model");
 const ObjectId = require("mongoose").Types.ObjectId;
@@ -127,30 +128,41 @@ module.exports.commentPost =  async (req,res) => {
   catch{}
 }
 
-module.exports.editCommentPost = async (req,res)=> {
+module.exports.editCommentPost = (req,res)=> {
   if (!ObjectId.isValid(req.params.id)) {
     return res.status(400).send("ID unknown : " + req.params.id);
   }
-  try{
-    await PostModel.findById(
+    PostModel.findById(
       req.params.id,
-      {},
-      {new : true},
-      (err, docs) => {
-        if(!err) return res.send(docs);
-        else return res.stratus(400).send(err)
-      }
     )
-  }
-  catch{
-
-  }
+    .then(docs => {
+      const theComment = docs.comments.find((comment) =>
+      comment._id.equals(req.body.commentId)
+      )
+      if(!theComment) return res.status(404).send('comment not found')
+      theComment.text = req.body.text
+      return docs.save((err) => {
+        if(!err) return res.status(200).send(docs)
+        return res.status(500).send(err)
+      })
+    })
+    .catch(err => res.status(400).send(err))
 }
 
 module.exports.deleteCommentPost = async (req,res)=> {
   if (!ObjectId.isValid(req.params.id)) {
     return res.status(400).send("ID unknown : " + req.params.id);
   }
-}
-
-  //3:28:12
+    await PostModel.findByIdAndUpdate(
+      req.params.id,
+      { $pull : {
+        comments : {
+          _id : req.body.commentId
+        }
+      }
+    },
+    {new : true}
+    )
+    .then(docs => res.status(200).send(docs))
+    .catch(err => res.status(400).send(err))
+  }
