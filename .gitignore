@@ -1,3 +1,6 @@
 /front/node_modules
 /back/node_modules
 /back/config/.env
+back/config/.DS_Store
+.DS_Store
+back/config/env
