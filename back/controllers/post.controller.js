@@ -3,13 +3,13 @@ const UserModel = require("../models/user.model");
 const ObjectId = require("mongoose").Types.ObjectId;
 
 module.exports.readPost = (req, res) => {
-  PostModel.find((err, docs) => {
-    if (!err) res.send(docs);
-    else console.log("Error to get data : " + err);
-  }).sort({ createdAt : -1 })
+  PostModel.find().sort({ createdAt : -1 })
+  .then(findPosts => res.status(200).json(findPosts))
+  .catch(error => res.status(404).json({ error }))
+
 };
 
-module.exports.createPost = async (req, res) => {
+module.exports.createPost = (req, res) => {
   const newPost = new PostModel({
     posterId: req.body.posterId,
     message: req.body.message,
@@ -17,13 +17,10 @@ module.exports.createPost = async (req, res) => {
     likers: [],
     comments: [],
   });
-  try {
-    const post = await newPost.save();
-    return res.status(201).json(post);
-  } catch (err) {
-    return res.status(400).send(err);
-  }
-};
+  newPost.save()
+  .then(() => { res.status(201).json({ message : 'post success'})})
+  .catch(error =>res.status(400).json({ error }))
+}
 
 module.exports.updatePost = (req, res) => {
   if (!ObjectId.isValid(req.params.id)) {

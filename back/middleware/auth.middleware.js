@@ -11,7 +11,7 @@ module.exports.checkUser = (req,res,next) => {
                 next()
             } 
             else{
-                let user = await userModel.findById(decodedToken.id)
+                let user = await userModel.findById(decodedToken.userId)
                 res.locals.user = user
                 next()
             }
@@ -26,20 +26,20 @@ module.exports.checkUser = (req,res,next) => {
 module.exports.requireAuth = (req, res, next) => {
     const token = req.cookies.jwt
     if(token){
-        jwt.verify(token, process.env.TOKEN_SECRET, async (err, decodedToken) => {
+        jwt.verify(token, process.env.TOKEN_SECRET, (err, decodedToken) => {
             if(err) {
-                res.status(400).json('no token')
+                res.status(400).json('token not found')
             } 
             else{
-                res.status(200).json(decodedToken.id)
-                console.log(decodedToken.id);
+                res.status(200).send(decodedToken.userId)
+                console.log(decodedToken.userId);
                 next()
             }
         })
     }
     else{
-        console.log('no token')
-        res.status(400).json('no token')
+        console.log('token  not found')
+        res.status(404).json('token not found')
         next()
     }
 }

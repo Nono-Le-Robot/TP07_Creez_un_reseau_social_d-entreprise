@@ -51,25 +51,5 @@ const UserSchema = new mongoose.Schema({
     timestamps : true
 })
 
-UserSchema.pre("save", async function(next) {
-    const salt = await bcrypt.genSalt();
-    this.password = await bcrypt.hash(this.password, salt)
-    next()
-})
-
-
-UserSchema.statics.login = async function(email, password){
-    const user = await this.findOne({ email })
-    res.status(200).json({message : user})
-    if(user){
-        const auth = await bcrypt.compare(password, user.password)
-        if(auth){
-            return user;
-        }
-        throw Error('wrong password')
-    }
-    throw Error('wrong email')
-}
-
 
 module.exports = mongoose.model('User', UserSchema)
