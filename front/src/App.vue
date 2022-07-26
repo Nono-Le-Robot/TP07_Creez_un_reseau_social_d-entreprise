@@ -1,7 +1,9 @@
 <template>
   <div id="App">
     <div id="top-nav">
-      <img id="logo" src="./assets/logo.png" alt="Photo du logo de groupomania, représentant une planéte en line-art">
+      <router-link to="/">
+        <img id="logo" src="./assets/logo.png" alt="Photo du logo de groupomania, représentant une planéte en line-art">
+      </router-link>
         <nav>
           <router-link to="/">Accueil</router-link> |
           <router-link to="/auth/login">Connexion</router-link> |
@@ -21,17 +23,25 @@
 </script>
 
 <style lang="scss">
-//Colors : 
+//===COLORS=== 
 //$scarlet
 //$pale-pink 
 //$independence 
 //$maximum-yellow 
 //$french-sky-blue
+@import "./sass/reset.scss";
 @import "./sass/variables/colors.scss";
 @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
 
 *{
   font-family: 'Lato', sans-serif;
+}
+html{
+  margin: 0;
+  padding: 0;
+  background-image: radial-gradient(circle at 29% 55%, rgba(255,255,255, 0.09) 0%, rgba(255,255,255, 0.09) 4%,transparent 4%, transparent 44%,transparent 44%, transparent 100%),radial-gradient(circle at 85% 89%, rgba(255,255,255, 0.09) 0%, rgba(255,255,255, 0.09) 51%,transparent 51%, transparent 52%,transparent 52%, transparent 100%),radial-gradient(circle at 6% 90%, rgba(255,255,255, 0.09) 0%, rgba(255,255,255, 0.09) 53%,transparent 53%, transparent 64%,transparent 64%, transparent 100%),radial-gradient(circle at 35% 75%, rgba(255,255,255, 0.09) 0%, rgba(255,255,255, 0.09) 6%,transparent 6%, transparent 98%,transparent 98%, transparent 100%),radial-gradient(circle at 56% 75%, rgba(255,255,255, 0.09) 0%, rgba(255,255,255, 0.09) 16%,transparent 16%, transparent 23%,transparent 23%, transparent 100%),radial-gradient(circle at 42% 0%, rgba(255,255,255, 0.09) 0%, rgba(255,255,255, 0.09) 3%,transparent 3%, transparent 26%,transparent 26%, transparent 100%),radial-gradient(circle at 29% 28%, rgba(255,255,255, 0.09) 0%, rgba(255,255,255, 0.09) 51%,transparent 51%, transparent 75%,transparent 75%, transparent 100%),radial-gradient(circle at 77% 21%, rgba(255,255,255, 0.09) 0%, rgba(255,255,255, 0.09) 35%,transparent 35%, transparent 55%,transparent 55%, transparent 100%),radial-gradient(circle at 65% 91%, rgba(255,255,255, 0.09) 0%, rgba(255,255,255, 0.09) 46%,transparent 46%, transparent 76%,transparent 76%, transparent 100%),linear-gradient(45deg, rgb(253,45,1),rgb(245,247,73));
+  background-repeat: no-repeat;
+  height: 900px;
 }
 
 #top-nav{
@@ -39,6 +49,9 @@
   justify-content: space-between;
   align-items: center;
   height: 50px;
+  margin-left: 10px;
+  margin-right: 20px;
+
 }
 
 #logo {
@@ -51,6 +64,10 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  h1{
+    font-size: 30px;
+    font-weight: bold;
+  }
 }
 
 a{
@@ -60,7 +77,7 @@ a{
 
 .router-link-active{
   font-weight: bold;
-  color: blueviolet;
+  color: rgba(180, 100, 255, 0.925);
 }
 
 </style>
