@@ -7,8 +7,8 @@
           <router-link to="/auth/login">Connexion</router-link> |
           <router-link to="/auth/register">Inscription</router-link>
         </nav>
-      <router-view />
     </div>
+      <router-view />
   </div>
 </template>
 
@@ -20,7 +20,20 @@
   }
 </script>
 
-<style>
+<style lang="scss">
+//Colors : 
+//$scarlet
+//$pale-pink 
+//$independence 
+//$maximum-yellow 
+//$french-sky-blue
+@import "./sass/variables/colors.scss";
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+*{
+  font-family: 'Lato', sans-serif;
+}
+
 #top-nav{
   display: flex;
   justify-content: space-between;
