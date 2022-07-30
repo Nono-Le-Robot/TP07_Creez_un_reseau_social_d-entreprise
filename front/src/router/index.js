@@ -10,7 +10,7 @@ const routes = [
         path : '/',
         component: Home,
         meta : {
-            title : 'Groupomania'
+            title : 'Groupomania | Home'
         }
     },
     {

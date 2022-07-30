@@ -6,9 +6,10 @@ const bcrypt = require("bcrypt")
 module.exports.signUp = async (req,res) => {
     bcrypt.hash(req.body.password, 10)
     .then(hash => {
+        console.log();
         const user = new UserModel({
-            lastname : req.body.lastname,
-            firstname : req.body.firstname,
+            lastname : req.body.lastname.charAt(0).toUpperCase() + req.body.lastname.slice(1),
+            firstname : req.body.firstname.charAt(0).toUpperCase() + req.body.firstname.slice(1),
             email : req.body.email,
             password : hash
         })
