@@ -10,12 +10,14 @@ module.exports.readPost = (req, res) => {
 };
 
 module.exports.createPost = (req, res) => {
+  console.log(req.file);
   const newPost = new PostModel({
     posterId: req.body.posterId,
     message: req.body.message,
     video: req.body.video,
     likers: [],
-    comments: []
+    comments: [],
+    picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/post/${req.file.filename}`: "",
   });
   newPost.save()
   .then(() => { res.status(201).json({ message : 'post success'})})

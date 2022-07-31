@@ -36,7 +36,7 @@ const UserSchema = new mongoose.Schema({
     picture : {
         type : String, 
         trim : true, 
-        default : "./uploads/profil/random-user.png"
+        default : "http://localhost:5000/images/default/default.jpg"
     },
     followers : {
         type : [String]
