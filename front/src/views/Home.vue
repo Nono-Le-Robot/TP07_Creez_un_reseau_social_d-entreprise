@@ -22,10 +22,10 @@
 
     <div id="createNewPost">
       <form id="newPost" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="newPost" >
-        <p>Que voulez vous partager ? :</p>
         <br>
-         <input type="file" name="picture" id="picture">
-        <input type="text" name="message" id="" placeholder="Que souhaitez vous dire ?" v-model="message" />
+        <input type="text" name="message" id="message-input" placeholder="Que souhaitez vous dire ?" v-model="message" /> 
+        <br>
+         <input type="file" name="picture" id="picture"/><p style="font-size:10px">(format : png,jpg,gif)</p>
         <br>
         <button v-on:click="sendPost()">Envoyer</button>
       </form>
@@ -109,7 +109,7 @@ mounted(){
                   <br>
                   <img class="post-picture" src="${res.data[i].picture}" alt="">
                   <br>
-                  <p>posté le : ${fullDate}</p>
+                  <p>posté le : ${res.data[i].date}</p>
                   <br>
                   </div>
                   <br>
@@ -190,5 +190,10 @@ mounted(){
 .post-picture{
     width: 200px;
 
+}
+
+#message-input{
+  width: 40%;
+  text-align: center;
 }
 </style>

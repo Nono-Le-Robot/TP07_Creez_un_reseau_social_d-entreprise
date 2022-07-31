@@ -1,12 +1,16 @@
 const PostModel = require("../models/post.model");
 const UserModel = require("../models/user.model");
 const ObjectId = require("mongoose").Types.ObjectId;
+const date = new Date()
+const days = date.toLocaleDateString()
+const minutes = String(date.getMinutes()).padStart(2, '0');
+const hours = String(date.getHours()).padStart(2, '0');
+const finalDate = `${days} à ${hours}:${minutes}`
 
 module.exports.readPost = (req, res) => {
   PostModel.find().sort({ createdAt : -1 })
   .then(findPosts => res.status(200).json(findPosts))
   .catch(error => res.status(404).json({ error }))
-
 };
 
 module.exports.createPost = (req, res) => {
@@ -18,6 +22,7 @@ module.exports.createPost = (req, res) => {
     likers: [],
     comments: [],
     picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/post/${req.file.filename}`: "",
+    date: finalDate
   });
   newPost.save()
   .then(() => { res.status(201).json({ message : 'post success'})})
