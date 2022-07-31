@@ -32,7 +32,6 @@ module.exports.requireAuth = (req, res, next) => {
             } 
             else{
                 res.status(200).send(decodedToken.userId)
-                console.log(decodedToken.userId);
                 next()
             }
         })
