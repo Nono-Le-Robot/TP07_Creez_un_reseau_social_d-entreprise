@@ -14,6 +14,7 @@
         <router-link to="/">Accueil</router-link> |
         <router-link to="/account">Mon compte</router-link> |
         <router-link to="/auth/login" v-on:click="disconnectUser()">Deconnexion</router-link>
+        
       </nav>
     </div>
 
@@ -24,6 +25,9 @@
         <br>
         <input v-model="message" type="text" />
         <br>
+        <form action="/profile" method="post" enctype="multipart/form-data">
+  <input type="file" name="avatar" />
+</form>
         <br>
         <button v-on:click="sendPost()">Envoyer</button>
       </form>
@@ -65,7 +69,6 @@ export default {
           })
           .catch();
       }
-
     },
   },
   mounted() {
@@ -84,8 +87,11 @@ export default {
                   posts.innerHTML += `
               <br>
               <div id='onePost'>
+              <div class='user-infos'>
+              <img id='picture-profil-post' src="${user.data.picture}" alt="" srcset="">
               <br>
               <p>${user.data.firstname}  ${user.data.lastname} : <p>
+              </div>
               <br>
               <p>${res.data[i].message}<p>
               <br>
@@ -151,5 +157,19 @@ export default {
   width: 70%;
   margin-left: auto;
   margin-right: auto;
+}
+
+#picture-profil-post{
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+}
+
+.user-infos{
+  display: flex;
+  align-items: center;
+  img{
+    margin-right: 20px;
+  }
 }
 </style>

@@ -73,6 +73,8 @@ export default {
           <br>
           <h1>Mon compte</h1>
           <br>
+          <img id="picture-profil" src="${user.data.picture}" alt="" srcset="">
+          <br>
           <p>Nom : ${user.data.lastname} </p>
           <br>
           <p>Prénom : ${user.data.firstname} </p>
@@ -80,6 +82,7 @@ export default {
           <p>Email : ${user.data.email} </p>
           <br>
           `;
+          console.log(user.data.picture);
           })
           .catch();
       })
@@ -115,5 +118,11 @@ export default {
   width: 70%;
   margin-left: auto;
   margin-right: auto;
+}
+
+#picture-profil{
+  width: 100px;
+  height: 100px;
+  border-radius: 100%;
 }
 </style>

@@ -49,12 +49,15 @@ export default {
           response.style.color = 'green'
           document.cookie = `jwt=${data.data.token}; domain=localhost; secure; path=/`
           axios.get(`http://localhost:5000/jwtid/${data.data.token}`)
-            .then(window.location.href = `../`)
+            .then(() => {
+              setTimeout(() => {
+                window.location.href = `../`
+              },500)
+              })
             .catch(err => {
               response.textContent = `La connexion a échouée`
               response.style.color = 'red'
             })
-
         })
         .catch(function (error) {
           response.textContent = `La connexion a échouée`

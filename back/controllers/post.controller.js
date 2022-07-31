@@ -15,7 +15,7 @@ module.exports.createPost = (req, res) => {
     message: req.body.message,
     video: req.body.video,
     likers: [],
-    comments: [],
+    comments: []
   });
   newPost.save()
   .then(() => { res.status(201).json({ message : 'post success'})})

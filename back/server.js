@@ -8,6 +8,7 @@ require('./config/db')
 const {checkUser, requireAuth} = require('./middleware/auth.middleware')
 const app = express()
 const cors = require('cors')
+const path = require('path')
 
 app.use(cors())
 
@@ -24,6 +25,7 @@ app.get('/jwtid/:id', requireAuth)
 //routes
 app.use('/api/user', userRoutes)
 app.use('/api/post', postRoutes)
+app.use('/images', express.static(path.join(__dirname, 'images')))
 
 
 //server
