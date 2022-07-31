@@ -1,12 +1,9 @@
 <template>
   <div>
-        <div id="top-nav">
+    <div id="top-nav">
       <router-link to="/">
-        <img
-          id="logo"
-          src="../assets/logo.png"
-          alt="Photo du logo de groupomania, représentant une planéte en line-art"
-        />
+        <img id="logo" src="../assets/logo.png"
+          alt="Photo du logo de groupomania, représentant une planéte en line-art" />
       </router-link>
       <nav>
         <router-link to="/">Accueil</router-link> |
@@ -44,28 +41,29 @@ export default {
   methods: {
     verifyLogin() {
       axios.post("http://localhost:5000/api/user/login/", {
-          email: this.email,
-          password: this.password,
-        })
+        email: this.email,
+        password: this.password,
+      })
         .then(function (data) {
-        response.textContent = `Connexion réussie`
-        response.style.color = 'green'
-        document.cookie = `jwt=${data.data.token}; domain=localhost; secure; path=/`
-        axios.get(`http://localhost:5000/jwtid/${data.data.token}`)
-        .then(window.location.href = `../`)
-        .catch(err => {
-            response.textContent = `La connexion a échouée`
-            response.style.color = 'red'
-        })
-        
+          response.textContent = `Connexion réussie`
+          response.style.color = 'green'
+          document.cookie = `jwt=${data.data.token}; domain=localhost; secure; path=/`
+          axios.get(`http://localhost:5000/jwtid/${data.data.token}`)
+            .then(window.location.href = `../`)
+            .catch(err => {
+              response.textContent = `La connexion a échouée`
+              response.style.color = 'red'
+            })
+
         })
         .catch(function (error) {
-            response.textContent = `La connexion a échouée`
-            response.style.color = 'red'
+          response.textContent = `La connexion a échouée`
+          response.style.color = 'red'
         });
     },
   },
 };
 </script>
 
-<style></style>
+<style>
+</style>

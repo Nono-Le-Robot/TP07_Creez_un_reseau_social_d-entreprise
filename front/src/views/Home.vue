@@ -2,11 +2,8 @@
   <div>
     <div id="top-nav">
       <router-link to="/">
-        <img
-          id="logo"
-          src="../assets/logo.png"
-          alt="Photo du logo de groupomania, représentant une planéte en line-art"
-        />
+        <img id="logo" src="../assets/logo.png"
+          alt="Photo du logo de groupomania, représentant une planéte en line-art" />
       </router-link>
       <nav v-if="logged === false">
         <router-link to="/">Accueil</router-link> |
@@ -16,24 +13,23 @@
       <nav v-if="logged === true">
         <router-link to="/">Accueil</router-link> |
         <router-link to="/account">Mon compte</router-link> |
-        <router-link to="/auth/login" v-on:click="disconnectUser()"
-          >Deconnexion</router-link
-        >
+        <router-link to="/auth/login" v-on:click="disconnectUser()">Deconnexion</router-link>
       </nav>
     </div>
 
-    <h1>Actualités</h1>
+
     <div id="createNewPost">
-      <form
-        v-if="logged === true"
-        v-on:submit.prevent="onSubmit"
-        action="newPost"
-      >
+      <form id="newPost" v-if="logged === true" v-on:submit.prevent="onSubmit" action="newPost">
         <p>Que voulez vous partager ? :</p>
+        <br>
         <input v-model="message" type="text" />
+        <br>
+        <br>
         <button v-on:click="sendPost()">Envoyer</button>
       </form>
     </div>
+    <br>
+
     <div id="posts"></div>
   </div>
 </template>
@@ -54,22 +50,22 @@ export default {
       this.logged = false;
     },
     sendPost() {
-      if(this.message != ""){
-          let token = document.cookie.slice(4);
+      if (this.message != "") {
+        let token = document.cookie.slice(4);
         axios
-        .get(`http://localhost:5000/jwtid/${token}`)
-        .then((user) => {
-          axios
-            .post("http://localhost:5000/api/post/", {
-              posterId: user.data,
-              message: this.message,
-            })
-            .then((created) => location.reload())
-            .catch();
-        })
-        .catch();
+          .get(`http://localhost:5000/jwtid/${token}`)
+          .then((user) => {
+            axios
+              .post("http://localhost:5000/api/post/", {
+                posterId: user.data,
+                message: this.message,
+              })
+              .then((created) => location.reload())
+              .catch();
+          })
+          .catch();
       }
-    
+
     },
   },
   mounted() {
@@ -87,9 +83,15 @@ export default {
                 .then((user) => {
                   posts.innerHTML += `
               <br>
+              <div id='onePost'>
+              <br>
               <p>${user.data.firstname}  ${user.data.lastname} : <p>
+              <br>
               <p>${res.data[i].message}<p>
+              <br>
               <p>posté le : ${res.data[i].createdAt}</p>
+              <br>
+              </div>
               <br>
               `;
                 })
@@ -109,4 +111,45 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss">
+@import "../sass/variables/colors.scss";
+
+//===COLORS===
+//$scarlet
+//$pale-pink
+//$independence
+//$maximum-yellow
+//$french-sky-blue
+#onePost {
+  font-size: 20px;
+  padding: 25px;
+  background-color: $independence;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  border-radius: 20px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.34);
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#newPost {
+  margin-top: 50px;
+  font-size: 20px;
+  padding: 25px;
+  background-color: $independence;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  border-radius: 20px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.34);
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>

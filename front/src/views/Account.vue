@@ -2,11 +2,8 @@
   <div>
     <div id="top-nav">
       <router-link to="/">
-        <img
-          id="logo"
-          src="../assets/logo.png"
-          alt="Photo du logo de groupomania, représentant une planéte en line-art"
-        />
+        <img id="logo" src="../assets/logo.png"
+          alt="Photo du logo de groupomania, représentant une planéte en line-art" />
       </router-link>
       <nav v-if="logged === false">
         <router-link to="/">Accueil</router-link> |
@@ -19,7 +16,6 @@
         <router-link to="/auth/login" v-on:click="disconnectUser()">Deconnexion</router-link>
       </nav>
     </div>
-    <h1>Mon compte</h1>
     <div id="userInfos"></div>
     <br />
     <!-- <p v-on:click="deleteUser()" id="deleteAccount">supprimer le compte</p> -->
@@ -75,9 +71,14 @@ export default {
           .then((user) => {
             userInfos.innerHTML = `
           <br>
+          <h1>Mon compte</h1>
+          <br>
           <p>Nom : ${user.data.lastname} </p>
+          <br>
           <p>Prénom : ${user.data.firstname} </p>
+          <br>
           <p>Email : ${user.data.email} </p>
+          <br>
           `;
           })
           .catch();
@@ -92,9 +93,27 @@ export default {
 <style lang="scss">
 #deleteAccount {
   color: red;
+
   &:hover {
     color: rgb(192, 0, 0);
     cursor: pointer;
   }
+}
+
+#userInfos {
+  margin-top: 50px;
+  font-size: 20px;
+  padding: 25px;
+  background-color: rgb(59, 66, 83);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  border-radius: 20px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.34);
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>
