@@ -43,24 +43,21 @@
         <p>{{ post.posterFirstname }}  {{ post.posterLastname }} : </p>
       </div>
       <br>
-      <p>{{ post.message }}</p>
+      <p class="message-post">{{ post.message }}</p>
       <br>
       <div class="edit-post-input">
       </div> 
       <br>
       <img class="post-picture" :src="post.picture" alt="">
       <br>
-      <p>posté le : {{ post.date }}</p>
+      <p class="date-post">posté le : {{ post.date }}</p>
       <br>
       <p class="confirm-edit"></p>
       <p class="confirm-delete"></p>
-      <br>
       <form id="editPost" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="editPost" >
       <input :class="post.active? 'selected' : 'hidden'" type="text" name="message-edit" class="message-input-edit" placeholder="" v-model="messageEdit" autocomplete="off" /> 
-      <br>
       <input v-if="edit" :class="post.active? 'selected' : 'hidden'" type="file" name="picture" id="picture"/><p v-if="edit" :class="post.active? 'selected' : 'hidden'" style="font-size:10px">(format : png,jpg,gif)</p>
       </form>
-      <br>
       <p class="post-id" hidden>{{ post._id }}</p>
       <div class="post-options-btn">
         <i :class="modify ? 'hidden' : 'selected'" class="fa-solid fa-thumbs-up"></i>
@@ -102,8 +99,8 @@ export default {
             for(let k = 0; k < selectedPost.length; k++){
                 selectedPost[k].addEventListener ('click', (event) =>{
                     confirmEdit[k].textContent = 'Entrez le nouveau contenu de votre post'
-                    newBtnValidate[k].innerHTML = '<i class="test2 fa-solid fa-xmark"></i>'
-                    newBtnValidate[k].innerHTML += '<i class="test fa-solid fa-check"></i>'
+                    newBtnValidate[k].innerHTML = '<br> <i class="test2 fa-solid fa-xmark"></i> <br> '
+                    newBtnValidate[k].innerHTML += '<br> <i class="test fa-solid fa-check"></i> <br> '
                     let test = document.querySelector('.test')
                     let test2 = document.querySelector('.test2')
                     test.addEventListener('click', () => {
@@ -220,6 +217,7 @@ export default {
 .onePost {
   font-size: 20px;
   padding: 25px;
+  padding-bottom: 40px;
   background-color: $independence;
   color: white;
   display: flex;
@@ -254,8 +252,8 @@ export default {
   margin-left: auto;
   margin-right: auto;
 }
-.test{
-  background-color: red;
+.test,.test2{
+    margin-top: 20px;
 }
 #picture-profil-post{
   width: 25px;
@@ -287,6 +285,7 @@ export default {
 }
 .message-input-edit{
   width: 300px;
+    margin-bottom: 15px;
   text-align: center;
 }
 .fa-thumbs-up {
@@ -337,14 +336,26 @@ export default {
 }
 .hidden-input{
   display: none;
+  
 }
 
 .confirm-delete{
+    margin-bottom: 20px;
   font-size: 15px;
   color: rgb(255, 131, 131);
 }
 .confirm-edit{
+  margin-bottom: 10px;
     font-size: 15px;
   color: rgb(255, 249, 131);
+}
+.date-post{
+    font-size: 15px;
+    color: rgb(224, 224, 224);
+}
+.message-post{
+  font-size: 25px;
+  font-weight: bold;
+    color: rgb(224, 224, 224);
 }
 </style>
