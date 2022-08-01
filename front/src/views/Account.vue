@@ -16,9 +16,26 @@
         <router-link to="/auth/login" v-on:click="disconnectUser()">Deconnexion</router-link>
       </nav>
     </div>
-    <div id="userInfos"></div>
+    <div id="userInfos">
+        <br>
+        <h1>Mon compte</h1>
+        <br>
+        <img id="picture-profil" :src='picture' alt="" srcset="">
+        <br>
+        <p>Nom : {{ lastname }} </p>
+        <br>
+        <p>Prénom : {{ firstname }} </p>
+        <br>
+        <p>Email : {{ email }} </p>
+        <br>
+        <form id="newPost" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="newPost" >
+        <br>
+        <input type="file" name="picture" id="picture"/><p style="font-size:10px">(format : png,jpg,gif)</p>
+        <br>
+        <button v-on:click="sendPost()">Changer ma photo de profil</button>
+        </form>
+    </div>
     <br />
-    <!-- <p v-on:click="deleteUser()" id="deleteAccount">supprimer le compte</p> -->
   </div>
 </template>
 
@@ -27,62 +44,30 @@ import axios from "axios";
 export default {
   data() {
     return {
-      users: null,
       logged: false,
+      firstname : '',
+      lastname : '',
+      email : '',
+      picture : '',
     };
   },
   methods: {
     disconnectUser() {
       document.cookie = "jwt=;max-age=0";
       this.logged = false;
-    },
-    deleteUser() {
-      let token = document.cookie.slice(4);
-      axios
-        .get(`http://localhost:5000/jwtid/${token}`)
-        .then((result) => {
-          if (
-            confirm(
-              "Etes vous sur de vouloir supprimer le compte ? l'action est irréversible"
-            ) == true
-          ) {
-            axios
-              .delete(`http://localhost:5000/api/user/${result.data}`)
-              .then((deletedUser) => console.log(deletedUser))
-              .catch();
-            alert("compte supprimé");
-            this.logged = false;
-            document.cookie = "jwt=;max-age=0";
-            window.location.href = `../`;
-          } else {
-          }
-        })
-        .catch();
-    },
+    }
   },
   mounted() {
     let token = document.cookie.slice(4);
-    axios
-      .get(`http://localhost:5000/jwtid/${token}`)
+    axios.get(`http://localhost:5000/jwtid/${token}`)
       .then((res) => {
         this.logged = true;
-        axios
-          .get(`http://localhost:5000/api/user/${res.data}`)
+        axios.get(`http://localhost:5000/api/user/${res.data}`)
           .then((user) => {
-            userInfos.innerHTML = `
-          <br>
-          <h1>Mon compte</h1>
-          <br>
-          <img id="picture-profil" src="${user.data.picture}" alt="" srcset="">
-          <br>
-          <p>Nom : ${user.data.lastname} </p>
-          <br>
-          <p>Prénom : ${user.data.firstname} </p>
-          <br>
-          <p>Email : ${user.data.email} </p>
-          <br>
-          `;
-          console.log(user.data.picture);
+            this.firstname = user.data.firstname
+            this.lastname = user.data.lastname
+            this.email = user.data.email
+            this.picture = user.data.picture
           })
           .catch();
       })
@@ -90,7 +75,7 @@ export default {
         document.cookie = "jwt=;max-age=0";
       });
   },
-};
+}
 </script>
 
 <style lang="scss">
