@@ -5,6 +5,18 @@ const PostSchema = new mongoose.Schema({
         type : String, 
         required: true,
     },
+    posterFirstname : {
+        type : String, 
+        required: true,
+    },
+    posterLastname : {
+        type : String, 
+        required: true,
+    },
+    posterProfil : {
+        type : String, 
+        required: true,
+    },
     message : {
         type : String, 
         maxLength: 500, 

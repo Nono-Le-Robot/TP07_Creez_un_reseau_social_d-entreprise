@@ -60,20 +60,27 @@ export default {
           .then((user) => {
                 let img =  document.getElementById('picture').files[0]
                 console.log(img);
-  
+                axios.get(`http://localhost:5000/api/user/${user.data}`)
+                .then((userInfo) => {
+                  console.log(userInfo);
                 let formData = new FormData()
                 console.log(img);
                 formData.append('posterId', user.data)
+                formData.append('posterFirstname', userInfo.data.firstname)
+                formData.append('posterLastname', userInfo.data.lastname)
+                formData.append('posterProfil', userInfo.data.picture)
                 formData.append('file', img)
                 formData.append('message', this.message)
-        // Envoi des données sur l'url du serveur (mettez la votre) en POST en envoyant le formData contenant notre image et notre texte
-        axios.post('http://localhost:5000/api/post/', formData)
+                axios.post('http://localhost:5000/api/post/', formData)
           .then((resp) => {
             location.reload()
           })
           .catch((err) => {
             console.log(err.response)
           })
+                })
+                .catch()
+        // Envoi des données sur l'url du serveur (mettez la votre) en POST en envoyant le formData contenant notre image et notre texte
                 console.log(img);
           })
           .catch();
@@ -82,16 +89,12 @@ export default {
   },
 mounted(){
     let token = document.cookie.slice(4);
-    axios
-      .get(`http://localhost:5000/jwtid/${token}`)
+    axios.get(`http://localhost:5000/jwtid/${token}`)
       .then((res) => {
         this.logged = true;
         axios.get("http://localhost:5000/api/post/")
           .then((res) => {
             for (let i = 0; i < res.data.length; i++) {
-              axios
-                .get(`http://localhost:5000/api/user/${res.data[i].posterId}`)
-                .then((user) => {
                   var d = new Date();
                   var date = d.getDate()+'-'+0+(d.getMonth()+1)+'-'+d.getFullYear();
                   var hours = d.getHours() + ":" + d.getMinutes();
@@ -100,9 +103,9 @@ mounted(){
                   <br>
                   <div id='onePost'>
                   <div class='user-infos'>
-                  <img id='picture-profil-post' src="${user.data.picture}" alt="" srcset="">
+                  <img id='picture-profil-post' src="${res.data[i].posterProfil}" alt="" srcset="">
                   <br>
-                  <p>${user.data.firstname}  ${user.data.lastname} : <p>
+                  <p>${res.data[i].posterFirstname}  ${res.data[i].posterLastname} : <p>
                   </div>
                   <br>
                   <p>${res.data[i].message}<p>
@@ -114,8 +117,8 @@ mounted(){
                   </div>
                   <br>
                   `;
-                  })
-                .catch();
+                  
+                
             }
           })
           .catch();

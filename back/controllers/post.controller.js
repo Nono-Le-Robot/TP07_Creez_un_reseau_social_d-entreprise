@@ -1,11 +1,7 @@
 const PostModel = require("../models/post.model");
 const UserModel = require("../models/user.model");
 const ObjectId = require("mongoose").Types.ObjectId;
-const date = new Date()
-const days = date.toLocaleDateString()
-const minutes = String(date.getMinutes()).padStart(2, '0');
-const hours = String(date.getHours()).padStart(2, '0');
-const finalDate = `${days} à ${hours}:${minutes}`
+
 
 module.exports.readPost = (req, res) => {
   PostModel.find().sort({ createdAt : -1 })
@@ -14,9 +10,16 @@ module.exports.readPost = (req, res) => {
 };
 
 module.exports.createPost = (req, res) => {
-  console.log(req.file);
-  const newPost = new PostModel({
+    const date = new Date(Date.now())
+    const days = date.toLocaleDateString()
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const finalDate = `${days} à ${hours}:${minutes}`
+    const newPost = new PostModel({
     posterId: req.body.posterId,
+    posterFirstname : req.body.posterFirstname,
+    posterLastname : req.body.posterLastname,
+    posterProfil : req.body.posterProfil,
     message: req.body.message,
     video: req.body.video,
     likers: [],
