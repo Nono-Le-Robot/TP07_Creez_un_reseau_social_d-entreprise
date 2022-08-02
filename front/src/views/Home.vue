@@ -60,7 +60,8 @@
       </form>
       <p class="post-id" hidden>{{ post._id }}</p>
       <div class="post-options-btn">
-        <i :class="modify ? 'hidden' : 'selected'" class="fa-solid fa-thumbs-up"></i>
+        <i v-if="userLikedPosts.includes(post._id) === false" @click="likePost()" :class="modify ? 'hidden' : 'selected'" class="btn-like fa-solid fa-face-meh"></i>
+        <i v-if="userLikedPosts.includes(post._id)"  @click="likePost()" :class="modify ? 'hidden' : 'selected'" class="btn-like fa-solid fa-face-grin-hearts"></i>
         <i :class="modify ? 'hidden' : 'selected'" @click = "post.active = ! post.active; editPost()" v-if="post.posterId === connectedUserId || connectedUserId === '62e7ac92ec5d36273c96911e' " class="btn-edit fa-solid fa-pen-to-square"></i>
         <i :class="modify ? 'hidden' : 'selected'" @click="post.active = ! post.active; deletePost()"  v-if="post.posterId === connectedUserId || connectedUserId === '62e7ac92ec5d36273c96911e' " class="btn-delete fa-solid fa-trash"></i>
       </div>
@@ -84,10 +85,36 @@ export default {
       modify: false,
       selectedPost: "",
       edit: false,
+      userLikedPosts : [],
     };
   },
   methods: {
-  
+        likePost(){
+         
+          const selectedPost = document.querySelectorAll(".onePost")
+          const btnLike = document.querySelectorAll(".btn-like")
+          const inputEdit = document.querySelectorAll('.message-input-edit')
+          const confirmEdit = document.querySelectorAll('.confirm-edit')
+          const newBtnValidate = document.querySelectorAll(".post-options-btn")
+          for(let k = 0; k < btnLike.length; k++){
+            selectedPost[k].addEventListener ('click', (event) =>{
+              // si l'id de l'user est present dans le tableau des likers du post ==> afficher l'icone coeur
+              // ou si l'id du post est present dans le tableau des likes de l'user ===> afficher l'icone coeur
+              // sinon ===> affichier l'icone neutre
+                btnLike[k].classList.replace('fa-face-meh','fa-face-grin-hearts')
+              let token = document.cookie.slice(4);
+              axios.get(`http://localhost:5000/jwtid/${token}`)
+                .then((user) => {
+                const postId = document.querySelectorAll('.post-id')
+                axios.patch(`http://localhost:5000/api/post/like-post/${postId[k].textContent}`,{id:user.data})
+                  .then(() => {
+                  })
+                  .catch()
+                })
+                .catch()
+            })
+          }
+        },
         editPost() {
           this.modify = true
           this.edit = true
@@ -188,9 +215,27 @@ export default {
     },
   },
   mounted(){
+
+   // si l'id de l'user est present dans le tableau des likers du post ==> afficher l'icone coeur
+              // ou si l'id du post est present dans le tableau des likes de l'user ===> afficher l'icone coeur
+              // sinon ===> affichier l'icone neutre
     let token = document.cookie.slice(4);
     axios.get(`http://localhost:5000/jwtid/${token}`)
       .then((user) => {
+    axios.get(`http://localhost:5000/api/user/${user.data}`)
+    .then((result) => {
+      this.userLikedPosts = result.data.likes;
+    })
+    .catch()
+
+
+
+
+
+
+
+
+
         this.logged = true;
         this.connectedUserId = user.data
         axios.get("http://localhost:5000/api/post/")
@@ -273,6 +318,7 @@ export default {
     margin-bottom: 20px;
     &:hover{
       cursor: nesw-resize;
+      transition : 0.2s ease-in-out;
     }
     &:active{
     width: 100%;
@@ -288,44 +334,59 @@ export default {
     margin-bottom: 15px;
   text-align: center;
 }
-.fa-thumbs-up {
+.fa-face-grin-hearts {
+  transition: 1s;
+  transform: scale(1.04);
     width: 20px;
-  background-color: white;
+  background-color: rgb(244, 128, 255);
   padding: 10px;
   border-radius: 50px;
-  color: rgb(146, 132, 253);
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+}
+.fa-face-meh{
+  transition: 1s;
+     width: 20px;
+  background-color: rgb(130, 242, 255);
+  padding: 10px;
+  border-radius: 50px;
+  color: rgb(0, 0, 0);
   cursor: pointer;
 }
 .fa-pen-to-square{
+  transition: 1s;
     width: 20px;
-  background-color: white;
+  background-color: rgb(255, 219, 165);
   padding: 10px;
   border-radius: 50px;
-  color: rgb(13, 84, 84);
+  color: rgb(0, 0, 0);
   cursor: pointer;
 }
 .fa-trash{
+  transition: 1s;
     width: 20px;
-  background-color: white;
+  background-color: rgb(255, 106, 106);
   padding: 10px;
   border-radius: 50px;
-  color: rgb(253, 132, 132);
+  color: rgb(0, 0, 0);
   cursor: pointer;
 }
 .fa-check{
-    width: 20px;
-  background-color: white;
+  transition: 1s;
+  width: 20px;
+  background-color: rgb(118, 255, 113);
   padding: 10px;
   border-radius: 50px;
-  color: rgb(65, 142, 68);
+  color: rgb(0, 0, 0);
   cursor: pointer;
 }
 .fa-xmark{
+  transition: 1s;
   width: 20px;
-  background-color: white;
+  background-color: rgb(255, 129, 129);
   padding: 10px;
   border-radius: 50px;
-  color: rgb(142, 65, 65);
+  color: rgb(0, 0, 0);
   cursor: pointer;
 }
 .post-options-btn{
