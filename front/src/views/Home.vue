@@ -61,7 +61,7 @@
       <p class="post-id" hidden>{{ post._id }}</p>
       <div class="post-options-btn">
         <i v-if="userLikedPosts.includes(post._id) === false" @click="likePost()" :class="modify ? 'hidden' : 'selected'" class="btn-like fa-solid fa-thumbs-up"></i>
-        <i v-if="userLikedPosts.includes(post._id)"  @click="likePost()" :class="modify ? 'hidden' : 'selected'" class="btn-like fa-solid fa-heart"></i>
+        <i v-if="userLikedPosts.includes(post._id)"  @click="unlikePost()" :class="modify ? 'hidden' : 'selected'" class="btn-like fa-solid fa-heart"></i>
         <i :class="modify ? 'hidden' : 'selected'" @click = "post.active = ! post.active; editPost()" v-if="post.posterId === connectedUserId || connectedUserId === '62e7ac92ec5d36273c96911e' " class="btn-edit fa-solid fa-pen-to-square"></i>
         <i :class="modify ? 'hidden' : 'selected'" @click="post.active = ! post.active; deletePost()"  v-if="post.posterId === connectedUserId || connectedUserId === '62e7ac92ec5d36273c96911e' " class="btn-delete fa-solid fa-trash"></i>
       </div>
@@ -92,9 +92,6 @@ export default {
         likePost(){
           const selectedPost = document.querySelectorAll(".onePost")
           const btnLike = document.querySelectorAll(".btn-like")
-          const inputEdit = document.querySelectorAll('.message-input-edit')
-          const confirmEdit = document.querySelectorAll('.confirm-edit')
-          const newBtnValidate = document.querySelectorAll(".post-options-btn")
           for(let k = 0; k < btnLike.length; k++){
             selectedPost[k].addEventListener ('click', (event) =>{
               // si l'id de l'user est present dans le tableau des likers du post ==> afficher l'icone coeur
@@ -105,6 +102,25 @@ export default {
                 .then((user) => {
                 const postId = document.querySelectorAll('.post-id')
                 axios.patch(`http://localhost:5000/api/post/like-post/${postId[k].textContent}`,{id:user.data})
+                  .then(() => {
+                    location.reload()
+                  })
+                  .catch()
+                })
+                .catch()
+            })
+          }
+        },
+        unlikePost(){
+          const btnLike = document.querySelectorAll(".btn-like")
+          const selectedPost = document.querySelectorAll(".onePost")
+          for(let k = 0; k < btnLike.length; k++){
+            selectedPost[k].addEventListener ('click', (event) =>{
+              let token = document.cookie.slice(4);
+              axios.get(`http://localhost:5000/jwtid/${token}`)
+                .then((user) => {
+                const postId = document.querySelectorAll('.post-id')
+                axios.patch(`http://localhost:5000/api/post/unlike-post/${postId[k].textContent}`,{id:user.data})
                   .then(() => {
                     location.reload()
                   })
@@ -217,13 +233,13 @@ export default {
     let token = document.cookie.slice(4);
     axios.get(`http://localhost:5000/jwtid/${token}`)
       .then((user) => {
+        this.connectedUserId = user.data
     axios.get(`http://localhost:5000/api/user/${user.data}`)
     .then((result) => {
       this.userLikedPosts = result.data.likes;
     })
     .catch()
         this.logged = true;
-        this.connectedUserId = user.data
         axios.get("http://localhost:5000/api/post/")
           .then((res) => {this.posts = res.data})
           .catch();
