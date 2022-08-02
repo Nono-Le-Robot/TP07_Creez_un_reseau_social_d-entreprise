@@ -1,16 +1,6 @@
 <template>
   <div>
-    <div id="top-nav">
-      <router-link to="/">
-        <img id="logo" src="../assets/logo.png"
-          alt="Photo du logo de groupomania, représentant une planéte en line-art" />
-      </router-link>
-      <nav>
-        <router-link to="/">Accueil</router-link> |
-        <router-link to="/auth/login">Connexion</router-link> |
-        <router-link to="/auth/register">Inscription</router-link>
-      </nav>
-    </div>
+    <topNav/>
     <h1>Connexion</h1>
     <label for="register"></label>
     <form v-on:submit.prevent="onSubmit" action="register">
@@ -29,9 +19,14 @@
 </template>
 
 <script>
-import { assertNullLiteralTypeAnnotation } from "@babel/types";
 import axios from "axios";
+import topNav from '@/components/LinkNav.vue'
+
 export default {
+  components: 
+    {
+    topNav
+    },
   data() {
     return {
       email: "",

@@ -41,7 +41,11 @@
 
 <script>
 import axios from "axios";
+import topNav from '@/components/LinkNav.vue'
 export default {
+  components:{
+    topNav
+  },
   data() {
     return {
       users: null,

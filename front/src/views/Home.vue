@@ -1,5 +1,6 @@
 <template>
   <div>
+  
     <div id="top-nav">
       <router-link to="/"> 
         <img id="logo" src="../assets/logo.png" alt="Photo du logo de groupomania, représentant une planéte en line-art" />
@@ -103,7 +104,7 @@ export default {
                 const postId = document.querySelectorAll('.post-id')
                 axios.patch(`http://localhost:5000/api/post/like-post/${postId[k].textContent}`,{id:user.data})
                   .then(() => {
-                    location.reload()
+                    window.location.reload()
                   })
                   .catch()
                 })
@@ -122,7 +123,7 @@ export default {
                 const postId = document.querySelectorAll('.post-id')
                 axios.patch(`http://localhost:5000/api/post/unlike-post/${postId[k].textContent}`,{id:user.data})
                   .then(() => {
-                    location.reload()
+                    window.location.reload()
                   })
                   .catch()
                 })
@@ -151,12 +152,12 @@ export default {
                         message:this.messageEdit
                     })
                     .then(() => {
-                      location.reload();
+                      window.location.reload();
                     })
                     .catch()
                     })
                    test2.addEventListener('click', () => {
-                      location.reload()
+                      window.location.reload()
                     })
             })
             
@@ -181,7 +182,7 @@ export default {
                           if(this.messageEdit === "supprimer"){
                         axios.delete(`http://localhost:5000/api/post/${postId[k].textContent}`)
                         .then(() => {
-                      location.reload();
+                      window.location.reload();
                     })
                     .catch()
 
@@ -191,7 +192,7 @@ export default {
                     }
                     })
                     test2.addEventListener('click', () => {
-                      location.reload()
+                      window.location.reload()
                     })
                     
                 
@@ -220,7 +221,7 @@ export default {
               formData.append('file', img)
               formData.append('message', this.message)
               axios.post('http://localhost:5000/api/post/', formData)
-                .then((resp) => {location.reload()})
+                .then((resp) => {window.location.reload()})
                 .catch()
             })
             .catch()
