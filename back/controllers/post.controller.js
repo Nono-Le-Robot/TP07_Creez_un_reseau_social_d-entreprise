@@ -39,6 +39,7 @@ module.exports.updatePost = (req, res) => {
   }
   const updatedRecord = {
     message: req.body.message,
+    picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/post/${req.file.filename}`: "",
   };
   PostModel.findByIdAndUpdate(
     req.params.id,

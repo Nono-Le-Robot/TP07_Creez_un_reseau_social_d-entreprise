@@ -51,13 +51,11 @@
       <br>
       <img class="post-picture" :src="post.picture" alt="">
       <br>
-      <p class="date-post">posté le : {{ post.date }}</p>
-      <br>
       <p class="confirm-edit"></p>
       <p class="confirm-delete"></p>
       <form id="editPost" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="editPost" >
       <input :class="post.active? 'selected' : 'hidden'" type="text" name="message-edit" class="message-input-edit" placeholder="" v-model="messageEdit" autocomplete="off" /> 
-      <input v-if="edit" :class="post.active? 'selected' : 'hidden'" type="file" name="picture" id="picture"/><p v-if="edit" :class="post.active? 'selected' : 'hidden'" style="font-size:10px">(format : png,jpg,gif)</p>
+            <input  type="file" name="picture-edit" class="picture-edit" v-if="edit" :class="post.active? 'selected' : 'hidden'"/><p v-if="edit" :class="post.active? 'selected' : 'hidden'" style="font-size:10px">(format : png,jpg,gif)</p><br>
       </form>
       <p class="post-id" hidden>{{ post._id }}</p>
       <div class="post-options-btn">
@@ -66,6 +64,8 @@
         <i :class="modify ? 'hidden' : 'selected'" @click = "post.active = ! post.active; editPost()" v-if="post.posterId === connectedUserId || connectedUserId === '62e7ac92ec5d36273c96911e' " class="btn-edit fa-solid fa-pen-to-square"></i>
         <i :class="modify ? 'hidden' : 'selected'" @click="post.active = ! post.active; deletePost()"  v-if="post.posterId === connectedUserId || connectedUserId === '62e7ac92ec5d36273c96911e' " class="btn-delete fa-solid fa-trash"></i>
       </div>
+      <br>
+      <p class="date-post">posté le : {{ post.date }}</p>
     </div>
     <br>
   </div>
@@ -138,20 +138,23 @@ export default {
           const newBtnValidate = document.querySelectorAll(".post-options-btn")
           const inputEdit = document.querySelectorAll('.message-input-edit')
           const confirmEdit = document.querySelectorAll('.confirm-edit')
-          
             for(let k = 0; k < selectedPost.length; k++){
-                selectedPost[k].addEventListener ('click', (event) =>{
+              selectedPost[k].addEventListener ('click', (event) =>{
                     confirmEdit[k].textContent = 'Entrez le nouveau contenu de votre post'
-                    newBtnValidate[k].innerHTML = '<br> <i class="test2 fa-solid fa-xmark"></i> <br> '
-                    newBtnValidate[k].innerHTML += '<br> <i class="test fa-solid fa-check"></i> <br> '
-                    let test = document.querySelector('.test')
-                    let test2 = document.querySelector('.test2')
+                    newBtnValidate[k].innerHTML = '<br> <i class="confirm fa-solid fa-xmark"></i> <br> '
+                    newBtnValidate[k].innerHTML += '<br> <i class="cancel fa-solid fa-check"></i> <br> '
+                    let test = document.querySelector('.cancel')
+                    let test2 = document.querySelector('.confirm')
                     test.addEventListener('click', () => {
+                    let imgEdit =  document.querySelectorAll(".picture-edit")
                     const postId = document.querySelectorAll('.post-id')
-                    axios.put(`http://localhost:5000/api/post/${postId[k].textContent}`,{
-                        message:this.messageEdit
-                    })
+                          let formData = new FormData()
+                          formData.append('file', imgEdit[k].files[0])
+                          formData.append('message', this.messageEdit)
+                    axios.put(`http://localhost:5000/api/post/${postId[k].textContent}`,formData)
                     .then(() => {
+                   
+                      // alert('rfrzgzr')
                       window.location.reload();
                     })
                     .catch()
@@ -210,9 +213,9 @@ export default {
         axios.get(`http://localhost:5000/jwtid/${token}`)
         .then((user) => {
           let img =  document.getElementById('picture').files[0]
+          console.log(img);
           axios.get(`http://localhost:5000/api/user/${user.data}`)
             .then((userInfo) => {
-              console.log(userInfo);
               let formData = new FormData()
               formData.append('posterId', user.data)
               formData.append('posterFirstname', userInfo.data.firstname)
@@ -221,7 +224,7 @@ export default {
               formData.append('file', img)
               formData.append('message', this.message)
               axios.post('http://localhost:5000/api/post/', formData)
-                .then((resp) => {window.location.reload()})
+                .then((resp) => {})
                 .catch()
             })
             .catch()
