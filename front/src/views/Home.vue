@@ -60,8 +60,8 @@
       </form>
       <p class="post-id" hidden>{{ post._id }}</p>
       <div class="post-options-btn">
-        <i v-if="userLikedPosts.includes(post._id) === false" @click="likePost()" :class="modify ? 'hidden' : 'selected'" class="btn-like fa-solid fa-face-meh"></i>
-        <i v-if="userLikedPosts.includes(post._id)"  @click="likePost()" :class="modify ? 'hidden' : 'selected'" class="btn-like fa-solid fa-face-grin-hearts"></i>
+        <i v-if="userLikedPosts.includes(post._id) === false" @click="likePost()" :class="modify ? 'hidden' : 'selected'" class="btn-like fa-solid fa-thumbs-up"></i>
+        <i v-if="userLikedPosts.includes(post._id)"  @click="likePost()" :class="modify ? 'hidden' : 'selected'" class="btn-like fa-solid fa-heart"></i>
         <i :class="modify ? 'hidden' : 'selected'" @click = "post.active = ! post.active; editPost()" v-if="post.posterId === connectedUserId || connectedUserId === '62e7ac92ec5d36273c96911e' " class="btn-edit fa-solid fa-pen-to-square"></i>
         <i :class="modify ? 'hidden' : 'selected'" @click="post.active = ! post.active; deletePost()"  v-if="post.posterId === connectedUserId || connectedUserId === '62e7ac92ec5d36273c96911e' " class="btn-delete fa-solid fa-trash"></i>
       </div>
@@ -90,7 +90,6 @@ export default {
   },
   methods: {
         likePost(){
-         
           const selectedPost = document.querySelectorAll(".onePost")
           const btnLike = document.querySelectorAll(".btn-like")
           const inputEdit = document.querySelectorAll('.message-input-edit')
@@ -101,13 +100,13 @@ export default {
               // si l'id de l'user est present dans le tableau des likers du post ==> afficher l'icone coeur
               // ou si l'id du post est present dans le tableau des likes de l'user ===> afficher l'icone coeur
               // sinon ===> affichier l'icone neutre
-                btnLike[k].classList.replace('fa-face-meh','fa-face-grin-hearts')
               let token = document.cookie.slice(4);
               axios.get(`http://localhost:5000/jwtid/${token}`)
                 .then((user) => {
                 const postId = document.querySelectorAll('.post-id')
                 axios.patch(`http://localhost:5000/api/post/like-post/${postId[k].textContent}`,{id:user.data})
                   .then(() => {
+                    location.reload()
                   })
                   .catch()
                 })
@@ -215,10 +214,6 @@ export default {
     },
   },
   mounted(){
-
-   // si l'id de l'user est present dans le tableau des likers du post ==> afficher l'icone coeur
-              // ou si l'id du post est present dans le tableau des likes de l'user ===> afficher l'icone coeur
-              // sinon ===> affichier l'icone neutre
     let token = document.cookie.slice(4);
     axios.get(`http://localhost:5000/jwtid/${token}`)
       .then((user) => {
@@ -227,15 +222,6 @@ export default {
       this.userLikedPosts = result.data.likes;
     })
     .catch()
-
-
-
-
-
-
-
-
-
         this.logged = true;
         this.connectedUserId = user.data
         axios.get("http://localhost:5000/api/post/")
@@ -334,7 +320,7 @@ export default {
     margin-bottom: 15px;
   text-align: center;
 }
-.fa-face-grin-hearts {
+.fa-heart {
   transition: 1s;
   transform: scale(1.04);
     width: 20px;
@@ -344,7 +330,7 @@ export default {
   color: rgb(0, 0, 0);
   cursor: pointer;
 }
-.fa-face-meh{
+.fa-thumbs-up{
   transition: 1s;
      width: 20px;
   background-color: rgb(130, 242, 255);

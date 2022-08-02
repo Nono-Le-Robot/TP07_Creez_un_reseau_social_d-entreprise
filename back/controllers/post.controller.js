@@ -1,6 +1,7 @@
 const PostModel = require("../models/post.model");
 const UserModel = require("../models/user.model");
 const ObjectId = require("mongoose").Types.ObjectId;
+const fs = require('fs')
 
 
 module.exports.readPost = (req, res) => {
@@ -54,10 +55,30 @@ module.exports.deletePost = (req, res) => {
   if (!ObjectId.isValid(req.params.id)) {
     return res.status(400).send("ID unknown : " + req.params.id);
   }
-  PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
-    if (!err) res.send("Post deleted : \n" + docs);
-    else console.log("Delete error :" + err);
-  });
+  
+
+
+    PostModel.findById(req.params.id)
+    .then((post) =>{
+      let pictureUrl = post.picture
+  if(pictureUrl){
+    let newString = pictureUrl.slice(22)
+    fs.unlink(`${newString}`, () => {
+      PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
+        if (!err) res.send("Post deleted : \n" + post.picture);
+        else console.log("Delete error :" + err);
+      });
+    });
+  }
+  else{
+    PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
+      if (!err) res.send("Post deleted : \n" + post.picture);
+      else console.log("Delete error :" + err);
+    });
+  }
+
+    })
+    .catch()
 };
 
 module.exports.likePost = async (req, res, next) => {
