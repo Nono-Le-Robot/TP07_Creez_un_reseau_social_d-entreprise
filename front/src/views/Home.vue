@@ -38,7 +38,7 @@ ex : photo mais text vide === garder l'ancien text -->
   v-if="logged === true"  
   id="posts">
   <br>
-    <div  class='onePost'>
+    <div @mouseover="likeRequest()"  class='onePost'>
       <div class='user-infos'>
         <img id='picture-profil-post' :src="post.posterProfil" alt="" srcset="">
         <br>
@@ -60,8 +60,8 @@ ex : photo mais text vide === garder l'ancien text -->
       </form>
       <p class="post-id" hidden>{{ post._id }}</p>
       <div class="post-options-btn">
-        <i v-if="userLikedPosts.includes(post._id) === false" @click="likePost()" :class="modify ? 'hidden' : 'selected'" class="btn-like fa-solid fa-thumbs-up"></i>
-        <i v-if="userLikedPosts.includes(post._id)"  @click="unlikePost()" :class="modify ? 'hidden' : 'selected'" class="btn-like fa-solid fa-heart"></i>
+        <i :class="userLikedPosts.includes(post._id) ? 'fa-heart' : 'fa-thumbs-up'" class="btn-like fa-solid"></i>
+        <!-- <i v-else @click="likeRequest()" :class="modify ? 'hidden' : 'selected'" class="btn-like fa-solid fa-thumbs-up"></i> -->
         <i :class="modify ? 'hidden' : 'selected'" @click = "post.active = ! post.active; editPost()" v-if="post.posterId === connectedUserId || connectedUserId === '62e7ac92ec5d36273c96911e' " class="btn-edit fa-solid fa-pen-to-square"></i>
         <i :class="modify ? 'hidden' : 'selected'" @click="post.active = ! post.active; deletePost()"  v-if="post.posterId === connectedUserId || connectedUserId === '62e7ac92ec5d36273c96911e' " class="btn-delete fa-solid fa-trash"></i>
       </div>
@@ -81,6 +81,7 @@ export default {
       logged: false,
       message: "",
       messageEdit :"",
+      post: "",
       posts: [],
       postPicture : "",
       connectedUserId: "",
@@ -91,47 +92,48 @@ export default {
     };
   },
   methods: {
-        likePost(){
-          const selectedPost = document.querySelectorAll(".onePost")
-          const btnLike = document.querySelectorAll(".btn-like")
-          for(let k = 0; k < btnLike.length; k++){
-            selectedPost[k].addEventListener ('click', (event) =>{
-              // si l'id de l'user est present dans le tableau des likers du post ==> afficher l'icone coeur
-              // ou si l'id du post est present dans le tableau des likes de l'user ===> afficher l'icone coeur
-              // sinon ===> affichier l'icone neutre
-              let token = document.cookie.slice(4);
-              axios.get(`http://localhost:5000/jwtid/${token}`)
-                .then((user) => {
-                const postId = document.querySelectorAll('.post-id')
-                axios.patch(`http://localhost:5000/api/post/like-post/${postId[k].textContent}`,{id:user.data})
-                  .then(() => {
-                    window.location.reload()
-                  })
-                  .catch()
-                })
-                .catch()
+    likeRequest(){
+      const postId = document.querySelectorAll('.post-id')
+      const selectedPost = document.querySelectorAll(".onePost")
+      const btnLike = document.querySelectorAll(".btn-like")
+      const token = document.cookie.slice(4)
+      axios.get(`http://localhost:5000/jwtid/${token}`)
+      .then((user) => {
+        axios.get(`http://localhost:5000/api/user/${user.data}`)
+        .then((infosUser) => {
+          this.userLikedPosts = infosUser.data.likes
+        })
+        .catch()
+      for(let k = 0; k < btnLike.length; k++){
+        btnLike[k].addEventListener ('click', (event) =>{ 
+          if(btnLike[k].classList.contains('fa-thumbs-up')){
+            
+            axios.patch(`http://localhost:5000/api/post/like-post/${postId[k].textContent}`,{id:user.data})
+            .then(() => {
+              axios.get(`http://localhost:5000/api/user/${user.data}`)
+              .then((infosUser) => {
+                this.userLikedPosts = infosUser.data.likes
+              })
+              .catch()
             })
+            .catch()      
           }
-        },
-        unlikePost(){
-          const btnLike = document.querySelectorAll(".btn-like")
-          const selectedPost = document.querySelectorAll(".onePost")
-          for(let k = 0; k < btnLike.length; k++){
-            selectedPost[k].addEventListener ('click', (event) =>{
-              let token = document.cookie.slice(4);
-              axios.get(`http://localhost:5000/jwtid/${token}`)
-                .then((user) => {
-                const postId = document.querySelectorAll('.post-id')
-                axios.patch(`http://localhost:5000/api/post/unlike-post/${postId[k].textContent}`,{id:user.data})
-                  .then(() => {
-                    window.location.reload()
-                  })
-                  .catch()
-                })
-                .catch()
+          else if(btnLike[k].classList.contains('fa-heart')){
+            axios.patch(`http://localhost:5000/api/post/unlike-post/${postId[k].textContent}`,{id:user.data})
+            .then(() => {
+              axios.get(`http://localhost:5000/api/user/${user.data}`)
+              .then((infosUser) => {
+                this.userLikedPosts = infosUser.data.likes
+              })
+              .catch()
             })
+            .catch()  
           }
-        },
+        })
+      }
+         })
+      .catch()
+},
         editPost() {
           this.modify = true
           this.edit = true
@@ -154,8 +156,6 @@ export default {
                           formData.append('message', this.messageEdit)
                     axios.put(`http://localhost:5000/api/post/${postId[k].textContent}`,formData)
                     .then(() => {
-                   
-                      // alert('rfrzgzr')
                       window.location.reload();
                     })
                     .catch()
@@ -198,9 +198,6 @@ export default {
                     test2.addEventListener('click', () => {
                       window.location.reload()
                     })
-                    
-                
-                 
             })
             }
     },
