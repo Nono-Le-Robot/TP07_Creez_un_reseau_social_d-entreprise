@@ -224,7 +224,7 @@ export default {
               formData.append('file', img)
               formData.append('message', this.message)
               axios.post('http://localhost:5000/api/post/', formData)
-                .then((resp) => {})
+                .then((resp) => window.location.reload())
                 .catch()
             })
             .catch()

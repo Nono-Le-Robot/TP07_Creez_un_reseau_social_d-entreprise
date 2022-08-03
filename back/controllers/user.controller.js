@@ -17,21 +17,24 @@ module.exports.getOneUser = async (req,res) => {
     }).select('-password')
 }
 
-module.exports.updateUser = async (req, res) => {
+module.exports.updateUser = (req, res) => {
     if(!ObjectId.isValid(req.params.id))
         return res.status(400).send('ID unknown : ' + req.params.id)
-    try{
-        await UserModel.findOneAndUpdate(
+
+        UserModel.findOneAndUpdate(
             {_id : req.params.id},
-            {$set:{bio: req.body.bio}},
+            {$set:{
+                picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/profil/${req.file.filename}`: "",
+            
+            }},
             {new: true, upsert : true , setDefaultsOnInsert: true},
-            (err, docs) => {
-                if(!err) return res.send(docs)
-                // if(err) return res.status(500).send({message : err})
-            }
         )
-    }
-    catch(err){console.log(err);}
+        .then((user) => {
+            res.status(200).send(user)
+        })
+        .catch()
+
+    
 }
 
 module.exports.deleteUser = async (req, res) => {

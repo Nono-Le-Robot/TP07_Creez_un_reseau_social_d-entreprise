@@ -30,9 +30,9 @@
         <br>
         <form id="newPost" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="newPost" >
         <br>
-        <input type="file" name="picture" id="picture"/><p style="font-size:10px">(format : png,jpg,gif)</p>
+        <input type="file" name="picture-profil-edit" id="picture-profil-edit"/><p style="font-size:10px">(format : png,jpg,gif)</p>
         <br>
-        <button v-on:click="sendPost()">Changer ma photo de profil</button>
+        <button id="send-modified-profil" v-on:click="editProfil()">Changer ma photo de profil</button>
         </form>
     </div>
     <br />
@@ -49,9 +49,21 @@ export default {
       lastname : '',
       email : '',
       picture : '',
+      connectedId: ''
     };
   },
   methods: {
+    editProfil() {
+        let imgPictureEdit =  document.querySelector("#picture-profil-edit")
+        let formData = new FormData()
+        formData.append('file', imgPictureEdit.files[0])
+        axios.put(`http://localhost:5000/api/user/${this.connectedId}`,formData)
+        .then(() => {
+          window.location.reload()
+        })
+        .catch()
+         
+    },
     disconnectUser() {
       document.cookie = "jwt=;max-age=0";
       this.logged = false;
@@ -68,6 +80,7 @@ export default {
             this.lastname = user.data.lastname
             this.email = user.data.email
             this.picture = user.data.picture
+            this.connectedId = user.data._id
           })
           .catch();
       })

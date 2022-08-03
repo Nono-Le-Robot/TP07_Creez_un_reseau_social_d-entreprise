@@ -37,28 +37,37 @@ module.exports.updatePost = (req, res) => {
   if (!ObjectId.isValid(req.params.id)) {
     return res.status(400).send("ID unknown : " + req.params.id);
   }
+
   const updatedRecord = {
     message: req.body.message,
     picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/post/${req.file.filename}`: "",
   };
+
+  PostModel.findById(req.params.id)
+  .then((post) => {
+    console.log(post.picture)
   PostModel.findByIdAndUpdate(
     req.params.id,
     { $set: updatedRecord },
-    { new: true },
-    (err, docs) => {
-      if (!err) res.send(docs);
-      else console.log("update error : " + err);
+    { new: true })
+  .then(() => {
+    let pictureUrl = post.picture
+    if(pictureUrl){
+    let newString = pictureUrl.slice(22)
+    fs.unlink(`${newString}`, () => {
+    });
+    res.send(post);
     }
-  );
+  })
+  .catch()
+})
+.catch()
 };
 
 module.exports.deletePost = (req, res) => {
   if (!ObjectId.isValid(req.params.id)) {
     return res.status(400).send("ID unknown : " + req.params.id);
   }
-  
-
-
     PostModel.findById(req.params.id)
     .then((post) =>{
       let pictureUrl = post.picture
