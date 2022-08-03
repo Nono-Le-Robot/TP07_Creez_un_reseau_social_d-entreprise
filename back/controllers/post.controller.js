@@ -55,6 +55,7 @@ module.exports.updatePost = (req, res) => {
     if(pictureUrl){
     let newString = pictureUrl.slice(22)
     fs.unlink(`${newString}`, () => {
+      console.log(newString)
     });
     res.send(post);
     }

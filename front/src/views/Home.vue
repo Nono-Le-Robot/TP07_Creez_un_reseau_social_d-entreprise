@@ -1,6 +1,5 @@
 <template>
   <div>
-  
     <div id="top-nav">
       <router-link to="/"> 
         <img id="logo" src="../assets/logo.png" alt="Photo du logo de groupomania, représentant une planéte en line-art" />
@@ -30,7 +29,9 @@
   </div>
   <p v-if="logged === false">Veuillez vous connecter</p>
 
-
+<!-- Faire en sorte de remplir les champs par lancienne valeur si l'utilisateur ne met pasq de Photo
+ex : text mais pas de photo, garder l'ancienne
+ex : photo mais text vide === garder l'ancien text -->
 
   <div 
   v-for="post in posts" 

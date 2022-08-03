@@ -1,5 +1,6 @@
 const UserModel = require ('../models/user.model')
 const ObjectId = require('mongoose').Types.ObjectId;
+const fs = require('fs')
 
 module.exports.getAllUsers = async (req,res) => {
     //récupére les données des utilisateurs (sauf le mot de passe)
@@ -18,9 +19,33 @@ module.exports.getOneUser = async (req,res) => {
 }
 
 module.exports.updateUser = (req, res) => {
+      const updatedRecord = {
+        picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/profil/${req.file.filename}`: "",
+      };
+      UserModel.findById(req.params.id)
+      .then((post) => {
+      UserModel.findByIdAndUpdate(
+        req.params.id,
+        { $set: updatedRecord })
+      .then(() => {
+        let pictureUrl = post.picture
+        if(pictureUrl){
+            if(pictureUrl.includes('default')=== false){
+                let newString = pictureUrl.slice(22)
+                console.log(newString)
+                fs.unlink(`${newString}`, () => {
+                    console.log('delete sucess')
+                });
+            }
+        }
+      })
+      .catch()
+    })
+    .catch()
+   
+
     if(!ObjectId.isValid(req.params.id))
         return res.status(400).send('ID unknown : ' + req.params.id)
-
         UserModel.findOneAndUpdate(
             {_id : req.params.id},
             {$set:{
@@ -33,9 +58,7 @@ module.exports.updateUser = (req, res) => {
             res.status(200).send(user)
         })
         .catch()
-
-    
-}
+    };
 
 module.exports.deleteUser = async (req, res) => {
     if(!ObjectId.isValid(req.params.id))
