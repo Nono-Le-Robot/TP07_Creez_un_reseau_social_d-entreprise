@@ -30,7 +30,10 @@
         <br>
         <form id="newPost" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="newPost" >
         <br>
-        <input type="file" name="picture-profil-edit" id="picture-profil-edit"/><p style="font-size:10px">(format : png,jpg,gif)</p>
+        <input class="input-file-new-post" type="file" name="picture-profil-edit" id="picture-profil-edit"/>
+        <label class="input-file-design" for="picture-profil-edit">Choisissez un fichier...</label>
+        <br>
+        <p style="font-size:10px">(format : png,jpg,gif)</p>
         <br>
         <button id="send-modified-profil" v-on:click="editProfil()">Changer ma photo de profil</button>
         </form>
@@ -123,5 +126,26 @@ export default {
   height: 100px;
   border-radius: 100%;
   object-fit:cover;
+}
+#picture-profil-edit{
+  display: none;
+}
+#newPost > label{
+      transition: 0.5s;
+  color: rgb(255, 255, 255);
+  background-color: rgb(20, 45, 79);
+  border: solid 1px black;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 10px 20px;
+  border-radius: 30px;
+  &:hover{
+    cursor: pointer;
+    transition: 0.5s;
+    background-color: rgb(105, 166, 239);
+    color: rgb(0, 0, 0);
+    transform: scale(1.03);
+    box-shadow: 1px 1px 1px black;
+}
 }
 </style>

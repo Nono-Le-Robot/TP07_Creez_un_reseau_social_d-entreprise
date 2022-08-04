@@ -15,18 +15,18 @@
         <router-link to="/auth/login" @click="disconnectUser()">Deconnexion</router-link>
       </nav>
     </div>
+      </div>
     <div id="createNewPost">
       <form id="newPost" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="newPost" >
         <br>
         <input type="text" name="message" id="message-input" placeholder="Que souhaitez vous dire ?" v-model="message" autocomplete="off" /> 
         <br>
-          <input type="file" name="picture" id="picture"/><p style="font-size:10px">(format : png,jpg,gif)</p>
+          <input class="input-file-new-post" type="file" name="picture" id="picture"/><p style="font-size:10px">(format : png,jpg,gif)</p>
         <br>
-        <button @click="sendPost()">Envoyer</button>
+        <button id="btn-new-post" @click="sendPost()">Envoyer</button>
       </form>
     </div>
     <br>
-  </div>
   <p v-if="logged === false">Veuillez vous connecter</p>
 
 <!-- Faire en sorte de remplir les champs par lancienne valeur si l'utilisateur ne met pasq de Photo
@@ -51,12 +51,11 @@ ex : photo mais text vide === garder l'ancien text -->
       </div> 
       <br>
       <img class="post-picture" :src="post.picture" alt="">
-      <br>
       <p class="confirm-edit"></p>
       <p class="confirm-delete"></p>
       <form id="editPost" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="editPost" >
       <input :class="post.active? 'selected' : 'hidden'" type="text" name="message-edit" class="message-input-edit" placeholder="" v-model="messageEdit" autocomplete="off" /> 
-            <input  type="file" name="picture-edit" class="picture-edit" v-if="edit" :class="post.active? 'selected' : 'hidden'"/><p v-if="edit" :class="post.active? 'selected' : 'hidden'" style="font-size:10px">(format : png,jpg,gif)</p><br>
+            <input  type="file" name="picture-edit" id="picture-edit" class=" input-file-new-post picture-edit" v-if="edit" :class="post.active? 'selected' : 'hidden'"/><p v-if="edit" :class="post.active? 'selected' : 'hidden'" style="font-size:10px">(format : png,jpg,gif)</p><br>
       </form>
       <p class="post-id" hidden>{{ post._id }}</p>
       <div class="post-options-btn">
@@ -286,7 +285,7 @@ export default {
   display: none;
 }
 #newPost {
-  margin-top: 50px;
+  margin-top: 85px;
   font-size: 20px;
   padding: 25px;
   background-color: $independence;
@@ -319,7 +318,6 @@ export default {
 .post-picture{
     width: 80%;
     border-radius: 20px;
-    margin-bottom: 20px;
     &:hover{
       cursor: nesw-resize;
       transition : 0.2s ease-in-out;
@@ -340,13 +338,18 @@ export default {
 }
 .fa-heart {
   transition: 1s;
-  transform: scale(1.04);
+ 
     width: 20px;
   background-color: rgb(244, 128, 255);
-  padding: 10px;
+  padding: 10px 10px 10px 10px;
   border-radius: 50px;
   color: rgb(0, 0, 0);
   cursor: pointer;
+   &:hover{
+    transition: 0.4s;
+    background-color: rgb(122, 19, 148) ;
+    color: white ;
+  }
 }
 .fa-thumbs-up{
   transition: 1s;
@@ -356,48 +359,78 @@ export default {
   border-radius: 50px;
   color: rgb(0, 0, 0);
   cursor: pointer;
+   &:hover{
+    transition: 0.4s;
+    background-color: rgb(10, 94, 113) ;
+    color: white ;
+  }
 }
 .fa-pen-to-square{
-  transition: 1s;
+  transition: 0.4s;
     width: 20px;
   background-color: rgb(255, 219, 165);
   padding: 10px;
   border-radius: 50px;
   color: rgb(0, 0, 0);
   cursor: pointer;
+   &:hover{
+    transition: 0.4s;
+    background-color: rgb(175, 113, 7) ;
+    color: white ;
+  }
 }
 .fa-trash{
-  transition: 1s;
+  transition: 0.4s;
     width: 20px;
   background-color: rgb(255, 106, 106);
   padding: 10px;
   border-radius: 50px;
   color: rgb(0, 0, 0);
   cursor: pointer;
+  &:hover{
+    transition: 0.4s;
+    background-color: rgb(168, 35, 35) ;
+    color: white ;
+  }
 }
 .fa-check{
-  transition: 1s;
+  transition: 0.4s;
   width: 20px;
   background-color: rgb(118, 255, 113);
   padding: 10px;
   border-radius: 50px;
   color: rgb(0, 0, 0);
   cursor: pointer;
+  margin-top: 30px;
+   &:hover{
+    transition: 0.4s;
+    background-color: rgb(17, 105, 27) ;
+    color: white ;
+  }
 }
 .fa-xmark{
-  transition: 1s;
+  transition: 0.4s;
   width: 20px;
   background-color: rgb(255, 129, 129);
   padding: 10px;
   border-radius: 50px;
   color: rgb(0, 0, 0);
+    margin-top: 30px;
   cursor: pointer;
+    &:hover{
+    transition: 0.4s;
+    background-color: rgb(105, 17, 17) ;
+    color: white ;
+  }
 }
 .post-options-btn{
   display: flex;
   align-items: center;
   justify-content: space-evenly;
   width: 20%;
+  position: relative;
+  top: -25px;
+  
 }
 .hidden-input{
   display: none;
@@ -410,6 +443,7 @@ export default {
   color: rgb(255, 131, 131);
 }
 .confirm-edit{
+  margin-top: 20px;
   margin-bottom: 10px;
     font-size: 15px;
   color: rgb(255, 249, 131);
@@ -423,4 +457,14 @@ export default {
   font-weight: bold;
     color: rgb(224, 224, 224);
 }
+
+
+#top-nav > nav > a:nth-child(3){
+  margin-right: 25px;
+}
+
+
+
+
+
 </style>

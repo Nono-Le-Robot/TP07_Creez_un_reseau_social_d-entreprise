@@ -10,6 +10,12 @@ module.exports.readPost = (req, res) => {
   .catch(error => res.status(404).json({ error }))
 };
 
+module.exports.readOnePost = (req, res) => {
+  PostModel.findById(req.params.id)
+  .then(findPosts => res.status(200).json(findPosts))
+  .catch(error => res.status(404).json({ error }))
+};
+
 module.exports.createPost = (req, res) => {
     const date = new Date(Date.now())
     const days = date.toLocaleDateString()

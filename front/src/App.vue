@@ -100,16 +100,25 @@ html {
 }
 
 #top-nav {
+  background-color: rgb(255, 68, 6);
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 50px;
-  margin-left: 10px;
-  margin-right: 20px;
+  width: 100%;
+  border-radius: 0px 0px 15px 10px;
+  margin-bottom: 30px;
+  position: fixed;
+  top:0;
+  z-index: 999;
+
+
 }
 
 #logo {
   width: 200px;
+  padding-top: 5px;
+  margin-left: 20px;
 }
 
 #app {
@@ -127,11 +136,32 @@ html {
 
 a {
   text-decoration: none;
-  color: rgb(78, 78, 78);
+  color: rgb(35, 35, 35);
+  padding-right: 5px;
 }
 
 .router-link-active {
   font-weight: bold;
-  color: rgba(180, 100, 255, 0.925);
+  color: rgb(121, 20, 204);
+}
+
+
+#btn-new-post, #send-modified-profil{
+      transition: 0.5s;
+  color: rgb(255, 255, 255);
+  background-color: rgb(20, 45, 79);
+  border: solid 1px black;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 10px 20px;
+  border-radius: 30px;
+  &:hover{
+    cursor: pointer;
+    transition: 0.5s;
+    background-color: rgb(105, 166, 239);
+    color: rgb(0, 0, 0);
+    transform: scale(1.03);
+    box-shadow: 1px 1px 1px black;
+  }
 }
 </style>

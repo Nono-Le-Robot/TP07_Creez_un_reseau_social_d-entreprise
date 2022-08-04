@@ -4,6 +4,7 @@ const multerPost = require('../middleware/multerPost')
 
 
 router.get("/", postController.readPost)
+router.get('/:id', postController.readOnePost)
 router.post("/", multerPost, postController.createPost)
 router.put("/:id", multerPost, postController.updatePost)
 router.delete("/:id", postController.deletePost)

@@ -35,6 +35,7 @@ module.exports.updateUser = (req, res) => {
                 console.log(newString)
                 fs.unlink(`${newString}`, () => {
                     console.log('delete sucess')
+                    res.status(201)
                 });
             }
         }
