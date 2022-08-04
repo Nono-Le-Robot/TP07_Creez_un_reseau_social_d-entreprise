@@ -1,6 +1,5 @@
 <template>
   <div>
-    <topNav/>
     <h1>Connexion</h1>
     <label for="register"></label>
     <form v-on:submit.prevent="onSubmit" action="register">
@@ -20,13 +19,9 @@
 
 <script>
 import axios from "axios";
-import topNav from '@/components/LinkNav.vue'
+
 
 export default {
-  components: 
-    {
-    topNav
-    },
   data() {
     return {
       email: "",

@@ -1,21 +1,4 @@
 <template>
-  <div>
-    <div id="top-nav">
-      <router-link to="/"> 
-        <img id="logo" src="../assets/logo.png" alt="Photo du logo de groupomania, représentant une planéte en line-art" />
-      </router-link>
-      <nav v-if="logged === false">
-        <router-link to="/">Accueil</router-link> |
-        <router-link to="/auth/login">Connexion</router-link> |
-        <router-link to="/auth/register">Inscription</router-link>
-      </nav>
-      <nav v-if="logged === true">
-        <router-link to="/">Accueil</router-link> |
-        <router-link to="/account">Mon compte</router-link> |
-        <router-link to="/auth/login" @click="disconnectUser()">Deconnexion</router-link>
-      </nav>
-    </div>
-      </div>
     <div id="createNewPost">
       <form id="newPost" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="newPost" >
         <br>
@@ -27,7 +10,7 @@
       </form>
     </div>
     <br>
-  <p v-if="logged === false">Veuillez vous connecter</p>
+  <p id='p-not-connected' v-if="logged === false">Veuillez vous connecter</p>
 
 <!-- Faire en sorte de remplir les champs par lancienne valeur si l'utilisateur ne met pasq de Photo
 ex : text mais pas de photo, garder l'ancienne
@@ -248,7 +231,8 @@ export default {
       .catch((err) => {
         document.cookie = "jwt=;max-age=0";
         this.logged = false;
-        posts.innerHTML += `<p> veuillez vous connecter<p>`;
+        const posts = document.querySelector('#p-not-connected')
+        posts.textContent = `veuillez vous connecter`;
       });
   },
 } ;
@@ -337,7 +321,7 @@ export default {
   text-align: center;
 }
 .fa-heart {
-  transition: 1s;
+  transition: 0.4s;
  
     width: 20px;
   background-color: rgb(244, 128, 255);
@@ -352,7 +336,7 @@ export default {
   }
 }
 .fa-thumbs-up{
-  transition: 1s;
+  transition: 0.4s;
      width: 20px;
   background-color: rgb(130, 242, 255);
   padding: 10px;

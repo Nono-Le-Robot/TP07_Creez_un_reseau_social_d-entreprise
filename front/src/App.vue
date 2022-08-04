@@ -1,15 +1,60 @@
 <template>
   <div id="App">
     <link rel="icon" href="./assets/logo.png" />
-    <router-view />
+
+
+<div id="top-nav">
+      <router-link to="/"> 
+        <img id="logo" src="./assets/logo.png" alt="Photo du logo de groupomania, représentant une planéte en line-art" />
+      </router-link>
+      <nav v-if="logged === true">
+        <router-link to="/">Accueil</router-link> |
+        <router-link to="/account">Mon compte</router-link> |
+        <router-link to="/auth/login" @click="disconnectUser()">Deconnexion</router-link>
+      </nav>
+        <nav v-else>
+        <router-link to="/">Accueil</router-link> |
+        <router-link to="/auth/login">Connexion</router-link> |
+        <router-link to="/auth/register">Inscription</router-link>
+      </nav>
+    </div>
+
+
+  <router-view />
+
+
+  
   </div>
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "App",
-  components: {},
-};
+  methods: {
+    disconnectUser() {
+      document.cookie = "jwt=;max-age=0";
+      this.logged = false;
+    },
+  },
+   data(){
+    return{
+      logged:false
+    } 
+  },
+  mounted(){
+    const token = document.cookie.slice(4)
+    if(token){
+      axios.get(`http://localhost:5000/jwtid/${token}`)
+      .then((user) => {
+        axios.get(`http://localhost:5000/api/user/${user.data}`)
+        .then((infosUser) => this.logged=true)
+        .catch()
+      })
+      .catch()
+    }
+  }
+}
 </script>
 
 <style lang="scss">
@@ -100,17 +145,11 @@ html {
 }
 
 #top-nav {
-  background-color: rgb(255, 68, 6);
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 50px;
-  width: 100%;
-  border-radius: 0px 0px 15px 10px;
-  margin-bottom: 30px;
-  position: fixed;
-  top:0;
-  z-index: 999;
+
 
 
 }

@@ -1,21 +1,5 @@
 <template>
   <div>
-    <div id="top-nav">
-      <router-link to="/">
-        <img id="logo" src="../assets/logo.png"
-          alt="Photo du logo de groupomania, représentant une planéte en line-art" />
-      </router-link>
-      <nav v-if="logged === false">
-        <router-link to="/">Accueil</router-link> |
-        <router-link to="/auth/login">Connexion</router-link> |
-        <router-link to="/auth/register">Inscription</router-link>
-      </nav>
-      <nav v-if="logged === true">
-        <router-link to="/">Accueil</router-link> |
-        <router-link to="/account">Mon compte</router-link> |
-        <router-link to="/auth/login" v-on:click="disconnectUser()">Deconnexion</router-link>
-      </nav>
-    </div>
     <div id="userInfos">
         <br>
         <h1>Mon compte</h1>
@@ -62,9 +46,47 @@ export default {
         formData.append('file', imgPictureEdit.files[0])
         axios.put(`http://localhost:5000/api/user/${this.connectedId}`,formData)
         .then(() => {
+
+
+          //ici il faut regarder tout les tableau avec for, et quand un ID est le meme que l'user
+          // il faut prendre le lien de sa nouvelle photo de profil et la modifier tout les posts
+
+
+
+
+
+
+
+
+
+
+
           window.location.reload()
         })
         .catch()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
          
     },
     disconnectUser() {
