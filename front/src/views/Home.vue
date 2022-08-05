@@ -44,13 +44,40 @@
       <p class="confirm-edit"></p>
       <p class="confirm-delete"></p>
 
+
+
+
+
+
         <form id="editPost" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="editPost" >
-      <div class="inputs-user">
-      <input type="text" name="message-edit" class="hidden message-input-edit" v-model="messageEdit" autocomplete="off" /> 
-      <input  type="file" name="picture-edit" class="hidden input-file-new-post picture-edit"/>
-      </div>
+        <span class="new-file-input hidden">
+          <div class="inputs-user">
+            <input id="picture-edit" type="file" name="picture-edit" class="hidden input-file-new-post picture-edit-select"/>
+            <input type="text" name="message-edit" class="hidden message-input-edit" v-model="messageEdit" autocomplete="off" /> 
+            <br>
+            <label class="new-design-edit" for="picture-edit">Choisissez un fichier...</label>
+            <br>
       <p class = 'supported-formats hidden' style="font-size:10px">(format : png,jpg,gif)</p><br>
+      </div>
+            <strong id="new-file-name">Nom du fichier : </strong>
+          <span class='get-name' id="file-name">Aucun</span>
+
+            <br>
+          
+        </span>
+        
       </form>
+
+<br>
+
+
+
+
+
+
+
+
+
       <p class="post-id" hidden>{{ post._id }}</p>
       <div class="post-options-btn">
         <i @mouseover="likeRequest()" :class="userLikedPosts.includes(post._id) ? 'fa-heart' : 'fa-thumbs-up'" class="btn-like fa-solid"></i>
@@ -130,33 +157,34 @@ export default {
                 
       const confirmEditText = document.querySelectorAll('.confirm-edit')
       const likeBtn = document.querySelectorAll(".btn-like")
-
+      const newInput = document.querySelectorAll(".new-file-input")
       const editBtn = document.querySelectorAll(".fa-pen-to-square")
       const deleteBtn = document.querySelectorAll(".fa-trash")
       const confirmBtn = document.querySelectorAll('.fa-check')
       const cancelBtn = document.querySelectorAll('.fa-xmark')
       const inputMessageEdit = document.querySelectorAll('.message-input-edit')
-      const imgEdit =  document.querySelectorAll(".picture-edit")
+      const imgEdit =  document.querySelectorAll(".picture-edit-select")
       const supportedFormats = document.querySelectorAll('.supported-formats')
+      const getName = document.querySelectorAll('#file-name.get-name')
       for (let j = 0; j < confirmBtn.length; j++) {
         editBtn[j].addEventListener ('click', () =>{
+          newInput[j].classList.remove('hidden')
           imgEdit[j].classList.remove('hidden')
           supportedFormats[j].classList.remove('hidden')
-          confirmEditText[j].textContent='Entrez le nouveau message : '
+          confirmEditText[j].textContent='Message du post : '
           likeBtn[j].classList.add('hidden')
           editBtn[j].classList.add('hidden')
           deleteBtn[j].classList.add('hidden')
           inputMessageEdit[j].classList.replace('hidden', 'visible')
           confirmBtn[j].classList.replace('hidden', 'visible')
           cancelBtn[j].classList.replace('hidden', 'visible')
-
-
-
-
-
-
-
+          console.log(imgEdit[j]);
+          console.log(getName[j]);
+          imgEdit[j].addEventListener("change", () => {
+              getName[j].textContent = imgEdit[j].files[0].name
+          })
           confirmBtn[j].addEventListener('click', () => {
+            newInput[j].classList.add('hidden')
             imgEdit[j].classList.add('hidden')
             supportedFormats[j].classList.add('hidden')
             confirmEditText[j].textContent='' 
@@ -169,16 +197,13 @@ export default {
               
             let formData = new FormData()
             if(imgEdit === null){
-                 formData.append('message', this.messageEdit)
-                 formData.append('picture', post.data.picture)
-               
-
+                formData.append('message', this.messageEdit)
+                formData.append('picture', post.data.picture)
             }
             else{
               formData.append('message', this.messageEdit)
               formData.append('file', imgEdit[j].files[0])
             }
-              
             axios.put(`http://localhost:5000/api/post/${postId}`, formData)
             .then(() => {
             
@@ -188,6 +213,7 @@ export default {
           )})
         })
         cancelBtn[j].addEventListener('click', () => {
+          newInput[j].classList.add('hidden')
           imgEdit[j].classList.add('hidden')
           supportedFormats[j].classList.add('hidden')
           confirmEditText[j].textContent=''
@@ -483,7 +509,7 @@ export default {
   top: -25px;
   
 }
-.hidden-input{
+.hidden-input,.picture-edit-select{
   display: none;
   
 }
@@ -519,6 +545,7 @@ export default {
 #picture{
   display: none;
 }
+
 label#design-input-file{
         transition: 0.5s;
   color: rgb(255, 255, 255);
@@ -547,5 +574,23 @@ label#design-input-file{
   font-size: 15px;
 }
 
+.new-design-edit{
+        transition: 0.5s;
+  color: rgb(255, 255, 255);
+  background-color: rgb(20, 45, 79);
+  border: solid 1px black;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 10px 20px;
+  border-radius: 30px;
+  &:hover{
+    cursor: pointer;
+    transition: 0.5s;
+    background-color: rgb(105, 166, 239);
+    color: rgb(0, 0, 0);
+    transform: scale(1.03);
+    box-shadow: 1px 1px 1px black;
+}
+}
 
 </style>
