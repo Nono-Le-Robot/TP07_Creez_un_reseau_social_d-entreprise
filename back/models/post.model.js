@@ -47,10 +47,6 @@ const PostSchema = new mongoose.Schema({
     date : {
         type: String
     },
-    active : {
-        type: Boolean,
-        default : false
-    }
 },
 {
     timestamps : true

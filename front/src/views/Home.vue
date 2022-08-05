@@ -6,22 +6,17 @@
         <br>
           <input class="input-file-new-post" type="file" name="picture" id="picture"/><p style="font-size:10px">(format : png,jpg,gif)</p>
         <br>
-        <button id="btn-new-post" @click="sendPost()">Envoyer</button>
+        <button id="btn-new-post" @click="createPost()">Envoyer</button>
       </form>
     </div>
     <br>
   <p id='p-not-connected' v-if="logged === false">Veuillez vous connecter</p>
-
-<!-- Faire en sorte de remplir les champs par lancienne valeur si l'utilisateur ne met pasq de Photo
-ex : text mais pas de photo, garder l'ancienne
-ex : photo mais text vide === garder l'ancien text -->
-
   <div 
   v-for="post in posts" 
   v-if="logged === true"  
   id="posts">
   <br>
-    <div @mouseover="likeRequest()"  class='onePost'>
+    <div class='one-post'>
       <div class='user-infos'>
         <img id='picture-profil-post' :src="post.posterProfil" alt="" srcset="">
         <br>
@@ -37,15 +32,18 @@ ex : photo mais text vide === garder l'ancien text -->
       <p class="confirm-edit"></p>
       <p class="confirm-delete"></p>
       <form id="editPost" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="editPost" >
-      <input :class="post.active? 'selected' : 'hidden'" type="text" name="message-edit" class="message-input-edit" placeholder="" v-model="messageEdit" autocomplete="off" /> 
-            <input  type="file" name="picture-edit" id="picture-edit" class=" input-file-new-post picture-edit" v-if="edit" :class="post.active? 'selected' : 'hidden'"/><p v-if="edit" :class="post.active? 'selected' : 'hidden'" style="font-size:10px">(format : png,jpg,gif)</p><br>
+      <input type="text" name="message-edit" class="hidden message-input-edit" v-model="messageEdit" autocomplete="off" /> 
+      <input  type="file" name="picture-edit" class="hidden input-file-new-post picture-edit"/>
+      <p class = 'supported-formats hidden' style="font-size:10px">(format : png,jpg,gif)</p><br>
       </form>
       <p class="post-id" hidden>{{ post._id }}</p>
       <div class="post-options-btn">
-        <i :class="userLikedPosts.includes(post._id) ? 'fa-heart' : 'fa-thumbs-up'" class="btn-like fa-solid"></i>
-        <!-- <i v-else @click="likeRequest()" :class="modify ? 'hidden' : 'selected'" class="btn-like fa-solid fa-thumbs-up"></i> -->
-        <i :class="modify ? 'hidden' : 'selected'" @click = "post.active = ! post.active; editPost()" v-if="post.posterId === connectedUserId || connectedUserId === '62e7ac92ec5d36273c96911e' " class="btn-edit fa-solid fa-pen-to-square"></i>
-        <i :class="modify ? 'hidden' : 'selected'" @click="post.active = ! post.active; deletePost()"  v-if="post.posterId === connectedUserId || connectedUserId === '62e7ac92ec5d36273c96911e' " class="btn-delete fa-solid fa-trash"></i>
+        <i @click="likeRequest()" :class="userLikedPosts.includes(post._id) ? 'fa-heart' : 'fa-thumbs-up'" class="btn-like fa-solid"></i>
+        <i @mouseover="updatePost(post._id) " v-if="post.posterId === connectedUserId || connectedUserId === '62e7ac92ec5d36273c96911e' " class="fa-solid fa-pen-to-square"></i>
+        <i @click="deletePost(post._id)"  v-if="post.posterId === connectedUserId || connectedUserId === '62e7ac92ec5d36273c96911e' " class="fa-solid fa-trash"></i>
+        <br> <i class="hidden fa-solid fa-check"></i> <br>
+        <br>
+        <br> <i class="hidden fa-solid fa-xmark"></i> <br> 
       </div>
       <br>
       <p class="date-post">posté le : {{ post.date }}</p>
@@ -59,24 +57,149 @@ import axios from "axios";
 export default {
   data() {
     return {
-      users: null,
       logged: false,
       message: "",
       messageEdit :"",
-      post: "",
       posts: [],
-      postPicture : "",
       connectedUserId: "",
-      modify: false,
+      posterLastname : '',
+      posterFirstname : "",
+      posterProfil : "",
       selectedPost: "",
-      edit: false,
       userLikedPosts : [],
     };
   },
   methods: {
+    //================= Fetch data functions ================
+    //====================== Users =====================
+    getUsers(){
+      axios.get('http://localhost:5000/api/user')
+      .then()
+      .catch((err) => console.log(err))
+    },   
+    updateUser(userId, updateUserData){
+      axios.put(`http://localhost:5000/api/post/${userId}`, updateUserData)
+      .then((updatedUser) => console.log(updatedUser.data))
+      .catch((err) => console.log(err))
+    },
+    deleteUser(userId){
+      axios.delete(`http://localhost:5000/api/user/${userId}`)
+      .then((deletedUser) => console.log(deletedUser.data))
+      .catch((err) => console.log(err))
+    },
+    //====================== Posts =====================
+    getPosts(){
+      axios.get('http://localhost:5000/api/post')
+      .then((posts) => {
+        this.posts = posts.data
+      })
+      .catch((err) => console.log(err.message))
+    },
+    createPost(){
+            const img = document.getElementById('picture')
+            let formData = new FormData()
+            formData.append('posterId', this.connectedUserId)
+            formData.append('posterFirstname', this.posterFirstname)
+            formData.append('posterLastname',this.posterLastname)
+            formData.append('posterProfil', this.posterProfil)
+            formData.append('message', this.message)
+            formData.append('file', img.files[0])
+            axios.post(`http://localhost:5000/api/post`, formData)
+            .then(() => window.location.reload())
+            .catch((err) => console.log(err.message))
+    },
+    updatePost(postId){
+            axios.get(`http://localhost:5000/api/post/${postId}`)
+                    .then((post) => {
+                      this.messageEdit = post.data.message
+                    })
+                    .catch((err) => console.log(err))
+      const confirmEditText = document.querySelectorAll('.confirm-edit')
+      const likeBtn = document.querySelectorAll(".fa-thumbs-up")
+      const editBtn = document.querySelectorAll(".fa-pen-to-square")
+      const deleteBtn = document.querySelectorAll(".fa-trash")
+      const confirmBtn = document.querySelectorAll('.fa-check')
+      const cancelBtn = document.querySelectorAll('.fa-xmark')
+      const inputMessageEdit = document.querySelectorAll('.message-input-edit')
+      const imgEdit =  document.querySelectorAll(".picture-edit")
+      const supportedFormats = document.querySelectorAll('.supported-formats')
+      for (let j = 0; j < confirmBtn.length; j++) {
+        editBtn[j].addEventListener ('click', () =>{
+          imgEdit[j].classList.remove('hidden')
+          supportedFormats[j].classList.remove('hidden')
+          confirmEditText[j].textContent='Entrez le nouveau message : '
+          likeBtn[j].classList.add('hidden')
+          editBtn[j].classList.add('hidden')
+          deleteBtn[j].classList.add('hidden')
+          inputMessageEdit[j].classList.replace('hidden', 'visible')
+          confirmBtn[j].classList.replace('hidden', 'visible')
+          cancelBtn[j].classList.replace('hidden', 'visible')
+          confirmBtn[j].addEventListener('click', () => {
+            imgEdit[j].classList.add('hidden')
+            supportedFormats[j].classList.add('hidden')
+            confirmEditText[j].textContent='' 
+              likeBtn[j].classList.remove('hidden')
+              editBtn[j].classList.remove('hidden')
+              deleteBtn[j].classList.remove('hidden')
+              inputMessageEdit[j].classList.replace('visible', 'hidden')
+              confirmBtn[j].classList.replace('visible' ,'hidden')
+              cancelBtn[j].classList.replace('visible', 'hidden')
+              
+            let formData = new FormData()
+              formData.append('message', this.messageEdit)
+              if(imgEdit){
+                formData.append('file', imgEdit[j].files[0])
+              }
+            axios.put(`http://localhost:5000/api/post/${postId}`, formData)
+            .then(() => {
+            
+              this.getPosts()
+            })
+            .catch((err) => console.log(err.message)
+          )})
+        })
+        cancelBtn[j].addEventListener('click', () => {
+          imgEdit[j].classList.add('hidden')
+          supportedFormats[j].classList.add('hidden')
+          confirmEditText[j].textContent=''
+          likeBtn[j].classList.remove('hidden')
+          editBtn[j].classList.remove('hidden')
+          deleteBtn[j].classList.remove('hidden')
+          inputMessageEdit[j].classList.replace('visible', 'hidden')
+          confirmBtn[j].classList.replace('visible' ,'hidden')
+          cancelBtn[j].classList.replace('visible', 'hidden')
+        })
+      }
+      
+    },
+    deletePost(postId){
+      if (window.confirm("Voulez vous vraiment supprimer ce post ? \n\n ⚠️ Cette action est irrévérsible ⚠️")) {
+        axios.delete(`http://localhost:5000/api/post/${postId}`)
+      .then((deletedPost) => {
+        deletedPost.data.likers.forEach(userIdLikeToDelete => {
+          axios.patch(`http://localhost:5000/api/post/unlike-post/${postId}`,{id:userIdLikeToDelete})
+          .then((result) => console.log(result))
+          
+        });
+          this.getPosts()
+        })
+      .catch((err) => console.log(err.message))
+    }
+    },
+    //====================== Auth =====================
+    verifyToken(){
+      const token = document.cookie.slice(4)
+      axios.get(`http://localhost:5000/jwtid/${token}`)
+      .then()
+      .catch((err) => console.log(err.message))
+    },
+    disconnectUser() {
+      document.cookie = "jwt=;max-age=0";
+      this.logged = false;
+    },
     likeRequest(){
       const postId = document.querySelectorAll('.post-id')
-      const selectedPost = document.querySelectorAll(".onePost")
+      const selectedPost = document.querySelectorAll(".one-post")
       const btnLike = document.querySelectorAll(".btn-like")
       const token = document.cookie.slice(4)
       axios.get(`http://localhost:5000/jwtid/${token}`)
@@ -89,7 +212,6 @@ export default {
       for(let k = 0; k < btnLike.length; k++){
         btnLike[k].addEventListener ('click', (event) =>{ 
           if(btnLike[k].classList.contains('fa-thumbs-up')){
-            
             axios.patch(`http://localhost:5000/api/post/like-post/${postId[k].textContent}`,{id:user.data})
             .then(() => {
               axios.get(`http://localhost:5000/api/user/${user.data}`)
@@ -116,102 +238,6 @@ export default {
          })
       .catch()
 },
-        editPost() {
-          this.modify = true
-          this.edit = true
-          const selectedPost = document.querySelectorAll(".onePost")
-          const newBtnValidate = document.querySelectorAll(".post-options-btn")
-          const inputEdit = document.querySelectorAll('.message-input-edit')
-          const confirmEdit = document.querySelectorAll('.confirm-edit')
-            for(let k = 0; k < selectedPost.length; k++){
-              selectedPost[k].addEventListener ('click', (event) =>{
-                    confirmEdit[k].textContent = 'Entrez le nouveau contenu de votre post'
-                    newBtnValidate[k].innerHTML = '<br> <i class="confirm fa-solid fa-xmark"></i> <br> '
-                    newBtnValidate[k].innerHTML += '<br> <i class="cancel fa-solid fa-check"></i> <br> '
-                    let test = document.querySelector('.cancel')
-                    let test2 = document.querySelector('.confirm')
-                    test.addEventListener('click', () => {
-                    let imgEdit =  document.querySelectorAll(".picture-edit")
-                    const postId = document.querySelectorAll('.post-id')
-                          let formData = new FormData()
-                          formData.append('file', imgEdit[k].files[0])
-                          formData.append('message', this.messageEdit)
-                    axios.put(`http://localhost:5000/api/post/${postId[k].textContent}`,formData)
-                    .then(() => {
-                      window.location.reload();
-                    })
-                    .catch()
-                    })
-                   test2.addEventListener('click', () => {
-                      window.location.reload()
-                    })
-            })
-            
-            }
-    },
-    deletePost() {
-            this.modify = true
-            const inputEdit = document.querySelectorAll('.message-input-edit')
-            const selectedPost = document.querySelectorAll(".onePost")
-            const confirmDelete = document.querySelectorAll('.confirm-delete')
-            const newBtnValidate = document.querySelectorAll(".post-options-btn")
-        
-            for(let k = 0; k < selectedPost.length; k++){
-                selectedPost[k].addEventListener ('click', (event) =>{
-                    confirmDelete[k].textContent = 'Entrez le mot "supprimer" pour confirmer la supression du post.'
-                    newBtnValidate[k].innerHTML = '<i class="test2 fa-solid fa-xmark"></i>'
-                    newBtnValidate[k].innerHTML += '<i class="test fa-solid fa-check"></i>'
-                    const postId = document.querySelectorAll('.post-id')
-                    let test = document.querySelector('.test')
-                    let test2= document.querySelector('.test2')
-                    test.addEventListener('click', () => {
-                          if(this.messageEdit === "supprimer"){
-                        axios.delete(`http://localhost:5000/api/post/${postId[k].textContent}`)
-                        .then(() => {
-                      window.location.reload();
-                    })
-                    .catch()
-
-                    }
-                    else{
-                      alert('Veuillez entrer le mot "supprimer" pour confirmer la suppression.')
-                    }
-                    })
-                    test2.addEventListener('click', () => {
-                      window.location.reload()
-                    })
-            })
-            }
-    },
-    disconnectUser() {
-      document.cookie = "jwt=;max-age=0";
-      this.logged = false;
-    },
-    sendPost() {
-      if (this.message != "") {
-        let token = document.cookie.slice(4);
-        axios.get(`http://localhost:5000/jwtid/${token}`)
-        .then((user) => {
-          let img =  document.getElementById('picture').files[0]
-          console.log(img);
-          axios.get(`http://localhost:5000/api/user/${user.data}`)
-            .then((userInfo) => {
-              let formData = new FormData()
-              formData.append('posterId', user.data)
-              formData.append('posterFirstname', userInfo.data.firstname)
-              formData.append('posterLastname', userInfo.data.lastname)
-              formData.append('posterProfil', userInfo.data.picture)
-              formData.append('file', img)
-              formData.append('message', this.message)
-              axios.post('http://localhost:5000/api/post/', formData)
-                .then((resp) => window.location.reload())
-                .catch()
-            })
-            .catch()
-        })
-        .catch();
-      }
-    },
   },
   mounted(){
     let token = document.cookie.slice(4);
@@ -221,6 +247,9 @@ export default {
     axios.get(`http://localhost:5000/api/user/${user.data}`)
     .then((result) => {
       this.userLikedPosts = result.data.likes;
+      this.posterFirstname = result.data.firstname
+      this.posterLastname = result.data.lastname
+      this.posterProfil = result.data.picture
     })
     .catch()
         this.logged = true;
@@ -246,7 +275,7 @@ export default {
 //$independence
 //$maximum-yellow
 //$french-sky-blue
-.onePost {
+.one-post {
   font-size: 20px;
   padding: 25px;
   padding-bottom: 40px;
@@ -262,8 +291,8 @@ export default {
   margin-left: auto;
   margin-right: auto;
 }
-.selected{
- display: block;
+.visible{
+  display: block;
 }
 .hidden{
   display: none;
@@ -322,14 +351,13 @@ export default {
 }
 .fa-heart {
   transition: 0.4s;
- 
-    width: 20px;
+  width: 20px;
   background-color: rgb(244, 128, 255);
   padding: 10px 10px 10px 10px;
   border-radius: 50px;
   color: rgb(0, 0, 0);
   cursor: pointer;
-   &:hover{
+    &:hover{
     transition: 0.4s;
     background-color: rgb(122, 19, 148) ;
     color: white ;
@@ -337,13 +365,13 @@ export default {
 }
 .fa-thumbs-up{
   transition: 0.4s;
-     width: 20px;
+  width: 20px;
   background-color: rgb(130, 242, 255);
   padding: 10px;
   border-radius: 50px;
   color: rgb(0, 0, 0);
   cursor: pointer;
-   &:hover{
+    &:hover{
     transition: 0.4s;
     background-color: rgb(10, 94, 113) ;
     color: white ;
@@ -357,7 +385,7 @@ export default {
   border-radius: 50px;
   color: rgb(0, 0, 0);
   cursor: pointer;
-   &:hover{
+    &:hover{
     transition: 0.4s;
     background-color: rgb(175, 113, 7) ;
     color: white ;
@@ -386,7 +414,7 @@ export default {
   color: rgb(0, 0, 0);
   cursor: pointer;
   margin-top: 30px;
-   &:hover{
+    &:hover{
     transition: 0.4s;
     background-color: rgb(17, 105, 27) ;
     color: white ;
@@ -420,7 +448,6 @@ export default {
   display: none;
   
 }
-
 .confirm-delete{
     margin-bottom: 20px;
   font-size: 15px;
@@ -441,14 +468,7 @@ export default {
   font-weight: bold;
     color: rgb(224, 224, 224);
 }
-
-
 #top-nav > nav > a:nth-child(3){
   margin-right: 25px;
 }
-
-
-
-
-
 </style>

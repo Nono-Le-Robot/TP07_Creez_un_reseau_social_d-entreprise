@@ -19,7 +19,7 @@
         <br>
         <p style="font-size:10px">(format : png,jpg,gif)</p>
         <br>
-        <button id="send-modified-profil" v-on:click="editProfil()">Changer ma photo de profil</button>
+        <button id="send-modified-profil" v-on:click="test()">Changer ma photo de profil</button>
         </form>
     </div>
     <br />

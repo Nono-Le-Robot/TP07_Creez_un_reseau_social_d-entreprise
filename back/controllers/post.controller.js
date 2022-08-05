@@ -35,7 +35,7 @@ module.exports.createPost = (req, res) => {
     date: finalDate
   });
   newPost.save()
-  .then(() => { res.status(201).json({ message : 'post success'})})
+  .then((postCreated) => { res.status(201).json(postCreated)})
   .catch(error =>res.status(400).json({ error }))
 }
 
@@ -44,14 +44,17 @@ module.exports.updatePost = (req, res) => {
     return res.status(400).send("ID unknown : " + req.params.id);
   }
 
+
+
+
+  PostModel.findById(req.params.id)
+  .then((post) => {
+
   const updatedRecord = {
     message: req.body.message,
     picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/post/${req.file.filename}`: "",
   };
 
-  PostModel.findById(req.params.id)
-  .then((post) => {
-    console.log(post.picture)
   PostModel.findByIdAndUpdate(
     req.params.id,
     { $set: updatedRecord },
@@ -61,14 +64,13 @@ module.exports.updatePost = (req, res) => {
     if(pictureUrl){
     let newString = pictureUrl.slice(22)
     fs.unlink(`${newString}`, () => {
-      console.log(newString)
     });
-    res.send(post);
     }
+    res.status(201).send(post);
   })
-  .catch()
+  .catch((err) => res.status(400).send(err))
 })
-.catch()
+.catch((err) => res.status(400).send(err))
 };
 
 module.exports.deletePost = (req, res) => {
@@ -77,19 +79,19 @@ module.exports.deletePost = (req, res) => {
   }
     PostModel.findById(req.params.id)
     .then((post) =>{
-      let pictureUrl = post.picture
-  if(pictureUrl){
-    let newString = pictureUrl.slice(22)
+  if(post.picture!= null){
+    let newString = post.picture.slice(22)
     fs.unlink(`${newString}`, () => {
       PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
-        if (!err) res.send("Post deleted : \n" + post.picture);
+        if (!err) res.send(post);
+
         else console.log("Delete error :" + err);
       });
     });
   }
   else{
     PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
-      if (!err) res.send("Post deleted : \n" + post.picture);
+      if (!err) res.send("Post deleted : \n");
       else console.log("Delete error :" + err);
     });
   }
