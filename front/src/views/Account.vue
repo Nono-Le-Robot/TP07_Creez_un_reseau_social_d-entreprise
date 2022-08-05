@@ -13,13 +13,18 @@
         <p>Email : {{ email }} </p>
         <br>
         <form id="newPost" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="newPost" >
-        <br>
+
         <input class="input-file-new-post" type="file" name="picture-profil-edit" id="picture-profil-edit"/>
         <label class="input-file-design" for="picture-profil-edit">Choisissez un fichier...</label>
         <br>
-        <p style="font-size:10px">(format : png,jpg,gif)</p>
+          <p style="font-size:10px">(format : png,jpg,gif)</p>
         <br>
-        <button id="send-modified-profil" v-on:click="test()">Changer ma photo de profil</button>
+        <span>
+          <strong id="new-file-name">Nom du fichier : </strong>
+          <span id="file-name">Aucun</span>
+        </span>
+        <br>
+        <button id="send-modified-profil" v-on:click="editProfil()">Changer ma photo de profil</button>
         </form>
     </div>
     <br />
@@ -46,46 +51,9 @@ export default {
         formData.append('file', imgPictureEdit.files[0])
         axios.put(`http://localhost:5000/api/user/${this.connectedId}`,formData)
         .then(() => {
-
-
-          //ici il faut regarder tout les tableau avec for, et quand un ID est le meme que l'user
-          // il faut prendre le lien de sa nouvelle photo de profil et la modifier tout les posts
-
-
-
-
-
-
-
-
-
-
-
           window.location.reload()
         })
         .catch()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
          
     },
@@ -95,10 +63,12 @@ export default {
     }
   },
   mounted() {
+
     let token = document.cookie.slice(4);
     axios.get(`http://localhost:5000/jwtid/${token}`)
       .then((res) => {
         this.logged = true;
+   
         axios.get(`http://localhost:5000/api/user/${res.data}`)
           .then((user) => {
             this.firstname = user.data.firstname
@@ -106,14 +76,25 @@ export default {
             this.email = user.data.email
             this.picture = user.data.picture
             this.connectedId = user.data._id
+            let inputFile = document.querySelector('#picture-profil-edit')
+            let fileName = document.querySelector('#file-name')
+            inputFile.addEventListener('change', () => {
+
+              fileName.textContent = inputFile.files[0].name
+            })
+
           })
           .catch();
       })
       .catch((err) => {
         document.cookie = "jwt=;max-age=0";
       });
+ 
+
+    
   },
 }
+
 </script>
 
 <style lang="scss">
@@ -169,5 +150,15 @@ export default {
     transform: scale(1.03);
     box-shadow: 1px 1px 1px black;
 }
+}
+
+#file-name{
+  font-size: 15px;
+  font-weight: bold;
+  
+}
+
+#new-file-name{
+  font-size: 15px;
 }
 </style>

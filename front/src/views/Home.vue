@@ -4,7 +4,19 @@
         <br>
         <input type="text" name="message" id="message-input" placeholder="Que souhaitez vous dire ?" v-model="message" autocomplete="off" /> 
         <br>
+              <label id="design-input-file" for="picture">Choisissez un fichier...</label>
+              <br>
           <input class="input-file-new-post" type="file" name="picture" id="picture"/><p style="font-size:10px">(format : png,jpg,gif)</p>
+
+<br>
+                  <span>
+          <strong id="new-file-name">Nom du fichier : </strong>
+          <span id="file-name">Aucun</span>
+        </span>
+
+
+
+              
         <br>
         <button id="btn-new-post" @click="createPost()">Envoyer</button>
       </form>
@@ -31,19 +43,22 @@
       <img class="post-picture" :src="post.picture" alt="">
       <p class="confirm-edit"></p>
       <p class="confirm-delete"></p>
-      <form id="editPost" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="editPost" >
+
+        <form id="editPost" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="editPost" >
+      <div class="inputs-user">
       <input type="text" name="message-edit" class="hidden message-input-edit" v-model="messageEdit" autocomplete="off" /> 
       <input  type="file" name="picture-edit" class="hidden input-file-new-post picture-edit"/>
+      </div>
       <p class = 'supported-formats hidden' style="font-size:10px">(format : png,jpg,gif)</p><br>
       </form>
       <p class="post-id" hidden>{{ post._id }}</p>
       <div class="post-options-btn">
-        <i @click="likeRequest()" :class="userLikedPosts.includes(post._id) ? 'fa-heart' : 'fa-thumbs-up'" class="btn-like fa-solid"></i>
+        <i @mouseover="likeRequest()" :class="userLikedPosts.includes(post._id) ? 'fa-heart' : 'fa-thumbs-up'" class="btn-like fa-solid"></i>
         <i @mouseover="updatePost(post._id) " v-if="post.posterId === connectedUserId || connectedUserId === '62e7ac92ec5d36273c96911e' " class="fa-solid fa-pen-to-square"></i>
         <i @click="deletePost(post._id)"  v-if="post.posterId === connectedUserId || connectedUserId === '62e7ac92ec5d36273c96911e' " class="fa-solid fa-trash"></i>
-        <br> <i class="hidden fa-solid fa-check"></i> <br>
-        <br>
-        <br> <i class="hidden fa-solid fa-xmark"></i> <br> 
+        <i class="fa-solid fa-check hidden "></i> 
+        
+         <i class="fa-solid fa-xmark hidden "></i> 
       </div>
       <br>
       <p class="date-post">posté le : {{ post.date }}</p>
@@ -112,10 +127,10 @@ export default {
             axios.get(`http://localhost:5000/api/post/${postId}`)
                     .then((post) => {
                       this.messageEdit = post.data.message
-                    })
-                    .catch((err) => console.log(err))
+                
       const confirmEditText = document.querySelectorAll('.confirm-edit')
-      const likeBtn = document.querySelectorAll(".fa-thumbs-up")
+      const likeBtn = document.querySelectorAll(".btn-like")
+
       const editBtn = document.querySelectorAll(".fa-pen-to-square")
       const deleteBtn = document.querySelectorAll(".fa-trash")
       const confirmBtn = document.querySelectorAll('.fa-check')
@@ -134,6 +149,13 @@ export default {
           inputMessageEdit[j].classList.replace('hidden', 'visible')
           confirmBtn[j].classList.replace('hidden', 'visible')
           cancelBtn[j].classList.replace('hidden', 'visible')
+
+
+
+
+
+
+
           confirmBtn[j].addEventListener('click', () => {
             imgEdit[j].classList.add('hidden')
             supportedFormats[j].classList.add('hidden')
@@ -146,10 +168,17 @@ export default {
               cancelBtn[j].classList.replace('visible', 'hidden')
               
             let formData = new FormData()
+            if(imgEdit === null){
+                 formData.append('message', this.messageEdit)
+                 formData.append('picture', post.data.picture)
+               
+
+            }
+            else{
               formData.append('message', this.messageEdit)
-              if(imgEdit){
-                formData.append('file', imgEdit[j].files[0])
-              }
+              formData.append('file', imgEdit[j].files[0])
+            }
+              
             axios.put(`http://localhost:5000/api/post/${postId}`, formData)
             .then(() => {
             
@@ -169,7 +198,10 @@ export default {
           confirmBtn[j].classList.replace('visible' ,'hidden')
           cancelBtn[j].classList.replace('visible', 'hidden')
         })
+        
       }
+          })
+                    .catch((err) => console.log(err))
       
     },
     deletePost(postId){
@@ -199,7 +231,6 @@ export default {
     },
     likeRequest(){
       const postId = document.querySelectorAll('.post-id')
-      const selectedPost = document.querySelectorAll(".one-post")
       const btnLike = document.querySelectorAll(".btn-like")
       const token = document.cookie.slice(4)
       axios.get(`http://localhost:5000/jwtid/${token}`)
@@ -254,7 +285,17 @@ export default {
     .catch()
         this.logged = true;
         axios.get("http://localhost:5000/api/post/")
-          .then((res) => {this.posts = res.data})
+          .then((res) => {
+            this.posts = res.data
+            
+            let inputFile = document.querySelector('#picture')
+            let fileName = document.querySelector('#file-name')
+            inputFile.addEventListener('change', () => {
+
+              fileName.textContent = inputFile.files[0].name
+            })
+            
+            })
           .catch();
       })
       .catch((err) => {
@@ -291,11 +332,9 @@ export default {
   margin-left: auto;
   margin-right: auto;
 }
-.visible{
-  display: block;
-}
 .hidden{
   display: none;
+  
 }
 #newPost {
   margin-top: 85px;
@@ -471,4 +510,42 @@ export default {
 #top-nav > nav > a:nth-child(3){
   margin-right: 25px;
 }
+.inputs-user{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+#picture{
+  display: none;
+}
+label#design-input-file{
+        transition: 0.5s;
+  color: rgb(255, 255, 255);
+  background-color: rgb(20, 45, 79);
+  border: solid 1px black;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 10px 20px;
+  border-radius: 30px;
+  &:hover{
+    cursor: pointer;
+    transition: 0.5s;
+    background-color: rgb(105, 166, 239);
+    color: rgb(0, 0, 0);
+    transform: scale(1.03);
+    box-shadow: 1px 1px 1px black;
+}
+}
+#file-name{
+  font-size: 15px;
+  font-weight: bold;
+  
+}
+
+#new-file-name{
+  font-size: 15px;
+}
+
+
 </style>

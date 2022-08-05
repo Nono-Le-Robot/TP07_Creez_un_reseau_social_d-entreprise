@@ -52,7 +52,7 @@ module.exports.updatePost = (req, res) => {
 
   const updatedRecord = {
     message: req.body.message,
-    picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/post/${req.file.filename}`: "",
+    picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/post/${req.file.filename}`: req.body.picture,
   };
 
   PostModel.findByIdAndUpdate(
@@ -62,9 +62,15 @@ module.exports.updatePost = (req, res) => {
   .then(() => {
     let pictureUrl = post.picture
     if(pictureUrl){
-    let newString = pictureUrl.slice(22)
-    fs.unlink(`${newString}`, () => {
-    });
+      if(req.file){
+        let newString = pictureUrl.slice(22)
+        fs.unlink(`${newString}`, () => {
+        });
+      }
+      else{
+   
+      }
+   
     }
     res.status(201).send(post);
   })
