@@ -138,17 +138,43 @@ export default {
       .catch((err) => console.log(err.message))
     },
     createPost(){
-            const img = document.getElementById('picture')
-            let formData = new FormData()
-            formData.append('posterId', this.connectedUserId)
+
+  const img = document.getElementById('picture')
+ if(img.files[0]){
+              if(img.files[0].name.includes('"')){
+                alert('Nom de fichier incorrect, supprimer les accents ou caractères spéciaux')
+              }
+              else{
+                let formData = new FormData()
+          formData.append('posterId', this.connectedUserId)
             formData.append('posterFirstname', this.posterFirstname)
             formData.append('posterLastname',this.posterLastname)
             formData.append('posterProfil', this.posterProfil)
             formData.append('message', this.message)
             formData.append('file', img.files[0])
-            axios.post(`http://localhost:5000/api/post`, formData)
-            .then(() => window.location.reload())
-            .catch((err) => console.log(err.message))
+        axios.post(`http://localhost:5000/api/post`,formData)
+        .then(() => {
+          window.location.reload()
+        
+        })
+        .catch()
+            }
+          }
+            else{
+                     let formData = new FormData()
+          formData.append('posterId', this.connectedUserId)
+            formData.append('posterFirstname', this.posterFirstname)
+            formData.append('posterLastname',this.posterLastname)
+            formData.append('posterProfil', this.posterProfil)
+            formData.append('message', this.message)
+        axios.post(`http://localhost:5000/api/post`,formData)
+        .then(() => {
+          window.location.reload()
+        
+        })
+        .catch()
+            }
+        
     },
     updatePost(postId){
             axios.get(`http://localhost:5000/api/post/${postId}`)

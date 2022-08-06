@@ -47,15 +47,25 @@ export default {
   methods: {
     editProfil() {
         let imgPictureEdit =  document.querySelector("#picture-profil-edit")
-        let formData = new FormData()
+            if(imgPictureEdit.files[0]){
+              if(imgPictureEdit.files[0].name.includes('"')){
+                alert('Nom de fichier incorrect, supprimer les accents ou caractères spéciaux')
+              }
+              else{
+                let formData = new FormData()
         formData.append('file', imgPictureEdit.files[0])
         axios.put(`http://localhost:5000/api/user/${this.connectedId}`,formData)
         .then(() => {
           window.location.reload()
+        
         })
         .catch()
-
-         
+            }
+          }
+            else{
+              alert('Aucun fichier chargé')
+            }
+            
     },
     disconnectUser() {
       document.cookie = "jwt=;max-age=0";
@@ -79,18 +89,14 @@ export default {
             let inputFile = document.querySelector('#picture-profil-edit')
             let fileName = document.querySelector('#file-name')
             inputFile.addEventListener('change', () => {
-
               fileName.textContent = inputFile.files[0].name
             })
-
           })
           .catch();
       })
       .catch((err) => {
         document.cookie = "jwt=;max-age=0";
       });
- 
-
     
   },
 }
@@ -100,7 +106,6 @@ export default {
 <style lang="scss">
 #deleteAccount {
   color: red;
-
   &:hover {
     color: rgb(192, 0, 0);
     cursor: pointer;

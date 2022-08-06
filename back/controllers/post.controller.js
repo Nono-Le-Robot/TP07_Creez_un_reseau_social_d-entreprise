@@ -54,7 +54,6 @@ module.exports.updatePost = (req, res) => {
     message: req.body.message,
     picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/post/${req.file.filename}`: req.body.picture,
   };
-
   PostModel.findByIdAndUpdate(
     req.params.id,
     { $set: updatedRecord },
@@ -64,13 +63,12 @@ module.exports.updatePost = (req, res) => {
     if(pictureUrl){
       if(req.file){
         let newString = pictureUrl.slice(22)
+        newString = newString.split(' ').join('_')
         fs.unlink(`${newString}`, () => {
         });
       }
       else{
-   
       }
-   
     }
     res.status(201).send(post);
   })
@@ -87,6 +85,7 @@ module.exports.deletePost = (req, res) => {
     .then((post) =>{
   if(post.picture!= null){
     let newString = post.picture.slice(22)
+    newString = newString.split(' ').join('_')
     fs.unlink(`${newString}`, () => {
       PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
         if (!err) res.send(post);
