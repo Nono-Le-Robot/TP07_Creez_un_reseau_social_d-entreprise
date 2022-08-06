@@ -188,12 +188,18 @@ export default {
       const deleteBtn = document.querySelectorAll(".fa-trash")
       const confirmBtn = document.querySelectorAll('.fa-check')
       const cancelBtn = document.querySelectorAll('.fa-xmark')
+      const removeOtherModifyBtn = document.querySelectorAll("#posts > div > div.post-options-btn > i.fa-solid.fa-pen-to-square")
+      const removeOtherDeleteBtn = document.querySelectorAll("i.fa-solid.fa-trash")
       const inputMessageEdit = document.querySelectorAll('.message-input-edit')
       const imgEdit =  document.querySelectorAll(".picture-edit-select")
       const supportedFormats = document.querySelectorAll('.supported-formats')
       const getName = document.querySelectorAll('#file-name.get-name')
       for (let j = 0; j < confirmBtn.length; j++) {
         editBtn[j].addEventListener ('click', () =>{
+                 for (let k = 0 ; k < editBtn.length; k++) {
+          removeOtherDeleteBtn[k].classList.add('hidden')
+          removeOtherModifyBtn[k].classList.add('hidden')
+          }
           newInput[j].classList.remove('hidden')
           imgEdit[j].classList.remove('hidden')
           supportedFormats[j].classList.remove('hidden')
@@ -210,6 +216,10 @@ export default {
               getName[j].textContent = imgEdit[j].files[0].name
           })
           confirmBtn[j].addEventListener('click', () => {
+               for (let k = 0 ; k < editBtn.length; k++) {
+          removeOtherDeleteBtn[k].classList.remove('hidden')
+          removeOtherModifyBtn[k].classList.remove('hidden')
+          }
             newInput[j].classList.add('hidden')
             imgEdit[j].classList.add('hidden')
             supportedFormats[j].classList.add('hidden')
@@ -239,6 +249,10 @@ export default {
           )})
         })
         cancelBtn[j].addEventListener('click', () => {
+               for (let k = 0 ; k < editBtn.length; k++) {
+          removeOtherDeleteBtn[k].classList.remove('hidden')
+          removeOtherModifyBtn[k].classList.remove('hidden')
+          }
           newInput[j].classList.add('hidden')
           imgEdit[j].classList.add('hidden')
           supportedFormats[j].classList.add('hidden')
