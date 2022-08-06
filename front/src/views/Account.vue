@@ -55,8 +55,29 @@ export default {
                 let formData = new FormData()
         formData.append('file', imgPictureEdit.files[0])
         axios.put(`http://localhost:5000/api/user/${this.connectedId}`,formData)
-        .then(() => {
-          window.location.reload()
+        .then((updatedUser) => {
+          axios.get('http://localhost:5000/api/post')
+          .then((res) => {
+            let posts = res.data
+            let postedByUser = posts.filter(p => p.posterId === this.connectedId)
+            for (let i = 0; i < postedByUser.length; i++) {
+                  axios.put(`http://localhost:5000/api/post/${postedByUser[i]._id}`, {
+                      posterProfil : updatedUser.data.picture
+                  })
+                  .then(window.location.reload())
+                  .catch(err => console.log(err))
+            }
+
+
+          })
+          .catch(err => console.log(err))
+
+
+
+
+
+
+         
         
         })
         .catch()

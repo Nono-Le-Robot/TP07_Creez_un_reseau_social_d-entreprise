@@ -43,22 +43,18 @@ module.exports.updatePost = (req, res) => {
   if (!ObjectId.isValid(req.params.id)) {
     return res.status(400).send("ID unknown : " + req.params.id);
   }
-
-
-
-
   PostModel.findById(req.params.id)
   .then((post) => {
-
   const updatedRecord = {
     message: req.body.message,
     picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/post/${req.file.filename}`: req.body.picture,
+    posterProfil : req.body.posterProfil
   };
   PostModel.findByIdAndUpdate(
     req.params.id,
     { $set: updatedRecord },
     { new: true })
-  .then(() => {
+  .then((updatedPost) => {
     let pictureUrl = post.picture
     if(pictureUrl){
       if(req.file){
@@ -70,7 +66,7 @@ module.exports.updatePost = (req, res) => {
       else{
       }
     }
-    res.status(201).send(post);
+    res.status(201).send(updatedPost);
   })
   .catch((err) => res.status(400).send(err))
 })
