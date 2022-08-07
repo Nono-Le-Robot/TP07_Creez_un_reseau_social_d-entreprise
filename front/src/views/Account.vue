@@ -64,11 +64,10 @@ export default {
                   axios.put(`http://localhost:5000/api/post/${postedByUser[i]._id}`, {
                       posterProfil : updatedUser.data.picture
                   })
-                  .then(window.location.reload())
+                  .then()
                   .catch(err => console.log(err))
             }
-
-
+            window.location.reload()
           })
           .catch(err => console.log(err))
 

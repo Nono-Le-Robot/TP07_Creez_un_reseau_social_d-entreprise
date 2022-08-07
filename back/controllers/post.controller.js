@@ -58,12 +58,20 @@ module.exports.updatePost = (req, res) => {
     let pictureUrl = post.picture
     if(pictureUrl){
       if(req.file){
+        if(pictureUrl === 'http://localhost:5000/images/default/deleted-picture.jpg'){
+        }
+        else{
+          let newString = pictureUrl.slice(22)
+          newString = newString.split(' ').join('_')
+          fs.unlink(`${newString}`, () => {
+          });
+        }
+      }
+      else if(req.body.picture === 'http://localhost:5000/images/default/deleted-picture.jpg'){
         let newString = pictureUrl.slice(22)
         newString = newString.split(' ').join('_')
         fs.unlink(`${newString}`, () => {
         });
-      }
-      else{
       }
     }
     res.status(201).send(updatedPost);
@@ -77,28 +85,34 @@ module.exports.deletePost = (req, res) => {
   if (!ObjectId.isValid(req.params.id)) {
     return res.status(400).send("ID unknown : " + req.params.id);
   }
-    PostModel.findById(req.params.id)
-    .then((post) =>{
-  if(post.picture!= null){
+  PostModel.findById(req.params.id)
+  .then((post) =>{
     let newString = post.picture.slice(22)
     newString = newString.split(' ').join('_')
-    fs.unlink(`${newString}`, () => {
+    if(post.picture != null){
+    if(post.picture === 'http://localhost:5000/images/default/deleted-picture.jpg'){
       PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
-        if (!err) res.send(post);
-
-        else console.log("Delete error :" + err);
+        if (!err) res.status(200).send(post);
+        else res.status(400).send("Delete error :" + err);
+      }); 
+    }
+    else{
+      fs.unlink(`${newString}`, () => {
+        PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
+          if (!err) res.status(200).send(post);
+          else res.status(400).send("Delete error :" + err);
+        }); 
       });
-    });
+    }
   }
   else{
     PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
-      if (!err) res.send("Post deleted : \n");
-      else console.log("Delete error :" + err);
-    });
+      if (!err) res.status(200).send(post);
+      else res.status(400).send("Delete error :" + err);
+    }); 
   }
-
     })
-    .catch()
+    .catch((err) => res.status(400).send(err))
 };
 
 module.exports.likePost = async (req, res, next) => {

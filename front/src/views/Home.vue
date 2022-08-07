@@ -10,16 +10,11 @@
       <br>
       <input class="input-file-new-post" type="file" name="picture" id="picture" />
       <p style="font-size:10px">(format : png,jpg,gif)</p>
-
       <br>
       <span>
         <strong id="new-file-name">Nom du fichier : </strong>
         <span id="file-name">Aucun</span>
       </span>
-
-
-
-
       <br>
       <button id="btn-new-post" @click="createPost()">Envoyer</button>
     </form>
@@ -43,28 +38,23 @@
       <img class="post-picture" :src="post.picture" alt="">
       <p class="confirm-edit"></p>
       <p class="confirm-delete"></p>
-
-
-
-
-
-
       <form id="editPost" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit"
         action="editPost">
         <span class="new-file-input hidden">
           <div class="inputs-user">
-            <input id="picture-edit" type="file" name="picture-edit"
-              class="hidden input-file-new-post picture-edit-select" />
-            <input type="text" name="message-edit" class="hidden message-input-edit"
-              autocomplete="off" />
+            <input type="text" name="message-edit" class="hidden message-input-edit" autocomplete="off" />
+            
+            <input id="picture-edit" type="file" name="picture-edit" class="hidden input-file-new-post picture-edit-select" />
             <br>
-            <label class="new-design-edit" for="picture-edit">Choisissez un fichier...</label>
-            <br>
+            <!-- <label class="new-design-edit" for="picture-edit">Choisissez un fichier...</label> -->
             <p class='supported-formats hidden' style="font-size:10px">(format : png,jpg,gif)</p><br>
           </div>
           <strong id="new-file-name">Nom du fichier : </strong>
           <span class='get-name' id="file-name">Aucun</span>
           <br>
+<br>
+            <button class="delete-picture-edit" @click="deletePicture()">Supprimer la photo</button>
+        <br>
         </span>
       </form>
       <br>
@@ -106,9 +96,22 @@ export default {
     };
   },
   methods: {
-    cancelEdit(){
-      alert('return')
-      return
+  
+    deletePicture(){
+        axios.put(`http://localhost:5000/api/post/${this.selectedPost._id}`, {
+          picture : 'http://localhost:5000/images/default/deleted-picture.jpg'
+        })
+        .then((deletedPicture) => {
+          const editBtn = document.querySelectorAll(".fa-pen-to-square")
+          const deleteBtnPicture = document.querySelectorAll('.delete-picture-edit')
+
+          for (let k = 0; k < editBtn.length; k++) {
+            deleteBtnPicture[k].classList.add('hidden')
+              }
+          this.getPosts()
+        })
+        .catch()
+
     },
     //================= Fetch data functions ================
     //====================== Users =====================
@@ -119,12 +122,12 @@ export default {
     },
     updateUser(userId, updateUserData) {
       axios.put(`http://localhost:5000/api/post/${userId}`, updateUserData)
-        .then((updatedUser) => console.log(updatedUser.data))
+        .then()
         .catch((err) => console.log(err))
     },
     deleteUser(userId) {
       axios.delete(`http://localhost:5000/api/user/${userId}`)
-        .then((deletedUser) => console.log(deletedUser.data))
+        .then()
         .catch((err) => console.log(err))
     },
     //====================== Posts =====================
@@ -171,6 +174,7 @@ export default {
       }
     },
     updatePost(postId) {
+      
           const confirmEditText = document.querySelectorAll('.confirm-edit')
           const likeBtn = document.querySelectorAll(".btn-like")
           const newInput = document.querySelectorAll(".new-file-input")
@@ -184,15 +188,23 @@ export default {
           const imgEdit = document.querySelectorAll(".picture-edit-select")
           const supportedFormats = document.querySelectorAll('.supported-formats')
           const getName = document.querySelectorAll('#file-name.get-name')
+          const deletePictureBtn = document.querySelectorAll('.delete-picture-edit')
           axios.get(`http://localhost:5000/api/post/${postId}`)
           .then((post) => {
+          
             this.selectedPost = post.data
-            console.log(this.selectedPost);
-          for (let j = 0; j < confirmBtn.length; j++) {   
-                  editBtn[j].addEventListener('mouseout', () => {
-                
-              })  
+          for (let j = 0; j < confirmBtn.length; j++) {  
             editBtn[j].addEventListener('click', () => {
+              imgEdit[j].value = ''
+              getName[j].textContent = 'Aucun'
+                if(post.data.picture === "" || post.data.picture === "http://localhost:5000/images/default/deleted-picture.jpg"){
+              deletePictureBtn[j].classList.add('hidden')
+              this.getPosts()
+            }
+            else{
+               deletePictureBtn[j].classList.remove('hidden')
+                 this.getPosts()
+            }
               inputMessageEdit[j].value = this.selectedPost.message
               for (let k = 0; k < editBtn.length; k++) {
                 removeOtherDeleteBtn[k].classList.add('hidden')
@@ -259,44 +271,21 @@ export default {
               cancelBtn[j].classList.replace('visible', 'hidden')
             })
               }
-
         })
         .catch((err) => console.log(err))
 
     },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     deletePost(postId) {
       if (window.confirm("Voulez vous vraiment supprimer ce post ? \n\n ⚠️ Cette action est irrévérsible ⚠️")) {
         axios.delete(`http://localhost:5000/api/post/${postId}`)
           .then((deletedPost) => {
             deletedPost.data.likers.forEach(userIdLikeToDelete => {
-              axios.patch(`http://localhost:5000/api/post/unlike-post/${postId}`, { id: userIdLikeToDelete })
-                .then((result) => console.log(result))
-
+              axios.patch(`http://localhost:5000/api/post/unlike-post/${postId}`, { 
+                id: userIdLikeToDelete })
             });
             this.getPosts()
           })
-          .catch((err) => console.log(err.message))
+          .catch((err) => console.log(err))
       }
     },
     //====================== Auth =====================
@@ -678,6 +667,26 @@ label#design-input-file {
     cursor: pointer;
     transition: 0.5s;
     background-color: rgb(105, 166, 239);
+    color: rgb(0, 0, 0);
+    transform: scale(1.03);
+    box-shadow: 1px 1px 1px black;
+  }
+}
+
+.delete-picture-edit {
+  transition: 0.5s;
+  color: rgb(255, 255, 255);
+  background-color: rgb(79, 20, 20);
+  border: solid 1px black;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 10px 20px;
+  border-radius: 30px;
+
+  &:hover {
+    cursor: pointer;
+    transition: 0.5s;
+    background-color: rgb(239, 105, 105);
     color: rgb(0, 0, 0);
     transform: scale(1.03);
     box-shadow: 1px 1px 1px black;
