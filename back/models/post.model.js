@@ -32,6 +32,10 @@ const PostSchema = new mongoose.Schema({
         type : [String],
         required : true
     },
+    selected : {
+        type : Boolean,
+        required : true
+    },
     comments : {
         type : [
             {

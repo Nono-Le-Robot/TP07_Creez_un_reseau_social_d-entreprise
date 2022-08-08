@@ -30,6 +30,7 @@ module.exports.createPost = (req, res) => {
     message: req.body.message,
     video: req.body.video,
     likers: [],
+    selected : false,
     comments: [],
     picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/post/${req.file.filename}`: "",
     date: finalDate
