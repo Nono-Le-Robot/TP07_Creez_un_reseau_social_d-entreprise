@@ -18,7 +18,7 @@
 
 
   <p id='p-not-connected' v-if="logged === false">Veuillez vous connecter</p>
-  <div v-for="(post, index) in posts" v-if="logged === true" id="posts">
+  <div v-for="(post,index) in posts" :key="post.id" v-if="logged === true" id="posts">
     <div class='one-post'>
       <div class='user-infos'>
         <img id='picture-profil-post' :src="post.posterProfil" alt="" srcset="">
@@ -26,7 +26,13 @@
       </div>
       <p class="message-post">{{ post.message }}</p>
       <img class="post-picture" :src="post.picture" alt="">
+      
+      
+      
       <p class="post-id" hidden>{{ post._id }}</p>
+
+
+
     <div class="post-footer">
       <form  id="editPost" v-if="post.selected === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="editPost">
         <span class="new-file-input">
@@ -45,16 +51,19 @@
       <button v-if="post.selected === true" class="delete-picture-edit" @click="deletePicture(post._id)">Supprimer la photo</button>
       <div class="post-options-btn">
         <button hidden></button>
-        <i @click="likeRequest(post._id, index)" v-if="post.selected === false"  :class="userLikedPosts.includes(post._id) ? 'fa-heart' : 'fa-thumbs-up'" class="btn-like fa-solid"></i>
+        <i @click="likeRequest(index, post._id)" v-if="post.selected === false"  :class="userLikedPosts.includes(post._id) ? 'fa-heart' : 'fa-thumbs-up'" class="btn-like fa-solid"></i>
         <i @click="post.selected = true, messageEdit = post.message"  v-if="post.posterId === connectedUserId && post.selected === false  || connectedUserId === '62e7ac92ec5d36273c96911e'&& post.selected === false"  class="fa-solid fa-pen-to-square"></i>
         <i @click="deletePost(post._id)" v-if="post.posterId === connectedUserId && post.selected === false || connectedUserId === '62e7ac92ec5d36273c96911e'&& post.selected === false" class="fa-solid fa-trash"></i>
-        <i @click="editPost(post._id, file, index)" v-if="post.selected === true" class='fa-solid fa-check'></i>
+        <i @click="editPost(post._id,file)" v-if="post.selected === true" class='fa-solid fa-check'></i>
         <i @click="post.selected = false, file = [],messageEdit = post.message" v-if="post.selected === true" class="fa-solid fa-xmark"></i>
       </div>
       <p class="date-post">posté le : {{ post.date }}</p>
     </div>
+    
     </div>
   </div>
+
+
 </template>
 
 <script>
@@ -67,15 +76,47 @@ export default {
       messageEdit: "",
       posts: [],
       connectedUserId: "",
+      selectedPost: "",
       userLikedPosts: [],
       file : [],
     };
   },
   methods: {
-//================== Fetch all posts ===============
-    previewFiles(event) {
+   previewFiles(event) {
       this.file = event.target.files[0];
+      console.log(this.file)
+   },
+
+
+   editPost(postId, file){
+    let formData = new FormData()
+    formData.append('posterId', this.connectedUserId)
+    formData.append('message', this.messageEdit)
+    formData.append('file', file)
+    axios.put(`http://localhost:5000/api/post/${postId}`,formData)
+    .then(() => this.getPosts())
+    .catch((err) => console.log(err))
+   },
+
+
+    deletePicture(postId){
+        axios.put(`http://localhost:5000/api/post/${postId}`, {
+          picture : 'http://localhost:5000/images/default/deleted-picture.jpg'
+        })
+        .then(() => {
+          this.getPosts
+        })
+        .catch()
+
     },
+    //================= Fetch data functions ================
+    //====================== Users =====================
+    getUsers() {
+      axios.get('http://localhost:5000/api/user')
+        .then()
+        .catch((err) => console.log(err))
+    },
+    //====================== Posts =====================
     getPosts() {
       axios.get('http://localhost:5000/api/post')
         .then((posts) => {
@@ -83,45 +124,44 @@ export default {
         })
         .catch((err) => console.log(err.message))
     },
-//======================= Posts =====================
     createPost() {
       const img = document.getElementById('picture')
-      let formData = new FormData()
-      formData.append('posterId', this.connectedUserId)
-      formData.append('posterFirstname', this.posterFirstname)
-      formData.append('posterLastname', this.posterLastname)
-      formData.append('posterProfil', this.posterProfil)
-      formData.append('message', this.message)
       if (img.files[0]) {
         if (img.files[0].name.includes('"')) {
-          return alert('Nom de fichier incorrect, supprimer les accents ou caractères spéciaux')
+          alert('Nom de fichier incorrect, supprimer les accents ou caractères spéciaux')
         }
-        else formData.append('file', img.files[0])
+        else {
+          let formData = new FormData()
+          formData.append('posterId', this.connectedUserId)
+          formData.append('posterFirstname', this.posterFirstname)
+          formData.append('posterLastname', this.posterLastname)
+          formData.append('posterProfil', this.posterProfil)
+          formData.append('message', this.message)
+          formData.append('file', img.files[0])
+          axios.post(`http://localhost:5000/api/post`, formData)
+            .then(() => {
+              window.location.reload()
+            })
+            .catch()
+        }
       }
-      axios.post(`http://localhost:5000/api/post`, formData)
-        .then(() => {
+      else {
+        let formData = new FormData()
+        formData.append('posterId', this.connectedUserId)
+        formData.append('posterFirstname', this.posterFirstname)
+        formData.append('posterLastname', this.posterLastname)
+        formData.append('posterProfil', this.posterProfil)
+        formData.append('message', this.message)
+        axios.post(`http://localhost:5000/api/post`, formData)
+          .then(() => {
             window.location.reload()
-        })
-        .catch()
-    },
-    editPost(postId, file, index){
-      let formData = new FormData()
-      formData.append('posterId', this.connectedUserId)
-      formData.append('message', this.messageEdit)
-      const img = document.querySelectorAll('.picture-edit-select')
-      if (img[index].files[0]) {
-        if (img[index].files[0].name.includes('"')) {
-          return alert('Nom de fichier incorrect, supprimer les accents ou caractères spéciaux')
-        }
-        else formData.append('file', img[index].files[0])
+          })
+          .catch()
       }
-      axios.put(`http://localhost:5000/api/post/${postId}`,formData)
-      .then(() => this.getPosts())
-      .catch((err) => console.log(err))
-      },
-      deletePost(postId) {
-        if (window.confirm("Voulez vous vraiment supprimer ce post ? \n\n ⚠️ Cette action est irrévérsible ⚠️")) {
-          axios.delete(`http://localhost:5000/api/post/${postId}`)
+    },
+    deletePost(postId) {
+      if (window.confirm("Voulez vous vraiment supprimer ce post ? \n\n ⚠️ Cette action est irrévérsible ⚠️")) {
+        axios.delete(`http://localhost:5000/api/post/${postId}`)
           .then((deletedPost) => {
             deletedPost.data.likers.forEach(userIdLikeToDelete => {
               axios.patch(`http://localhost:5000/api/post/unlike-post/${postId}`, { 
@@ -132,8 +172,9 @@ export default {
           .catch((err) => console.log(err))
       }
     },
-//====================== Features =====================
-    likeRequest(postId, index) {
+    //====================== Auth =====================
+    likeRequest(index, postId) {
+
     const likeBtn = document.querySelectorAll('.btn-like')
     if(likeBtn[index].classList.contains("fa-thumbs-up")){
       axios.patch(`http://localhost:5000/api/post/like-post/${postId}`,{id : this.connectedUserId})
@@ -148,15 +189,6 @@ export default {
 
       likeBtn[index].classList.replace('fa-heart','fa-thumbs-up')
     } 
-    },
-    deletePicture(postId){
-      axios.put(`http://localhost:5000/api/post/${postId}`, {
-        picture : 'http://localhost:5000/images/default/deleted-picture.jpg'
-      })
-      .then(() => {
-        this.getPosts()
-      })
-      .catch()
     },
   },
   mounted() {
