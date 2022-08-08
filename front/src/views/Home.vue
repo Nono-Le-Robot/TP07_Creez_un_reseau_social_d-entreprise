@@ -19,7 +19,7 @@
 
   <p id='p-not-connected' v-if="logged === false">Veuillez vous connecter</p>
   <div v-for="(post,index) in posts" :key="post.id" v-if="logged === true" id="posts">
-    <div class='one-post'>
+    <div @mouseleave="post.selected = false" class='one-post' >
       <div class='user-infos'>
         <img id='picture-profil-post' :src="post.posterProfil" alt="" srcset="">
         <p>{{ post.posterFirstname }} {{ post.posterLastname }} à posté : </p>
@@ -48,13 +48,13 @@
           <span class='get-name' id="file-name">{{ file.name }}</span>
         </span>
       </form>
-      <button v-if="post.selected === true" class="delete-picture-edit" @click="deletePicture(post._id)">Supprimer la photo</button>
+      <button v-if="post.selected === true && post.picture != 'http://localhost:5000/images/default/deleted-picture.jpg'" class="delete-picture-edit" @click="deletePicture(post._id), file = []">Supprimer la photo</button>
       <div class="post-options-btn">
         <button hidden></button>
         <i @click="likeRequest(index, post._id)" v-if="post.selected === false"  :class="userLikedPosts.includes(post._id) ? 'fa-heart' : 'fa-thumbs-up'" class="btn-like fa-solid"></i>
-        <i @click="post.selected = true, messageEdit = post.message"  v-if="post.posterId === connectedUserId && post.selected === false  || connectedUserId === '62e7ac92ec5d36273c96911e'&& post.selected === false"  class="fa-solid fa-pen-to-square"></i>
+        <i @click="editPost(index, posts), post.selected = true, messageEdit = post.message"  v-if="post.posterId === connectedUserId && post.selected === false  || connectedUserId === '62e7ac92ec5d36273c96911e'&& post.selected === false"  class="fa-solid fa-pen-to-square"></i>
         <i @click="deletePost(post._id)" v-if="post.posterId === connectedUserId && post.selected === false || connectedUserId === '62e7ac92ec5d36273c96911e'&& post.selected === false" class="fa-solid fa-trash"></i>
-        <i @click="editPost(post._id,file)" v-if="post.selected === true" class='fa-solid fa-check'></i>
+        <i @click="sendPost(post._id,file), file = []" v-if="post.selected === true" class='fa-solid fa-check'></i>
         <i @click="post.selected = false, file = [],messageEdit = post.message" v-if="post.selected === true" class="fa-solid fa-xmark"></i>
       </div>
       <p class="date-post">posté le : {{ post.date }}</p>
@@ -86,9 +86,10 @@ export default {
       this.file = event.target.files[0];
       console.log(this.file)
    },
+    editPost(index, posts) {
 
-
-   editPost(postId, file){
+    },
+   sendPost(postId, file){
     let formData = new FormData()
     formData.append('posterId', this.connectedUserId)
     formData.append('message', this.messageEdit)
@@ -96,6 +97,7 @@ export default {
     axios.put(`http://localhost:5000/api/post/${postId}`,formData)
     .then(() => this.getPosts())
     .catch((err) => console.log(err))
+
    },
 
 
@@ -104,7 +106,7 @@ export default {
           picture : 'http://localhost:5000/images/default/deleted-picture.jpg'
         })
         .then(() => {
-          this.getPosts
+          this.getPosts()
         })
         .catch()
 

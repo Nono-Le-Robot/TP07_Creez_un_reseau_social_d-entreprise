@@ -24,6 +24,7 @@ const PostSchema = new mongoose.Schema({
     },
     picture : {
         type : String, 
+        default : "http://localhost:5000/images/default/deleted-picture.jpg"
     },
     video : {
         type : String,  

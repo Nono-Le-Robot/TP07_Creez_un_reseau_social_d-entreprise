@@ -32,7 +32,7 @@ module.exports.createPost = (req, res) => {
     likers: [],
     selected : false,
     comments: [],
-    picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/post/${req.file.filename}`: "",
+    picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/post/${req.file.filename}`: "http://localhost:5000/images/default/deleted-picture.jpg",
     date: finalDate
   });
   newPost.save()
