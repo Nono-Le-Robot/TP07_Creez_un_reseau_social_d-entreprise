@@ -1,16 +1,19 @@
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser')
 const express = require('express')
+const helmet = require('helmet')
 const userRoutes = require('./routes/user.routes')
 const postRoutes = require('./routes/post.routes')
-require('dotenv').config({path: './config/.env'})
 require('./config/db')
 const {checkUser, requireAuth} = require('./middleware/auth.middleware')
 const app = express()
 const cors = require('cors')
 const path = require('path')
 
+// app.use(helmet())
+
 app.use(cors())
+
 
 
 app.use(bodyParser.json());

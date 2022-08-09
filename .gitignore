@@ -1,7 +1,8 @@
 /front/node_modules
 /back/node_modules
 /back/config/.env
+/back/config/env
 /back/config/.DS_Store
-/back/images
+/back/images/post/*
+/back/images/profil/*
 .DS_Store
-back/config/env

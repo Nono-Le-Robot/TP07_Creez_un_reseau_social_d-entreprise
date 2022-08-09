@@ -1,33 +1,48 @@
+<!-- Responsive ok au dessus de 933 pixels -->
 <template>
+<div>
   <div id="createnew-post">
     <form id="new-post" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit"
       action="new-post">
-      <input type="text" maxlength="300" name="message" id="message-input" placeholder="Que souhaitez vous dire ?" v-model="message"
+    <br>
+      <input type="text" maxlength="300" name="message" id="message-input" placeholder="Que souhaitez vous partager ?" v-model="message"
         autocomplete="off" />
-      <label id="design-input-file" for="picture">Choisissez un fichier...</label>
+        <br>
+      <label id="design-input-file" for="picture"> <i class="fa-solid fa-file-arrow-up"></i> Choisir un fichier...</label>
       <input class="input-file-new-post" type="file" name="picture" id="picture" />
       <p style="font-size:10px; margin-bottom: 20px;">(format : png,jpg,gif)</p>
       <span>
         <strong id="new-file-name">Nom du fichier : </strong>
         <span id="file-name">Aucun</span>
       </span>
-      <button id="btn-new-post" @click="createPost()">Envoyer</button>
+      <button id="btn-new-post" @click="createPost()"><i class="fa-solid fa-paper-plane"></i> Envoyer</button>
+    <br>
     </form>
   </div>
 
 
 
-  <p id='p-not-connected' v-if="logged === false">Veuillez vous connecter</p>
-  <div v-for="(post,index) in posts" :key="post.id" v-if="logged === true" id="posts">
-    <div @mouseleave="post.selected = false" class='one-post' >
+  <p id='p-not-connected' v-if="logged === false"> <i class="fa-solid fa-arrow-left-long"></i> Veuillez vous connecter</p>
+  <div v-if="logged === true">
+
+
+  <div v-for="(post,index) in posts" :key="post.id"  id="posts">
+    <div class='one-post' >
+      <br>
       <div class='user-infos'>
         <img id='picture-profil-post' :src="post.posterProfil" alt="" srcset="">
-        <p>{{ post.posterFirstname }} {{ post.posterLastname }} à posté : </p>
+        <p>{{ post.posterFirstname }} {{ post.posterLastname }} : </p>
       </div>
-      <p class="message-post">{{ post.message }}</p>
+        <br>
+      <p class="message-post"> {{ post.message }} </p>
+      <br>
       <img class="post-picture" :src="post.picture" alt="">
       
+        <div class="separator"></div>
+        <br>
       
+      
+
       
       <p class="post-id" hidden>{{ post._id }}</p>
 
@@ -37,9 +52,10 @@
       <form  id="editPost" v-if="post.selected === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="editPost">
         <span class="new-file-input">
           <div class="inputs-user">
+            <p class="p-modify">que voulez vous modifier ?</p>
             <input type="text" name="message-edit" class="message-input-edit" autocomplete="off" v-model="messageEdit"/>
             <button class="new-design-edit">
-              <p>Choisir un fichier...</p>
+              <p> <i class="fa-solid fa-file-arrow-up"></i>  Choisir un fichier...</p>
               <input @change="previewFiles" id="picture-edit" type="file" name="picture-edit" class="input-file-new-post picture-edit-select" />
             </button>
           <p class='supported-formats' style="font-size:10px; margin-bottom:20px;">(format : png,jpg,gif)</p>
@@ -48,21 +64,33 @@
           <span class='get-name' id="file-name">{{ file.name }}</span>
         </span>
       </form>
-      <button v-if="post.selected === true && post.picture != 'http://localhost:5000/images/default/deleted-picture.jpg'" class="delete-picture-edit" @click="deletePicture(post._id), file = []">Supprimer la photo</button>
+
+      
+      <button v-if="post.selected === true && post.picture != 'http://localhost:5000/images/default/deleted-picture.jpg' && deletePictureChecked === false" class="delete-picture-edit" @click="deletePicture(post._id, index), file = []"><i class="fa-solid fa-trash-can"></i> Supprimer la photo</button>
+      <button v-else-if="post.selected === true && post.picture != 'http://localhost:5000/images/default/deleted-picture.jpg' && deletePictureChecked === true " class="delete-picture-edit"><i id="btnDeleteChecked" class="fa-solid fa-check"></i> La photo a bien été supprimée</button>
+      <br>
+        <div v-if="post.selected === true" class="separator2"></div>
       <div class="post-options-btn">
-        <button hidden></button>
-        <i @click="likeRequest(index, post._id)" v-if="post.selected === false"  :class="userLikedPosts.includes(post._id) ? 'fa-heart' : 'fa-thumbs-up'" class="btn-like fa-solid"></i>
-        <i @click="editPost(index, posts), post.selected = true, messageEdit = post.message"  v-if="post.posterId === connectedUserId && post.selected === false  || connectedUserId === '62e7ac92ec5d36273c96911e'&& post.selected === false"  class="fa-solid fa-pen-to-square"></i>
-        <i @click="deletePost(post._id)" v-if="post.posterId === connectedUserId && post.selected === false || connectedUserId === '62e7ac92ec5d36273c96911e'&& post.selected === false" class="fa-solid fa-trash"></i>
-        <i @click="sendPost(post._id,file), file = []" v-if="post.selected === true" class='fa-solid fa-check'></i>
-        <i @click="post.selected = false, file = [],messageEdit = post.message" v-if="post.selected === true" class="fa-solid fa-xmark"></i>
+        <i :class="userLikedPosts.includes(post._id) ? 'fa-heart' : 'fa-thumbs-up'" @click="likeRequest(index, post._id)" v-if="post.selected === false"   class="btn-like fa-solid"><span class="bubble-likes">{{post.likers.length}}</span></i>
+        <i @click="editPost(index, posts), hideBubble(), post.selected = true, messageEdit = post.message"  v-if="post.posterId === connectedUserId && post.selected === false  || connectedUserId === '62f2ae7fd2fc5c1305443984'&& post.selected === false"  class="fa-solid fa-pen-to-square"></i>
+        <i @click="deletePost(post._id), showBubble()" v-if="post.posterId === connectedUserId && post.selected === false || connectedUserId === '62f2ae7fd2fc5c1305443984'&& post.selected === false" class="fa-solid fa-trash"></i>
+        <i @click="sendPost(post._id,index,file), showBubble(), file = [], showOtherBtn(post._id, index), deletePictureChecked = false" v-if="post.selected === true" class='fa-solid fa-check confirm-btn'></i>
+        <i @click="post.selected = false, file = [],messageEdit = post.message , getPosts(), showBubble(), showOtherBtn(post._id, index), deletePictureChecked = false" v-if="post.selected === true" class="fa-solid fa-xmark"></i>
       </div>
+     
+
+
+        
+        <!-- <p class="design-like-number-own-post" v-if="post.posterId === connectedUserId  || connectedUserId === '62e7ac92ec5d36273c96911e'">{{post.likers.length}}</p>
+        <p v-else class="design-like-number">{{post.likers.length}}</p> -->
+
+      
       <p class="date-post">posté le : {{ post.date }}</p>
     </div>
-    
     </div>
   </div>
-
+    </div>
+</div>
 
 </template>
 
@@ -71,6 +99,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      deletePictureChecked : false,
       logged: false,
       message: "",
       messageEdit: "",
@@ -82,14 +111,75 @@ export default {
     };
   },
   methods: {
+    hideOtherBtn(){
+      const likeBtn = document.querySelectorAll('.btn-like')
+      const editBtn = document.querySelectorAll('.fa-pen-to-square')
+      const deleteBtn = document.querySelectorAll('.fa-trash')
+      for(let n = 0; n < likeBtn.length; n++){
+      likeBtn[n].classList.add('hidden')
+      }
+      for(let n = 0; n < editBtn.length; n++){
+        editBtn[n].classList.add('hidden')
+      }
+      for(let n = 0; n < deleteBtn.length; n++){
+        deleteBtn[n].classList.add('hidden')
+      }
+      this.hideBubble()
+    },
+     showOtherBtn(postId, index){
+        const imgDeleted = document.querySelectorAll('.post-picture')
+        imgDeleted[index].classList.remove('deleted-picture')
+      
+      const likeBtn = document.querySelectorAll('.btn-like')
+      const editBtn = document.querySelectorAll('.fa-pen-to-square')
+      const deleteBtn = document.querySelectorAll('.fa-trash')
+      for(let n = 0; n < likeBtn.length; n++){
+      likeBtn[n].classList.remove('hidden')
+      }
+      for(let n = 0; n < editBtn.length; n++){
+        editBtn[n].classList.remove('hidden')
+      }
+      for(let n = 0; n < deleteBtn.length; n++){
+        deleteBtn[n].classList.remove('hidden')
+      }
+      this.showBubble()
+      this.updateLike()
+      console.log(this.userLikedPosts.includes(postId))
+    },
+   hideBubble(){
+     const likeBubbleOwnPost = document.querySelectorAll('.design-like-number')
+      const likeBubble = document.querySelectorAll('.design-like-number-own-post')
+      for(let n = 0; n < likeBubbleOwnPost.length; n++){
+        likeBubbleOwnPost[n].classList.add('hidden')
+        
+      }
+      for(let n = 0; n < likeBubble.length; n++){
+        likeBubble[n].classList.add('hidden')
+      }
+   },
+    showBubble(){
+     const likeBubbleOwnPost = document.querySelectorAll('.design-like-number')
+      const likeBubble = document.querySelectorAll('.design-like-number-own-post')
+      for(let n = 0; n < likeBubbleOwnPost.length; n++){
+        likeBubbleOwnPost[n].classList.remove('hidden')
+        
+      }
+      for(let n = 0; n < likeBubble.length; n++){
+        likeBubble[n].classList.remove('hidden')
+      }
+   },
    previewFiles(event) {
       this.file = event.target.files[0];
       console.log(this.file)
    },
-    editPost(index, posts) {
+    editPost() {
+      this.hideOtherBtn()
+
+
+
 
     },
-   sendPost(postId, file){
+   sendPost(postId,index, file){
     let formData = new FormData()
     formData.append('posterId', this.connectedUserId)
     formData.append('message', this.messageEdit)
@@ -101,15 +191,21 @@ export default {
    },
 
 
-    deletePicture(postId){
+    deletePicture(postId, index){
+      if(window.confirm('Voulez vous vraiment supprimer cette photo ? \n\n ⚠️ Cette action est irrévérsible ⚠️')){
+        this.deletePictureChecked = true;
+
         axios.put(`http://localhost:5000/api/post/${postId}`, {
           picture : 'http://localhost:5000/images/default/deleted-picture.jpg'
         })
         .then(() => {
-          this.getPosts()
+          const imgDeleted = document.querySelectorAll('.post-picture')
+          imgDeleted[index].classList.add('deleted-picture')
         })
         .catch()
-
+      }
+        
+        
     },
     //================= Fetch data functions ================
     //====================== Users =====================
@@ -125,6 +221,14 @@ export default {
           this.posts = posts.data
         })
         .catch((err) => console.log(err.message))
+    },
+    updateLike(){
+      axios.get(`http://localhost:5000/api/user/${this.connectedUserId}`)
+      .then((user) => {
+        console.log(user.data.likes);
+          this.userLikedPosts = user.data.likes
+      })
+      .catch()
     },
     createPost() {
       const img = document.getElementById('picture')
@@ -225,7 +329,7 @@ export default {
         document.cookie = "jwt=;max-age=0";
         this.logged = false;
         const posts = document.querySelector('#p-not-connected')
-        posts.textContent = `veuillez vous connecter`;
+        posts.innerHTML = `<i class="fa-solid fa-arrow-left-long"></i> Veuillez vous connecter`;
       });
   },
 };
@@ -251,7 +355,7 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-  border-radius: 20px;
+  border-radius: 8px;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.631);
   width: 70%;
   margin-left: auto;
@@ -261,12 +365,10 @@ export default {
 
 .hidden {
   display: none;
-
 }
 
 #new-post {
   margin-bottom: 50px;
-  margin-top: 50px;
   font-size: 20px;
   padding: 25px;
   background-color: $independence;
@@ -275,13 +377,15 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-  border-radius: 20px;
+  border-radius: 8px;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.34);
   width: 70%;
   margin-left: auto;
   margin-right: auto;
 }
-
+body{
+  padding-bottom: 10px;
+}
 .test,
 .test2 {
   margin-top: 20px;
@@ -289,33 +393,27 @@ export default {
 
 #picture-profil-post {
   transition: 0.5s;
-  margin-right: 10px;
+  margin-right: 20px;
   width: 25px;
   height: 25px;
-  border-radius: 50px;
-  transform: scale(1.3);
-  margin-bottom: 15px;
+  border-radius: 50%;
+  transform: scale(1.5);
   object-fit: cover;
-   &:hover {
-    transition: 0.5s;
-    transform: scale(2);
-    margin-bottom: 20px;
-    margin-top: 10px;
-  }
+
 }
 
 .user-infos {
   margin-bottom: 20px;
   display: flex;
   align-items: center;
-  flex-direction: column;
   justify-content: space-between;
   transform: scale(1.2);
 }
 
 .post-picture {
   width: 80%;
-  border-radius: 20px;
+  border-radius: 8px;
+  margin-bottom: 40px;
 
   &:hover {
     cursor: nesw-resize;
@@ -331,7 +429,7 @@ export default {
   width:50%;
   margin-bottom: 20px;
   height: 20px;
-  border-radius: 10px;
+  border-radius: 4px;
   text-align: center;
   box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.447);
   transform: scale(1.1);
@@ -344,7 +442,7 @@ export default {
 .message-input-edit {
   width:50%;
   height: 20px;
-  border-radius: 10px;
+  border-radius: 4px;
   text-align: center;
   box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.447);
   transform: scale(1.1);
@@ -358,7 +456,7 @@ export default {
   margin-bottom: 20px;
   width:400px;
   height: 20px;
-  border-radius: 10px;
+  border-radius: 4px;
   text-align: center;
   box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.447);
   transform: scale(1.1);
@@ -369,7 +467,7 @@ export default {
 }
 
 .fa-heart {
-  transition: 0.5s;
+  transition: 0.2s;
   width: 20px;
   background-color: rgb(244, 128, 255);
   padding: 10px 10px 10px 10px;
@@ -378,23 +476,23 @@ export default {
   cursor: pointer;
 
   &:hover {
-    transition: 0.4s;
+    transition: 0.2s;
     background-color: rgb(122, 19, 148);
     color: white;
   }
 }
 
 .fa-thumbs-up {
-  transition: 0.5s;
+  transition: 0.2s;
   width: 20px;
   background-color: rgb(130, 242, 255);
   padding: 10px;
-  border-radius: 50px;
+  border-radius: 50%;
   color: rgb(0, 0, 0);
   cursor: pointer;
 
   &:hover {
-    transition: 0.4s;
+    transition: 0.2s;
     background-color: rgb(10, 94, 113);
     color: white;
   }
@@ -405,7 +503,7 @@ export default {
   width: 20px;
   background-color: rgb(255, 219, 165);
   padding: 10px;
-  border-radius: 50px;
+  border-radius: 50%;
   color: rgb(0, 0, 0);
   cursor: pointer;
 
@@ -421,7 +519,7 @@ export default {
   width: 20px;
   background-color: rgb(255, 106, 106);
   padding: 10px;
-  border-radius: 50px;
+  border-radius: 50%;
   color: rgb(0, 0, 0);
   cursor: pointer;
 
@@ -432,12 +530,12 @@ export default {
   }
 }
 
-.fa-check {
+.confirm-btn {
   transition: 0.4s;
   width: 20px;
   background-color: rgb(118, 255, 113);
   padding: 10px;
-  border-radius: 50px;
+  border-radius: 50%;
   color: rgb(0, 0, 0);
   cursor: pointer;
   margin-top: 30px;
@@ -454,7 +552,7 @@ export default {
   width: 20px;
   background-color: rgb(255, 129, 129);
   padding: 10px;
-  border-radius: 50px;
+  border-radius: 50%;
   color: rgb(0, 0, 0);
   margin-top: 30px;
   cursor: pointer;
@@ -482,7 +580,7 @@ export default {
   left: -15px;
   width: 160px;
   height: 30px;
-  border-radius: 30px;
+  border-radius: 8px;
   opacity: 0;
 
 
@@ -529,19 +627,20 @@ export default {
 label#design-input-file {
   margin-bottom: 20px;
   transition: 0.5s;
-  color: rgb(255, 255, 255);
-  background-color: rgb(20, 45, 79);
+  color: rgb(0, 0, 0);
+  
+   background-color: rgb(105, 166, 239);
   border: solid 1px black;
   font-weight: bold;
   font-size: 15px;
   padding: 10px 20px;
-  border-radius: 30px;
+  border-radius: 8px;
 
   &:hover {
     cursor: pointer;
     transition: 0.5s;
-    background-color: rgb(105, 166, 239);
-    color: rgb(0, 0, 0);
+   background-color: rgb(20, 45, 79);
+    color: rgb(255, 251, 251);
     transform: scale(1.03);
     box-shadow: 1px 1px 1px black;
   }
@@ -561,15 +660,16 @@ label#design-input-file {
 .new-design-edit {
   margin-bottom: 20px;
   transition: 0.5s;
-  color: rgb(255, 255, 255);
-  background-color: rgb(20, 45, 79);
+  color: rgb(0, 0, 0);
+     background-color: rgb(105, 166, 239);
+  
   border: solid 1px black;
   font-weight: bold;
   font-size: 15px;
   padding: 10px 20px;
-  border-radius: 30px;
+  border-radius: 8px;
   height: 40px;
-  width: 170px;
+  width: 200px;
   overflow: hidden;
    
   cursor: pointer;
@@ -577,8 +677,8 @@ label#design-input-file {
   &:hover {
     cursor: pointer;
     transition: 0.5s;
-    background-color: rgb(105, 166, 239);
-    color: rgb(0, 0, 0);
+ background-color: rgb(20, 45, 79);
+    color: rgb(255, 255, 255);
     transform: scale(1.03);
     box-shadow: 1px 1px 1px black;
   }
@@ -586,21 +686,23 @@ label#design-input-file {
 
 .delete-picture-edit {
   transition: 0.5s;
-  color: rgb(255, 255, 255);
-  background-color: rgb(79, 20, 20);
+  color: rgb(0, 0, 0);
+  
   border: solid 1px black;
+  background-color: rgb(239, 105, 105);
   font-weight: bold;
   font-size: 15px;
   padding: 10px 20px;
-  border-radius: 30px;
+  border-radius: 8px;
   margin-top: 20px;
   margin-bottom: 20px;
 
   &:hover {
     cursor: pointer;
     transition: 0.5s;
-    background-color: rgb(239, 105, 105);
-    color: rgb(0, 0, 0);
+    background-color: rgb(79, 20, 20);
+    
+    color: rgb(255, 247, 247);
     transform: scale(1.03);
     box-shadow: 1px 1px 1px black;
   }
@@ -608,6 +710,28 @@ label#design-input-file {
 
 #btn-new-post{
   margin-top: 20px;
+
+
+   transition: 0.5s;
+  color: rgb(0, 0, 0);
+  
+  border: solid 1px black;
+  background-color: rgb(105, 161, 239);
+  font-weight: bold;
+  font-size: 15px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  &:hover {
+    cursor: pointer;
+    transition: 0.5s;
+    background-color: rgb(20, 51, 79);
+    color: rgb(255, 247, 247);
+    transform: scale(1.03);
+    box-shadow: 1px 1px 1px black;
+  }
 
 }
 
@@ -617,6 +741,93 @@ label#design-input-file {
   flex-direction: column;
   align-items: center;
   width: 80%;
-  margin-top: 40px;
 }
+
+.design-like-number-own-post{
+       position: relative; 
+        top:-63px; 
+        left:-37px;
+        font-weight: bold;
+        box-shadow: 1px 1px 2px rgba(18, 14, 14, 0.291);
+        background:rgb(251, 255, 201);
+        color: rgb(0, 0, 0);
+        padding: 1px 4px;
+        font-size: 13px;
+        border-radius: 100px;
+}
+.design-like-number{
+       position: relative; 
+        top:-63px; 
+        left:13px;
+        font-weight: bold;
+        box-shadow: 1px 1px 2px rgba(18, 14, 14, 0.291);
+        background:rgb(251, 255, 201);
+        color: rgb(0, 0, 0);
+        padding: 1px 4px;
+        font-size: 13px;
+        border-radius: 100px;
+}
+.deleted-picture{
+  transition: 0.5s;
+  opacity: 0.7;
+  filter: grayscale(1);
+
+}
+.p-modify{
+  margin-bottom: 20px;
+  
+}
+.picture-edit-select{
+  padding: 0;
+}
+
+#p-not-connected{
+  font-size: 30px;
+  font-weight: bold;
+  position: absolute;
+  top: 150px;
+  left: 50px;
+}
+.fa-arrow-left-long{
+  transform: rotate(45deg);
+  position: fixed;
+  top: 100px;
+  left: 100px;
+}
+
+.separator{
+  width: 80%;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.198);
+  margin-bottom: 10px;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.227);
+}
+
+.separator2{
+  width: 100%;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.198);
+  margin-bottom: 10px;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.227);
+}
+
+
+.bubble-likes{
+  position: relative;
+  top: -34px;
+  left: 18px;
+  font-size: 11px;
+  background-color: rgb(251, 215, 147);
+  border-radius: 50%;
+  padding: 4px 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+}
+
+#posts > div > div.post-footer > div > i.fa-heart.btn-like.fa-solid, #posts > div > div.post-footer > div > i.fa-thumbs-up.btn-like.fa-solid{
+  height: 20px;
+}
+
 </style>

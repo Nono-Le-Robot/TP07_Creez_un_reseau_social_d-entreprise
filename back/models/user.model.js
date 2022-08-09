@@ -38,7 +38,7 @@ const UserSchema = new mongoose.Schema({
     picture : {
         type : String, 
         trim : true, 
-        default : "http://localhost:5000/images/default/default.jpg"
+        default : "http://localhost:5000/images/default/default.png"
     },
     followers : {
         type : [String]

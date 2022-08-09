@@ -2,7 +2,7 @@
   <div>
     <div id="userInfos">
         <br>
-        <h1>Mon compte</h1>
+        <h1><i class="fa-solid fa-file-user"></i>Mon compte :</h1>
         <br>
         <img id="picture-profil" :src='picture' alt="" srcset="">
         <br>
@@ -12,19 +12,26 @@
         <br>
         <p>Email : {{ email }} </p>
         <br>
+        <br>
+                 <div class="separator"></div>
+        <br>
+        <br>
         <form id="newPost" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="newPost" >
 
         <input class="input-file-new-post" type="file" name="picture-profil-edit" id="picture-profil-edit"/>
-        <label class="input-file-design" for="picture-profil-edit">Choisissez un fichier...</label>
+        <label class="input-file-design" for="picture-profil-edit"><i class="fa-solid fa-file-arrow-up"></i> Choisissez un fichier...</label>
         <br>
-          <p style="font-size:10px">(format : png,jpg,gif)</p>
+        <br>
         <br>
         <span>
+          <p style="font-size:10px">(format : png,jpg,gif)</p>
           <strong id="new-file-name">Nom du fichier : </strong>
+          
           <span id="file-name">Aucun</span>
+          <br>
         </span>
         <br>
-        <button id="send-modified-profil" v-on:click="editProfil()">Changer ma photo de profil</button>
+        <button id="send-modified-profil" v-on:click="editProfil()"><i class="fa-solid fa-arrows-rotate"></i> Changer ma photo de profil</button>
         </form>
     </div>
     <br />
@@ -142,17 +149,20 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-  border-radius: 20px;
+  border-radius: 4px;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.34);
   width: 70%;
   margin-left: auto;
   margin-right: auto;
 }
+html{
+  height: 700px;
+}
 
 #picture-profil{
   width: 100px;
   height: 100px;
-  border-radius: 100%;
+  border-radius: 50%;
   object-fit:cover;
 }
 #picture-profil-edit{
@@ -160,21 +170,22 @@ export default {
 }
 #newPost > label{
       transition: 0.5s;
-  color: rgb(255, 255, 255);
-  background-color: rgb(20, 45, 79);
+  color: black;
+  background-color: rgb(105, 161, 239);
   border: solid 1px black;
   font-weight: bold;
   font-size: 15px;
   padding: 10px 20px;
-  border-radius: 30px;
+  border-radius: 4px;
   &:hover{
     cursor: pointer;
     transition: 0.5s;
-    background-color: rgb(105, 166, 239);
-    color: rgb(0, 0, 0);
+    background-color: rgb(20, 51, 79);
+    color: rgb(255, 255, 255);
     transform: scale(1.03);
     box-shadow: 1px 1px 1px black;
 }
+    border-radius: 8px;
 }
 
 #file-name{
@@ -185,5 +196,21 @@ export default {
 
 #new-file-name{
   font-size: 15px;
+ 
+}
+#send-modified-profil{
+  background-color: rgb(105, 161, 239);
+  color: black;
+
+  margin-top: 3px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  &:hover{
+    transition: 0.5s;
+      background-color: rgb(20, 51, 79);
+      color: white;
+  }
+      transition: 0.5s;
+      border-radius: 8px;
 }
 </style>
