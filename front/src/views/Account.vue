@@ -19,7 +19,7 @@
         <form id="newPost" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="newPost" >
 
         <input class="input-file-new-post" type="file" name="picture-profil-edit" id="picture-profil-edit"/>
-        <label class="input-file-design" for="picture-profil-edit"><i class="fa-solid fa-file-arrow-up"></i> Choisissez un fichier...</label>
+        <label class="input-file-design" for="picture-profil-edit"><i class="fa-solid fa-arrows-rotate"></i> Changer ma photo de profil</label>
         <br>
         <br>
         <br>
@@ -31,7 +31,7 @@
           <br>
         </span>
         <br>
-        <button id="send-modified-profil" v-on:click="editProfil()"><i class="fa-solid fa-arrows-rotate"></i> Changer ma photo de profil</button>
+        <button id="send-modified-profil" v-on:click="editProfil()"><i class="fa-solid fa-check"></i> Valider</button>
         </form>
     </div>
     <br />

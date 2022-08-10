@@ -607,6 +607,10 @@ body{
   font-weight: bold;
   color: rgb(224, 224, 224);
   margin-bottom: 20px;
+   word-wrap: break-word;
+  width: 85%;
+  line-height: 40px;
+
 }
 
 #top-nav>nav>a:nth-child(3) {
