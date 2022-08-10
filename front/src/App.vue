@@ -6,40 +6,21 @@
     </div>
     <link rel="icon" href="./assets/logo.png" />
     <nav class="menu">
-  <input type="checkbox" href="#" class="menu-open" name="menu-open" id="menu-open" />
-  <label class="menu-open-button" for="menu-open">
-    <span class="hamburger hamburger-1"></span>
-    <span class="hamburger hamburger-2"></span>
-    <span class="hamburger hamburger-3"></span>
-  </label>
-  <router-link title="Social" v-if="logged === true" to="/" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-house-chimney"></i> </router-link>
-  <router-link title="Social" v-else to="/" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-house-chimney"></i> </router-link>
-  <router-link title="Mon compte" v-if="logged === true" to="/account" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-user-gear"></i> </router-link>
-  <router-link title="Se connecter" v-else to="/auth/login" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-key login-btn"></i> </router-link>
-  <router-link title="Se déconnecter" @click="disconnectUser()" v-if="logged === true" to="/auth/login" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-power-off"></i></router-link>
-  <router-link title="S'enregistrer" v-else to="/auth/register" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-user-plus"></i></router-link>
-</nav>
-<!-- filters -->
-  <router-view />
-<svg style="display:none" xmlns="http://www.w3.org/2000/svg" version="1.1">
-  <defs>
-    <filter id="shadowed-goo">
-      <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10" />
-      <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
-      <feGaussianBlur in="goo" stdDeviation="3" result="shadow" />
-      <feColorMatrix in="shadow" mode="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 -0.2" result="shadow" />
-      <feOffset in="shadow" dx="1" dy="1" result="shadow" />
-      <feBlend in2="shadow" in="goo" result="goo" />
-      <feBlend in2="goo" in="SourceGraphic" result="mix" />
-    </filter>
-    <filter id="goo">
-      <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10" />
-      <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
-      <feBlend in2="goo" in="SourceGraphic" result="mix" />
-    </filter>
-  </defs>
-</svg>
+      <input type="checkbox" href="#" class="menu-open" name="menu-open" id="menu-open" />
+      <label class="menu-open-button" for="menu-open">
+        <span class="hamburger hamburger-1"></span>
+        <span class="hamburger hamburger-2"></span>
+        <span class="hamburger hamburger-3"></span>
+      </label>
+      <router-link title="Social" v-if="logged === true" to="/" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-house-chimney"></i> </router-link>
+      <router-link title="Social" v-else to="/" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-house-chimney"></i> </router-link>
+      <router-link title="Mon compte" v-if="logged === true" to="/account" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-user-gear"></i> </router-link>
+      <router-link title="Se connecter" v-else to="/auth/login" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-key login-btn"></i> </router-link>
+      <router-link title="Se déconnecter" @click="disconnectUser()" v-if="logged === true" to="/auth/login" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-power-off"></i></router-link>
+      <router-link title="S'enregistrer" v-else to="/auth/register" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-user-plus"></i></router-link>
+    </nav>
   </div>
+  <router-view />
 </template>
 
 <script>
@@ -52,7 +33,7 @@ export default {
       this.logged = false;
     },
   },
-   data(){
+  data(){
     return{
       logged:false
     } 
@@ -164,9 +145,6 @@ html {
   justify-content: space-between;
   align-items: center;
   height: 50px;
-
-
-
 }
 
 #logo {
@@ -175,18 +153,19 @@ html {
   padding-top: 5px;
   transform: scale(0.4);
 }
+
 #englobe-logo{
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-
   h1 {
     font-size: 30px;
     font-weight: bold;
@@ -203,13 +182,13 @@ a {
   font-weight: bold;
   color: rgb(121, 20, 204);
 }
+
 .fa-arrow-right-to-bracket{
   font-weight: 800;
   font-size: 25px;
   margin-left: 5px;
   margin-top: 28px;
 }
-
 
 #btn-new-post, #send-modified-profil{
       transition: 0.5s;
@@ -230,68 +209,8 @@ a {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 a {
   color: inherit;
-}
-
-
-
-.menu {
-  filter: url("#shadowed-goo");
 }
 
 .menu-item, .menu-open-button {
@@ -346,9 +265,11 @@ a {
 .menu-open:checked + .menu-open-button .hamburger-1 {
   transform: translate3d(0, 0, 0) rotate(45deg);
 }
+
 .menu-open:checked + .menu-open-button .hamburger-2 {
   transform: translate3d(0, 0, 0) scale(0.1, 1);
 }
+
 .menu-open:checked + .menu-open-button .hamburger-3 {
   transform: translate3d(0, 0, 0) rotate(-45deg);
 }
@@ -372,18 +293,23 @@ a {
   background: #c10000;
   color: #fcfcfc;
 }
+
 .menu-item:nth-child(3) {
   transition-duration: 70ms;
 }
+
 .menu-item:nth-child(4) {
   transition-duration: 130ms;
 }
+
 .menu-item:nth-child(5) {
   transition-duration: 190ms;
 }
+
 .menu-item:nth-child(6) {
   transition-duration: 250ms;
 }
+
 .menu-item:nth-child(7) {
   transition-duration: 310ms;
 }
@@ -409,22 +335,27 @@ a {
 .menu-open:checked ~ .menu-item {
   transition-timing-function: cubic-bezier(0.935, 0, 0.34, 1.33);
 }
+
 .menu-open:checked ~ .menu-item:nth-child(3) {
   transition-duration: 160ms;
   transform: translate3d(114.42548px, 11.48084px, 0);
 }
+
 .menu-open:checked ~ .menu-item:nth-child(4) {
   transition-duration: 240ms;
   transform: translate3d(77.18543px, 85.2491px, 0);
 }
+
 .menu-open:checked ~ .menu-item:nth-child(5) {
   transition-duration: 320ms;
   transform: translate3d(0.09158px, 114.99996px, 0);
 }
+
 .menu-open:checked ~ .menu-item:nth-child(6) {
   transition-duration: 400ms;
   transform: translate3d(-77.04956px, 85.37192px, 0);
 }
+
 .menu-open:checked ~ .menu-item:nth-child(7) {
   transition-duration: 480ms;
   transform: translate3d(-114.40705px, 11.66307px, 0);
@@ -437,8 +368,8 @@ a {
     background-color: rgb(84, 112, 156);
   }
   transition: 0.2s;
-
 }
+
 #App > nav > a:nth-child(3){
   background-color: rgb(115, 255, 141);
     &:hover{
@@ -447,39 +378,40 @@ a {
   }
   transition: 0.2s;
 }
+
 #App > nav > a:nth-child(5){
   background-color: rgb(255, 156, 81);
       &:hover{
   transition: 0.2s;
   background-color: rgb(161, 93, 41);
-  
   }
-  
 }
+
 #App > nav > label{
   transform: scale(1.3);
 }
+
 .fa-house-chimney  {
   margin-left: 8px;
 }
+
 .fa-power-off{
 margin-left: 10px;
 padding-top: 10px;
-
 }
+
 .fa-user-plus{
 margin-left: 12px;
-
 }
+
 .fa-user-gear{
 margin-left: 20px;
-
 }
+
 .login-btn{
   font-weight: 800;
   font-size: 23px;
   margin-left: 14px;
   margin-top: 32px;
-
 }
 </style>
