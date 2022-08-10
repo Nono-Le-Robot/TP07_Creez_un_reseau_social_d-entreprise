@@ -1,97 +1,70 @@
-<!-- Responsive ok au dessus de 933 pixels -->
 <template>
-<div>
-  <div id="createnew-post">
-    <form id="new-post" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit"
-      action="new-post">
-    <br>
-      <input type="text" maxlength="300" name="message" id="message-input" placeholder="Que souhaitez vous partager ?" v-model="message"
-        autocomplete="off" />
+  <div>
+    <div id="createnew-post">
+      <form id="new-post" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="new-post">
         <br>
-      <label id="design-input-file" for="picture"> <i class="fa-solid fa-file-arrow-up"></i> Choisir un fichier...</label>
-      <input class="input-file-new-post" type="file" name="picture" id="picture" />
-      <p style="font-size:10px; margin-bottom: 20px;">(format : png,jpg,gif)</p>
-      <span>
-        <strong id="new-file-name">Nom du fichier : </strong>
-        <span id="file-name">Aucun</span>
-      </span>
-      <button id="btn-new-post" @click="createPost()"><i class="fa-solid fa-paper-plane"></i> Envoyer</button>
-    <br>
-    </form>
-  </div>
-
-
-
-  <p id='p-not-connected' v-if="logged === false"> <i class="fa-solid fa-arrow-left-long"></i> Veuillez vous connecter</p>
-  <div v-if="logged === true">
-
-
-  <div v-for="(post,index) in posts" :key="post.id"  id="posts">
-    <div class='one-post' >
-      <br>
-      <div class='user-infos'>
-        <img id='picture-profil-post' :src="post.posterProfil" alt="" srcset="">
-        <p>{{ post.posterFirstname }} {{ post.posterLastname }} : </p>
-      </div>
+        <input type="text" maxlength="300" name="message" id="message-input" placeholder="Que souhaitez vous partager ?" v-model="message" autocomplete="off" />
         <br>
-      <p class="message-post"> {{ post.message }} </p>
-      <br>
-      <img class="post-picture" :src="post.picture" alt="">
-      
-        <div class="separator"></div>
-        <br>
-      
-      
-
-      
-      <p class="post-id" hidden>{{ post._id }}</p>
-
-
-
-    <div class="post-footer">
-      <form  id="editPost" v-if="post.selected === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="editPost">
-        <span class="new-file-input">
-          <div class="inputs-user">
-            <p class="p-modify">que voulez vous modifier ?</p>
-            <input type="text" name="message-edit" class="message-input-edit" autocomplete="off" v-model="messageEdit"/>
-            <button class="new-design-edit">
-              <p> <i class="fa-solid fa-file-arrow-up"></i>  Choisir un fichier...</p>
-              <input @change="previewFiles" id="picture-edit" type="file" name="picture-edit" class="input-file-new-post picture-edit-select" />
-            </button>
-          <p class='supported-formats' style="font-size:10px; margin-bottom:20px;">(format : png,jpg,gif)</p>
-          </div>
+        <label id="design-input-file" for="picture"> <i class="fa-solid fa-file-arrow-up"></i> Choisir un fichier...</label>
+        <input class="input-file-new-post" type="file" name="picture" id="picture" />
+        <p style="font-size:10px; margin-bottom: 20px;">(format : png,jpg,gif)</p>
+        <span>
           <strong id="new-file-name">Nom du fichier : </strong>
-          <span class='get-name' id="file-name">{{ file.name }}</span>
+          <span id="file-name">Aucun</span>
         </span>
+        <button id="btn-new-post" @click="createPost()"><i class="fa-solid fa-paper-plane"></i> Envoyer</button>
+        <br>
       </form>
-
-      
-      <button v-if="post.selected === true && post.picture != 'http://localhost:5000/images/default/deleted-picture.jpg' && deletePictureChecked === false" class="delete-picture-edit" @click="deletePicture(post._id, index), file = []"><i class="fa-solid fa-trash-can"></i> Supprimer la photo</button>
-      <button v-else-if="post.selected === true && post.picture != 'http://localhost:5000/images/default/deleted-picture.jpg' && deletePictureChecked === true " class="delete-picture-edit"><i id="btnDeleteChecked" class="fa-solid fa-check"></i> La photo a bien été supprimée</button>
-      <br>
-        <div v-if="post.selected === true" class="separator2"></div>
-      <div class="post-options-btn">
-        <i :class="userLikedPosts.includes(post._id) ? 'fa-heart' : 'fa-thumbs-up'" @click="likeRequest(index, post._id)" v-if="post.selected === false"   class="btn-like fa-solid"><span class="bubble-likes">{{post.likers.length}}</span></i>
-        <i @click="editPost(index, posts), hideBubble(), post.selected = true, messageEdit = post.message"  v-if="post.posterId === connectedUserId && post.selected === false  || connectedUserId === '62f2ae7fd2fc5c1305443984'&& post.selected === false"  class="fa-solid fa-pen-to-square"></i>
-        <i @click="deletePost(post._id), showBubble()" v-if="post.posterId === connectedUserId && post.selected === false || connectedUserId === '62f2ae7fd2fc5c1305443984'&& post.selected === false" class="fa-solid fa-trash"></i>
-        <i @click="sendPost(post._id,index,file), showBubble(), file = [], showOtherBtn(post._id, index), deletePictureChecked = false" v-if="post.selected === true" class='fa-solid fa-check confirm-btn'></i>
-        <i @click="post.selected = false, file = [],messageEdit = post.message , getPosts(), showBubble(), showOtherBtn(post._id, index), deletePictureChecked = false" v-if="post.selected === true" class="fa-solid fa-xmark"></i>
-      </div>
-     
-
-
-        
-        <!-- <p class="design-like-number-own-post" v-if="post.posterId === connectedUserId  || connectedUserId === '62e7ac92ec5d36273c96911e'">{{post.likers.length}}</p>
-        <p v-else class="design-like-number">{{post.likers.length}}</p> -->
-
-      
-      <p class="date-post">posté le : {{ post.date }}</p>
     </div>
+    <p id='p-not-connected' v-if="logged === false"> <i class="fa-solid fa-arrow-left-long"></i> Veuillez vous connecter</p>
+    <div v-if="logged === true">
+      <div v-for="(post,index) in posts" :key="post.id"  id="posts">
+        <div class='one-post' >
+          <br>
+          <div class='user-infos'>
+            <img id='picture-profil-post' :src="post.posterProfil" alt="" srcset="">
+            <p>{{ post.posterFirstname }} {{ post.posterLastname }} : </p>
+          </div>
+          <br>
+          <p class="message-post"> {{ post.message }} </p>
+          <br>
+          <img class="post-picture" :src="post.picture" alt="">
+          <div class="separator"></div>
+          <br>
+          <p class="post-id" hidden>{{ post._id }}</p>
+          <div class="post-footer">
+            <form  id="editPost" v-if="post.selected === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="editPost">
+              <span class="new-file-input">
+                <div class="inputs-user">
+                  <p class="p-modify">que voulez vous modifier ?</p>
+                  <input type="text" name="message-edit" class="message-input-edit" autocomplete="off" v-model="messageEdit"/>
+                  <button class="new-design-edit">
+                    <p> <i class="fa-solid fa-file-arrow-up"></i>  Choisir un fichier...</p>
+                    <input @change="previewFiles" id="picture-edit" type="file" name="picture-edit" class="input-file-new-post picture-edit-select" />
+                  </button>
+                  <p class='supported-formats' style="font-size:10px; margin-bottom:20px;">(format : png,jpg,gif)</p>
+                </div>
+                <strong id="new-file-name">Nom du fichier : </strong>
+                <span class='get-name' id="file-name">{{ file.name }}</span>
+              </span>
+            </form>
+            <button v-if="post.selected === true && post.picture != 'http://localhost:5000/images/default/deleted-picture.jpg' && deletePictureChecked === false" class="delete-picture-edit" @click="deletePicture(post._id, index), file = []"><i class="fa-solid fa-trash-can"></i> Supprimer la photo</button>
+            <button v-else-if="post.selected === true && post.picture != 'http://localhost:5000/images/default/deleted-picture.jpg' && deletePictureChecked === true " class="delete-picture-edit"><i id="btnDeleteChecked" class="fa-solid fa-check"></i> La photo a bien été supprimée</button>
+            <br>
+            <div v-if="post.selected === true" class="separator2"></div>
+            <div class="post-options-btn">
+              <i :class="userLikedPosts.includes(post._id) ? 'fa-heart' : 'fa-thumbs-up'" @click="likeRequest(index, post._id)" v-if="post.selected === false"   class="btn-like fa-solid"><span class="bubble-likes">{{post.likers.length}}</span></i>
+              <i @click="editPost(index, posts), hideBubble(), post.selected = true, messageEdit = post.message"  v-if="post.posterId === connectedUserId && post.selected === false  || connectedUserId === '62f2ae7fd2fc5c1305443984'&& post.selected === false"  class="fa-solid fa-pen-to-square"></i>
+              <i @click="deletePost(post._id), showBubble()" v-if="post.posterId === connectedUserId && post.selected === false || connectedUserId === '62f2ae7fd2fc5c1305443984'&& post.selected === false" class="fa-solid fa-trash"></i>
+              <i @click="sendPost(post._id,index,file), showBubble(), file = [], showOtherBtn(post._id, index), deletePictureChecked = false" v-if="post.selected === true" class='fa-solid fa-check confirm-btn'></i>
+              <i @click="post.selected = false, file = [],messageEdit = post.message , getPosts(), showBubble(), showOtherBtn(post._id, index), deletePictureChecked = false" v-if="post.selected === true" class="fa-solid fa-xmark"></i>
+            </div>
+            <p class="date-post">posté le : {{ post.date }}</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-    </div>
-</div>
-
 </template>
 
 <script>
@@ -116,7 +89,7 @@ export default {
       const editBtn = document.querySelectorAll('.fa-pen-to-square')
       const deleteBtn = document.querySelectorAll('.fa-trash')
       for(let n = 0; n < likeBtn.length; n++){
-      likeBtn[n].classList.add('hidden')
+        likeBtn[n].classList.add('hidden')
       }
       for(let n = 0; n < editBtn.length; n++){
         editBtn[n].classList.add('hidden')
@@ -126,15 +99,14 @@ export default {
       }
       this.hideBubble()
     },
-     showOtherBtn(postId, index){
-        const imgDeleted = document.querySelectorAll('.post-picture')
-        imgDeleted[index].classList.remove('deleted-picture')
-      
+    showOtherBtn(postId, index){
+      const imgDeleted = document.querySelectorAll('.post-picture')
+      imgDeleted[index].classList.remove('deleted-picture')    
       const likeBtn = document.querySelectorAll('.btn-like')
       const editBtn = document.querySelectorAll('.fa-pen-to-square')
       const deleteBtn = document.querySelectorAll('.fa-trash')
       for(let n = 0; n < likeBtn.length; n++){
-      likeBtn[n].classList.remove('hidden')
+        likeBtn[n].classList.remove('hidden')
       }
       for(let n = 0; n < editBtn.length; n++){
         editBtn[n].classList.remove('hidden')
@@ -144,57 +116,46 @@ export default {
       }
       this.showBubble()
       this.updateLike()
-      console.log(this.userLikedPosts.includes(postId))
     },
-   hideBubble(){
-     const likeBubbleOwnPost = document.querySelectorAll('.design-like-number')
+    hideBubble(){
+      const likeBubbleOwnPost = document.querySelectorAll('.design-like-number')
       const likeBubble = document.querySelectorAll('.design-like-number-own-post')
       for(let n = 0; n < likeBubbleOwnPost.length; n++){
         likeBubbleOwnPost[n].classList.add('hidden')
-        
       }
       for(let n = 0; n < likeBubble.length; n++){
         likeBubble[n].classList.add('hidden')
       }
-   },
+    },
     showBubble(){
-     const likeBubbleOwnPost = document.querySelectorAll('.design-like-number')
+      const likeBubbleOwnPost = document.querySelectorAll('.design-like-number')
       const likeBubble = document.querySelectorAll('.design-like-number-own-post')
       for(let n = 0; n < likeBubbleOwnPost.length; n++){
         likeBubbleOwnPost[n].classList.remove('hidden')
-        
       }
       for(let n = 0; n < likeBubble.length; n++){
         likeBubble[n].classList.remove('hidden')
       }
-   },
-   previewFiles(event) {
+    },
+    previewFiles(event) {
       this.file = event.target.files[0];
       console.log(this.file)
-   },
+    },
     editPost() {
       this.hideOtherBtn()
-
-
-
-
     },
-   sendPost(postId,index, file){
-    let formData = new FormData()
-    formData.append('posterId', this.connectedUserId)
-    formData.append('message', this.messageEdit)
-    formData.append('file', file)
-    axios.put(`http://localhost:5000/api/post/${postId}`,formData)
-    .then(() => this.getPosts())
-    .catch((err) => console.log(err))
-
-   },
-
-
+    sendPost(postId,index, file){
+      let formData = new FormData()
+      formData.append('posterId', this.connectedUserId)
+      formData.append('message', this.messageEdit)
+      formData.append('file', file)
+      axios.put(`http://localhost:5000/api/post/${postId}`,formData)
+      .then(() => this.getPosts())
+      .catch((err) => console.log(err))
+    },
     deletePicture(postId, index){
       if(window.confirm('Voulez vous vraiment supprimer cette photo ? \n\n ⚠️ Cette action est irrévérsible ⚠️')){
         this.deletePictureChecked = true;
-
         axios.put(`http://localhost:5000/api/post/${postId}`, {
           picture : 'http://localhost:5000/images/default/deleted-picture.jpg'
         })
@@ -204,30 +165,22 @@ export default {
         })
         .catch()
       }
-        
-        
     },
-    //================= Fetch data functions ================
-    //====================== Users =====================
     getUsers() {
       axios.get('http://localhost:5000/api/user')
-        .then()
-        .catch((err) => console.log(err))
+      .then()
+      .catch((err) => console.log(err))
     },
-    //====================== Posts =====================
     getPosts() {
       axios.get('http://localhost:5000/api/post')
-        .then((posts) => {
+      .then((posts) => {
           this.posts = posts.data
-        })
-        .catch((err) => console.log(err.message))
+      })
+      .catch((err) => console.log(err.message))
     },
     updateLike(){
       axios.get(`http://localhost:5000/api/user/${this.connectedUserId}`)
-      .then((user) => {
-        console.log(user.data.likes);
-          this.userLikedPosts = user.data.likes
-      })
+      .then((user) => { this.userLikedPosts = user.data.likes })
       .catch()
     },
     createPost() {
@@ -245,10 +198,10 @@ export default {
           formData.append('message', this.message)
           formData.append('file', img.files[0])
           axios.post(`http://localhost:5000/api/post`, formData)
-            .then(() => {
-              window.location.reload()
-            })
-            .catch()
+          .then(() => {
+            window.location.reload()
+          })
+          .catch()
         }
       }
       else {
@@ -259,93 +212,78 @@ export default {
         formData.append('posterProfil', this.posterProfil)
         formData.append('message', this.message)
         axios.post(`http://localhost:5000/api/post`, formData)
-          .then(() => {
-            window.location.reload()
-          })
-          .catch()
+        .then(() => {
+          window.location.reload()
+        })
+        .catch()
       }
     },
     deletePost(postId) {
       if (window.confirm("Voulez vous vraiment supprimer ce post ? \n\n ⚠️ Cette action est irrévérsible ⚠️")) {
         axios.delete(`http://localhost:5000/api/post/${postId}`)
-          .then((deletedPost) => {
-            deletedPost.data.likers.forEach(userIdLikeToDelete => {
-              axios.patch(`http://localhost:5000/api/post/unlike-post/${postId}`, { 
-                id: userIdLikeToDelete })
-            });
-            this.getPosts()
-          })
-          .catch((err) => console.log(err))
+        .then((deletedPost) => {
+          deletedPost.data.likers.forEach(userIdLikeToDelete => {
+            axios.patch(`http://localhost:5000/api/post/unlike-post/${postId}`, { id: userIdLikeToDelete })
+          });
+          this.getPosts()
+        })
+        .catch((err) => console.log(err))
       }
     },
-    //====================== Auth =====================
     likeRequest(index, postId) {
-
-    const likeBtn = document.querySelectorAll('.btn-like')
-    if(likeBtn[index].classList.contains("fa-thumbs-up")){
-      axios.patch(`http://localhost:5000/api/post/like-post/${postId}`,{id : this.connectedUserId})
-      .then(() => this.getPosts())
-      .catch((err) => console.log(err))
-      likeBtn[index].classList.replace('fa-thumbs-up','fa-heart')
-    } 
-    else if(likeBtn[index].classList.contains("fa-heart")){
-      axios.patch(`http://localhost:5000/api/post/unlike-post/${postId}`,{id : this.connectedUserId})
-      .then(() => this.getPosts())
-      .catch((err) => console.log(err))
-
-      likeBtn[index].classList.replace('fa-heart','fa-thumbs-up')
-    } 
+      const likeBtn = document.querySelectorAll('.btn-like')
+      if(likeBtn[index].classList.contains("fa-thumbs-up")){
+        axios.patch(`http://localhost:5000/api/post/like-post/${postId}`,{id : this.connectedUserId})
+        .then(() => this.getPosts())
+        .catch((err) => console.log(err))
+        likeBtn[index].classList.replace('fa-thumbs-up','fa-heart')
+      } 
+      else if(likeBtn[index].classList.contains("fa-heart")){
+        axios.patch(`http://localhost:5000/api/post/unlike-post/${postId}`,{id : this.connectedUserId})
+        .then(() => this.getPosts())
+        .catch((err) => console.log(err))
+        likeBtn[index].classList.replace('fa-heart','fa-thumbs-up')
+      } 
     },
   },
   mounted() {
     let token = document.cookie.slice(4);
     axios.get(`http://localhost:5000/jwtid/${token}`)
-      .then((user) => {
-        this.connectedUserId = user.data
-        axios.get(`http://localhost:5000/api/user/${user.data}`)
-          .then((result) => {
-            this.userLikedPosts = result.data.likes;
-            this.posterFirstname = result.data.firstname
-            this.posterLastname = result.data.lastname
-            this.posterProfil = result.data.picture
-          })
-          .catch()
-        this.logged = true;
-        axios.get("http://localhost:5000/api/post/")
-          .then((res) => {
-            this.posts = res.data
-
-            let inputFile = document.querySelector('#picture')
-            let fileName = document.querySelector('#file-name')
-            inputFile.addEventListener('change', () => {
-
-              fileName.textContent = inputFile.files[0].name
-            })
-
-          })
-          .catch();
+    .then((user) => {
+      this.connectedUserId = user.data
+      axios.get(`http://localhost:5000/api/user/${user.data}`)
+        .then((result) => {
+          this.userLikedPosts = result.data.likes;
+          this.posterFirstname = result.data.firstname
+          this.posterLastname = result.data.lastname
+          this.posterProfil = result.data.picture
+        })
+        .catch()
+      this.logged = true;
+      axios.get("http://localhost:5000/api/post/")
+      .then((res) => {
+        this.posts = res.data
+        let inputFile = document.querySelector('#picture')
+        let fileName = document.querySelector('#file-name')
+        inputFile.addEventListener('change', () => {
+          fileName.textContent = inputFile.files[0].name
+        })
       })
-      .catch((err) => {
-        document.cookie = "jwt=;max-age=0";
-        this.logged = false;
-        const posts = document.querySelector('#p-not-connected')
-        posts.innerHTML = `<i class="fa-solid fa-arrow-left-long"></i> Veuillez vous connecter`;
-      });
+      .catch();
+    })
+    .catch((err) => {
+      document.cookie = "jwt=;max-age=0";
+      this.logged = false;
+      const posts = document.querySelector('#p-not-connected')
+      posts.innerHTML = `<i class="fa-solid fa-arrow-left-long"></i> Veuillez vous connecter`;
+    });
   },
 };
 </script>
 
 <style lang="scss">
 @import "../sass/variables/colors.scss";
-
-//===COLORS===
-//$scarlet
-//$pale-pink
-//$independence
-//$maximum-yellow
-//$french-sky-blue
 .one-post {
-  
   font-size: 20px;
   padding: 25px;
   padding-bottom: 20px;
@@ -383,11 +321,12 @@ export default {
   margin-left: auto;
   margin-right: auto;
 }
+
 body{
   padding-bottom: 10px;
 }
-.test,
-.test2 {
+
+.test, .test2 {
   margin-top: 20px;
 }
 
@@ -399,7 +338,6 @@ body{
   border-radius: 50%;
   transform: scale(1.5);
   object-fit: cover;
-
 }
 
 .user-infos {
@@ -414,12 +352,10 @@ body{
   width: 80%;
   border-radius: 8px;
   margin-bottom: 40px;
-
   &:hover {
     cursor: nesw-resize;
     transition: 0.2s ease-in-out;
   }
-
   &:active {
     width: 100%;
     transition: 0.2s ease-in-out;
@@ -435,7 +371,7 @@ body{
   transform: scale(1.1);
   border: none;
   &:focus{
-        outline:  none;
+    outline:  none;
   }
 }
 
@@ -474,7 +410,6 @@ body{
   border-radius: 50px;
   color: rgb(0, 0, 0);
   cursor: pointer;
-
   &:hover {
     transition: 0.2s;
     background-color: rgb(122, 19, 148);
@@ -490,7 +425,6 @@ body{
   border-radius: 50%;
   color: rgb(0, 0, 0);
   cursor: pointer;
-
   &:hover {
     transition: 0.2s;
     background-color: rgb(10, 94, 113);
@@ -506,7 +440,6 @@ body{
   border-radius: 50%;
   color: rgb(0, 0, 0);
   cursor: pointer;
-
   &:hover {
     transition: 0.4s;
     background-color: rgb(175, 113, 7);
@@ -522,7 +455,6 @@ body{
   border-radius: 50%;
   color: rgb(0, 0, 0);
   cursor: pointer;
-
   &:hover {
     transition: 0.4s;
     background-color: rgb(168, 35, 35);
@@ -539,7 +471,6 @@ body{
   color: rgb(0, 0, 0);
   cursor: pointer;
   margin-top: 30px;
-
   &:hover {
     transition: 0.4s;
     background-color: rgb(17, 105, 27);
@@ -556,7 +487,6 @@ body{
   color: rgb(0, 0, 0);
   margin-top: 30px;
   cursor: pointer;
-
   &:hover {
     transition: 0.4s;
     background-color: rgb(105, 17, 17);
@@ -571,7 +501,6 @@ body{
   width: 20%;
   position: relative;
   top: -20px;
-
 }
 
 .hidden-input,.picture-edit-select{
@@ -582,9 +511,8 @@ body{
   height: 30px;
   border-radius: 8px;
   opacity: 0;
-
-
 }
+
 .confirm-delete {
   margin-bottom: 20px;
   font-size: 15px;
@@ -607,7 +535,7 @@ body{
   font-weight: bold;
   color: rgb(224, 224, 224);
   margin-bottom: 20px;
-   word-wrap: break-word;
+  word-wrap: break-word;
   width: 85%;
   line-height: 40px;
 
@@ -632,18 +560,16 @@ label#design-input-file {
   margin-bottom: 20px;
   transition: 0.5s;
   color: rgb(0, 0, 0);
-  
-   background-color: rgb(105, 166, 239);
+  background-color: rgb(105, 166, 239);
   border: solid 1px black;
   font-weight: bold;
   font-size: 15px;
   padding: 10px 20px;
   border-radius: 8px;
-
   &:hover {
     cursor: pointer;
     transition: 0.5s;
-   background-color: rgb(20, 45, 79);
+    background-color: rgb(20, 45, 79);
     color: rgb(255, 251, 251);
     transform: scale(1.03);
     box-shadow: 1px 1px 1px black;
@@ -654,19 +580,18 @@ label#design-input-file {
   font-size: 15px;
   font-weight: bold;
   margin-bottom: 20px;
-
 }
 
 #new-file-name {
   margin-bottom: 20px;
   font-size: 15px;
 }
+
 .new-design-edit {
   margin-bottom: 20px;
   transition: 0.5s;
   color: rgb(0, 0, 0);
-     background-color: rgb(105, 166, 239);
-  
+  background-color: rgb(105, 166, 239);
   border: solid 1px black;
   font-weight: bold;
   font-size: 15px;
@@ -675,13 +600,11 @@ label#design-input-file {
   height: 40px;
   width: 200px;
   overflow: hidden;
-   
   cursor: pointer;
-
   &:hover {
     cursor: pointer;
     transition: 0.5s;
- background-color: rgb(20, 45, 79);
+    background-color: rgb(20, 45, 79);
     color: rgb(255, 255, 255);
     transform: scale(1.03);
     box-shadow: 1px 1px 1px black;
@@ -691,7 +614,6 @@ label#design-input-file {
 .delete-picture-edit {
   transition: 0.5s;
   color: rgb(0, 0, 0);
-  
   border: solid 1px black;
   background-color: rgb(239, 105, 105);
   font-weight: bold;
@@ -700,12 +622,10 @@ label#design-input-file {
   border-radius: 8px;
   margin-top: 20px;
   margin-bottom: 20px;
-
   &:hover {
     cursor: pointer;
     transition: 0.5s;
     background-color: rgb(79, 20, 20);
-    
     color: rgb(255, 247, 247);
     transform: scale(1.03);
     box-shadow: 1px 1px 1px black;
@@ -714,11 +634,8 @@ label#design-input-file {
 
 #btn-new-post{
   margin-top: 20px;
-
-
-   transition: 0.5s;
+  transition: 0.5s;
   color: rgb(0, 0, 0);
-  
   border: solid 1px black;
   background-color: rgb(105, 161, 239);
   font-weight: bold;
@@ -727,7 +644,6 @@ label#design-input-file {
   border-radius: 8px;
   margin-top: 20px;
   margin-bottom: 20px;
-
   &:hover {
     cursor: pointer;
     transition: 0.5s;
@@ -736,7 +652,6 @@ label#design-input-file {
     transform: scale(1.03);
     box-shadow: 1px 1px 1px black;
   }
-
 }
 
 .post-footer{
@@ -748,39 +663,43 @@ label#design-input-file {
 }
 
 .design-like-number-own-post{
-       position: relative; 
-        top:-63px; 
-        left:-37px;
-        font-weight: bold;
-        box-shadow: 1px 1px 2px rgba(18, 14, 14, 0.291);
-        background:rgb(251, 255, 201);
-        color: rgb(0, 0, 0);
-        padding: 1px 4px;
-        font-size: 13px;
-        border-radius: 100px;
+  position: relative; 
+  top:-63px; 
+  left:-37px;
+  font-weight: bold;
+  box-shadow: 1px 1px 2px rgba(18, 14, 14, 0.291);
+  background:rgb(251, 255, 201);
+  color: rgb(0, 0, 0);
+  padding: 1px 4px;
+  font-size: 13px;
+  border-radius: 100px;
 }
+
 .design-like-number{
-       position: relative; 
-        top:-63px; 
-        left:13px;
-        font-weight: bold;
-        box-shadow: 1px 1px 2px rgba(18, 14, 14, 0.291);
-        background:rgb(251, 255, 201);
-        color: rgb(0, 0, 0);
-        padding: 1px 4px;
-        font-size: 13px;
-        border-radius: 100px;
+  position: relative; 
+  top:-63px; 
+  left:13px;
+  font-weight: bold;
+  box-shadow: 1px 1px 2px rgba(18, 14, 14, 0.291);
+  background:rgb(251, 255, 201);
+  color: rgb(0, 0, 0);
+  padding: 1px 4px;
+  font-size: 13px;
+  border-radius: 100px;
 }
+
 .deleted-picture{
   transition: 0.5s;
   opacity: 0.7;
   filter: grayscale(1);
 
 }
+
 .p-modify{
   margin-bottom: 20px;
   
 }
+
 .picture-edit-select{
   padding: 0;
 }
@@ -815,7 +734,6 @@ label#design-input-file {
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.227);
 }
 
-
 .bubble-likes{
   position: relative;
   top: -34px;
@@ -833,5 +751,4 @@ label#design-input-file {
 #posts > div > div.post-footer > div > i.fa-heart.btn-like.fa-solid, #posts > div > div.post-footer > div > i.fa-thumbs-up.btn-like.fa-solid{
   height: 20px;
 }
-
 </style>

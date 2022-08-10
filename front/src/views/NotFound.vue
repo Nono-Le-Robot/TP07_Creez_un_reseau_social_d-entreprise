@@ -14,10 +14,12 @@ export default {};
 #return-error{
   font-size: 30px;
 }
+
 #redirectToMain {
   font-weight: bold;
   color: rgb(117, 117, 213);
 }
+
 #not-found{
       height: 300px;
       width: 80%;
@@ -25,6 +27,7 @@ export default {};
       margin-left: auto;
       margin-right: auto;
 }
+
 .fa-arrow-left-long#arrow-indicator{
   position: absolute;
   top: 70px;

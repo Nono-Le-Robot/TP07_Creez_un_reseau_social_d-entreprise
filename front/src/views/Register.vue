@@ -20,21 +20,14 @@
       <input type="password" name="password" id="password" v-model="password" />
       <br />
       <button type="submit" v-on:click="sendUserData()"><i class="fa-solid fa-user-plus"></i>S'inscrire</button>
-
-      <div id="response">
-
-      </div>
+      <div id="response"></div>
     </form>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import topNav from '@/components/LinkNav.vue'
 export default {
-  components:{
-    topNav
-  },
   data() {
     return {
       users: null,
@@ -46,8 +39,7 @@ export default {
   },
   methods: {
     sendUserData() {
-      axios
-        .post("http://localhost:5000/api/user/register/", {
+      axios.post("http://localhost:5000/api/user/register/", {
           firstname: this.firstname,
           lastname: this.lastname,
           email: this.email,
@@ -56,7 +48,6 @@ export default {
         .then(function (data) {
           response.innerHTML = `<p>Création réussie !<br>  redirection dans 3 secondes...</p><br>`;
           response.style.color = "rgb(63, 211, 61)";
-
           let timerToRedirect = 3;
           setInterval(() => {
             timerToRedirect--;
@@ -79,7 +70,6 @@ export default {
 
 <style lang="scss">
 #card{
-
   background-color: #4E5566;
   color: rgb(255, 255, 255);
   width: 500px;
@@ -89,15 +79,18 @@ export default {
   padding: 50px 0px 0px 0px;
   margin-top: 0;
 }
+
 h1{
   font-weight: bold;
   margin-bottom: 10px;
   position: relative;
   top: -20px;
 }
+
 h2{
   font-weight: bold;
 }
+
 input{
   margin-bottom: 40px;
   border-radius: 5px;
@@ -109,6 +102,7 @@ input{
     outline: none;
   }
 }
+
 button{
   border-radius: 4px;
   padding: 10px 15px;
@@ -125,6 +119,7 @@ button{
   }
   transition: 0.5s;
 }
+
 #response{
   padding-bottom: 10px;
   padding-top: 20px;
@@ -134,13 +129,16 @@ button{
   margin-left: auto;
   margin-right: auto;
 }
+
 .fa-user-plus{
     
     transform: scale(0.8);
 }
+
 .fa-solid{
 margin-right: 5px;
 }
+
 #card > form > button > i{
   margin-left: 0px;
 }
@@ -148,8 +146,6 @@ margin-right: 5px;
 .fa-key{
   margin-top: 0;
 }
-
-
 </style>
 
 

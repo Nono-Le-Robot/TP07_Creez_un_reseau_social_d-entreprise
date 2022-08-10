@@ -19,8 +19,6 @@
 
 <script>
 import axios from "axios";
-
-
 export default {
   data() {
     return {
@@ -34,25 +32,23 @@ export default {
         email: this.email,
         password: this.password,
       })
-        .then(function (data) {
-              response.innerHTML = `<p>Connexion réussie</p><br>`
-          response.style.color = 'rgb(63, 211, 61)'
-          document.cookie = `jwt=${data.data.token}; domain=localhost; secure; path=/`
-          axios.get(`http://localhost:5000/jwtid/${data.data.token}`)
-            .then(() => {
-              setTimeout(() => {
-                window.location.href = `../`
-              },500)
-              })
-            .catch(err => {
-              response.innerHTML = `<p>La connexion a échouée</p><br>`
-              response.style.color = 'rgb(211, 61, 61)'
-            })
+      .then(function (data) {
+        response.innerHTML = `<p>Connexion réussie</p><br>`
+        response.style.color = 'rgb(63, 211, 61)'
+        document.cookie = `jwt=${data.data.token}; domain=localhost; secure; path=/`
+        axios.get(`http://localhost:5000/jwtid/${data.data.token}`)
+        .then(() => {
+          setTimeout(() => {window.location.href = `../`},500)
         })
-        .catch(function (error) {
-            response.innerHTML = `<p>La connexion a échouée</p><br>`
+        .catch(err => {
+          response.innerHTML = `<p>La connexion a échouée</p><br>`
           response.style.color = 'rgb(211, 61, 61)'
-        });
+        })
+      })
+      .catch(function (error) {
+        response.innerHTML = `<p>La connexion a échouée</p><br>`
+        response.style.color = 'rgb(211, 61, 61)'
+      });
     },
   },
 };
@@ -69,15 +65,18 @@ export default {
   border-radius: 4px;
   padding: 50px 0px 20px 0px;
 }
+
 h1{
   font-weight: bold;
   margin-bottom: 10px;
   position: relative;
   top: -20px;
 }
+
 h2{
   font-weight: bold;
 }
+
 input{
   margin-bottom: 40px;
   border-radius: 5px;
@@ -85,6 +84,7 @@ input{
   width: 180px;
   padding: 0px 10px;
 }
+
 button{
   border-radius: 4px;
   padding: 10px 15px;
@@ -101,6 +101,7 @@ button{
   }
   transition: 0.5s;
 }
+
 #response{
   padding-top: 20px;
   font-size: 20px;
@@ -108,5 +109,4 @@ button{
   padding-bottom: 20px;
   
 }
-fa{}
 </style>

@@ -1,4 +1,3 @@
-<!-- Animation credit : Lucas Bebber  (https://codepen.io/lbebber/pen/LELBEo/) -->
 <template>
   <div id="App">
     <div id="englobe-logo">
@@ -140,13 +139,6 @@ html {
   height: 900px;
 }
 
-#top-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 50px;
-}
-
 #logo {
   margin-left: auto;
   margin-right: auto;
@@ -215,7 +207,8 @@ a {
 
 .menu-item, .menu-open-button {
   transition: 1s;
-  background: #FD2D01;
+  background: #a243fc;
+  color: white;
   border-radius: 100%;
   width: 80px;
   height: 80px;
@@ -229,12 +222,17 @@ a {
   transition: transform ease-out 200ms;
   &:hover{
     transition: 1s;
-    background: #fd4d01;
+      background: #b464ff;
   }
+  transition: 1s;
 }
 
 .menu-open {
   display: none;
+}
+
+.menu-open-button{
+  border: 3px rgb(0, 0, 0) solid;
 }
 
 .hamburger {
@@ -242,6 +240,7 @@ a {
   height: 3px;
   background: black;
   display: block;
+  color: #fcfcfc;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -275,7 +274,9 @@ a {
 }
 
 .menu {
+  
   position:fixed;
+  color: #fcfcfc;
   left: 38px;
   top: -55px;
   margin-left: -190px;
@@ -314,20 +315,13 @@ a {
   transition-duration: 310ms;
 }
 
-.menu-open-button {
-  z-index: 2;
-  transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  transition-duration: 400ms;
-  transform: scale(1.1, 1.1) translate3d(0, 0, 0);
-  cursor: pointer;
-}
-
 .menu-open-button:hover {
   transform: scale(1.2, 1.2) translate3d(0, 0, 0);
 }
 
 .menu-open:checked + .menu-open-button {
   transition-timing-function: linear;
+  color: white;
   transition-duration: 200ms;
   transform: scale(0.8, 0.8) translate3d(0, 0, 0);
 }
@@ -380,10 +374,10 @@ a {
 }
 
 #App > nav > a:nth-child(5){
-  background-color: rgb(255, 156, 81);
+  background-color: rgb(251, 193, 59);
       &:hover{
   transition: 0.2s;
-  background-color: rgb(161, 93, 41);
+  background-color: rgb(183, 104, 0);
   }
 }
 
@@ -414,4 +408,14 @@ margin-left: 20px;
   margin-left: 14px;
   margin-top: 32px;
 }
+
+.menu-open-button {
+  z-index: 2;
+  transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition-duration: 400ms;
+  transform: scale(1.1, 1.1) translate3d(0, 0, 0);
+  cursor: pointer;
+  color: white;
+}
+
 </style>
