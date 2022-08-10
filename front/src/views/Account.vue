@@ -4,7 +4,10 @@
         <br>
         <h1><i class="fa-solid fa-file-user"></i>Mon compte :</h1>
         <br>
-        <img id="picture-profil" :src='picture' alt="" srcset="">
+        <div>
+        <img :style="picture === 'http://localhost:5000/images/default/default.png' ? 'left: 0px;' : '' " id="picture-profil" :src='picture' alt="" srcset="">
+        <i v-if="(picture != 'http://localhost:5000/images/default/default.png')" @click="setDefault()" class="fa-solid fa-xmark default-picture"></i>
+        </div>
         <br>
         <p>Nom : {{ lastname }} </p>
         <br>
@@ -13,7 +16,7 @@
         <p>Email : {{ email }} </p>
         <br>
         <br>
-                 <div class="separator"></div>
+        <div class="separator"></div>
         <br>
         <br>
         <form id="newPost" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="newPost" >
@@ -52,6 +55,11 @@ export default {
     };
   },
   methods: {
+    setDefault(){
+      axios.put(`http://localhost:5000/api/user/${this.connectedId}`)
+      .then(() => window.location.reload())
+      .catch()
+    },
     editProfil() {
         let imgPictureEdit =  document.querySelector("#picture-profil-edit")
             if(imgPictureEdit.files[0]){
@@ -68,23 +76,13 @@ export default {
             let posts = res.data
             let postedByUser = posts.filter(p => p.posterId === this.connectedId)
             for (let i = 0; i < postedByUser.length; i++) {
-                  axios.put(`http://localhost:5000/api/post/${postedByUser[i]._id}`, {
-                      posterProfil : updatedUser.data.picture
-                  })
+                  axios.put(`http://localhost:5000/api/post/${postedByUser[i]._id}`, {posterProfil : updatedUser.data.picture})
                   .then()
                   .catch(err => console.log(err))
             }
             window.location.reload()
           })
           .catch(err => console.log(err))
-
-
-
-
-
-
-         
-        
         })
         .catch()
             }
@@ -162,6 +160,8 @@ html{
 #picture-profil{
   width: 100px;
   height: 100px;
+  position: relative;
+  left: 25px;
   border-radius: 50%;
   object-fit:cover;
 }
@@ -213,4 +213,10 @@ html{
       transition: 0.5s;
       border-radius: 8px;
 }
+  .default-picture{
+    position: relative;
+    left: -10px;
+    transform: scale(0.6);
+    top: -80px;
+  }
 </style>

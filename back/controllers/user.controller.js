@@ -20,7 +20,7 @@ module.exports.getOneUser = async (req,res) => {
 
 module.exports.updateUser = (req, res) => {
       const updatedRecord = {
-        picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/profil/${req.file.filename}`: "",
+        picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/profil/${req.file.filename}`: "http://localhost:5000/images/default/default.png",
       };
       UserModel.findById(req.params.id)
       .then((post) => {
