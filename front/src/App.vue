@@ -43,12 +43,15 @@ export default {
       axios.get(`http://localhost:5000/jwtid/${token}`)
       .then((user) => {
         axios.get(`http://localhost:5000/api/user/${user.data}`)
-        .then((infosUser) => this.logged=true)
+        .then((infosUser) => {
+          this.logged=true
+        })
         .catch()
       })
       .catch()
     }
   }
+
 }
 </script>
 
@@ -417,5 +420,6 @@ margin-left: 20px;
   cursor: pointer;
   color: white;
 }
+
 
 </style>

@@ -7,7 +7,7 @@
         <br>
         <label id="design-input-file" for="picture"> <i class="fa-solid fa-file-arrow-up"></i> Choisir un fichier...</label>
         <input class="input-file-new-post" type="file" name="picture" id="picture" />
-        <p style="font-size:10px; margin-bottom: 20px;">(format : png,jpg,gif)</p>
+        <p style="font-size:12px; margin-bottom: 20px;">(format : png,jpg,gif)</p>
         <span>
           <strong id="new-file-name">Nom du fichier : </strong>
           <span id="file-name">Aucun</span>
@@ -21,7 +21,7 @@
       <div v-for="(post,index) in posts" :key="post.id"  id="posts">
         <div class='one-post' >
           <br>
-          <div class='user-infos'>
+          <div class='user-infos load'>
             <img id='picture-profil-post' :src="post.posterProfil" alt="" srcset="">
             <p>{{ post.posterFirstname }} {{ post.posterLastname }} : </p>
           </div>
@@ -42,7 +42,7 @@
                     <p> <i class="fa-solid fa-file-arrow-up"></i>  Choisir un fichier...</p>
                     <input @change="previewFiles" id="picture-edit" type="file" name="picture-edit" class="input-file-new-post picture-edit-select" />
                   </button>
-                  <p class='supported-formats' style="font-size:10px; margin-bottom:20px;">(format : png,jpg,gif)</p>
+                  <p class='supported-formats' style="font-size:12px; margin-bottom:20px;">(format : png,jpg,gif)</p>
                 </div>
                 <strong id="new-file-name">Nom du fichier : </strong>
                 <span class='get-name' id="file-name">{{ file.name }}</span>
@@ -302,7 +302,7 @@ export default {
 }
 
 .hidden {
-  display: none;
+  opacity: 0;
 }
 
 #new-post {
@@ -418,7 +418,7 @@ body{
 }
 
 .fa-thumbs-up {
-  transition: 0.2s;
+  transition: 0.6s;
   width: 20px;
   background-color: rgb(130, 242, 255);
   padding: 10px;
@@ -426,7 +426,7 @@ body{
   color: rgb(0, 0, 0);
   cursor: pointer;
   &:hover {
-    transition: 0.2s;
+    transition: 0.6s;
     background-color: rgb(10, 94, 113);
     color: white;
   }
@@ -690,8 +690,8 @@ label#design-input-file {
 
 .deleted-picture{
   transition: 0.5s;
-  opacity: 0.7;
-  filter: grayscale(1);
+  opacity: 0.4;
+  filter: grayscale(2);
 
 }
 

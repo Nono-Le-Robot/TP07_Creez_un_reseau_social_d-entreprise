@@ -2,7 +2,6 @@ const router = require('express').Router();
 const postController = require('../controllers/post.controller')
 const multerPost = require('../middleware/multerPost')
 
-
 router.get("/", postController.readPost)
 router.get('/:id', postController.readOnePost)
 router.post("/", multerPost, postController.createPost)
@@ -11,7 +10,6 @@ router.delete("/:id", postController.deletePost)
 router.patch('/like-post/:id', postController.likePost)
 router.patch('/unlike-post/:id', postController.unlikePost)
 
-//comments
 router.patch('/comment-post/:id', postController.commentPost )
 router.patch('/edit-comment-post/:id', postController.editCommentPost )
 router.patch('/delete-comment-post/:id', postController.deleteCommentPost )

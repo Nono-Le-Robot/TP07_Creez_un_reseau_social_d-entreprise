@@ -17,23 +17,23 @@ module.exports.readOnePost = (req, res) => {
 };
 
 module.exports.createPost = (req, res) => {
-    const date = new Date(Date.now())
-    const days = date.toLocaleDateString()
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const finalDate = `${days} à ${hours}:${minutes}`
-    const newPost = new PostModel({
-    posterId: req.body.posterId,
-    posterFirstname : req.body.posterFirstname,
-    posterLastname : req.body.posterLastname,
-    posterProfil : req.body.posterProfil,
-    message: req.body.message,
-    video: req.body.video,
-    likers: [],
-    selected : false,
-    comments: [],
-    picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/post/${req.file.filename}`: "http://localhost:5000/images/default/deleted-picture.jpg",
-    date: finalDate
+  const date = new Date(Date.now())
+  const days = date.toLocaleDateString()
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const finalDate = `${days} à ${hours}:${minutes}`
+  const newPost = new PostModel({
+  posterId: req.body.posterId,
+  posterFirstname : req.body.posterFirstname,
+  posterLastname : req.body.posterLastname,
+  posterProfil : req.body.posterProfil,
+  message: req.body.message,
+  video: req.body.video,
+  likers: [],
+  selected : false,
+  comments: [],
+  picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/post/${req.file.filename}`: "http://localhost:5000/images/default/deleted-picture.jpg",
+  date: finalDate
   });
   newPost.save()
   .then((postCreated) => { res.status(201).json(postCreated)})
@@ -46,40 +46,40 @@ module.exports.updatePost = (req, res) => {
   }
   PostModel.findById(req.params.id)
   .then((post) => {
-  const updatedRecord = {
+    const updatedRecord = {
     message: req.body.message,
     picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/post/${req.file.filename}`: req.body.picture,
     posterProfil : req.body.posterProfil
-  };
-  PostModel.findByIdAndUpdate(
-    req.params.id,
-    { $set: updatedRecord },
-    { new: true })
-  .then((updatedPost) => {
-    let pictureUrl = post.picture
-    if(pictureUrl){
-      if(req.file){
-        if(pictureUrl === 'http://localhost:5000/images/default/deleted-picture.jpg'){
+    };
+    PostModel.findByIdAndUpdate(
+      req.params.id,
+      { $set: updatedRecord },
+      { new: true })
+    .then((updatedPost) => {
+      let pictureUrl = post.picture
+      if(pictureUrl){
+        if(req.file){
+          if(pictureUrl === 'http://localhost:5000/images/default/deleted-picture.jpg'){
+          }
+          else{
+            let newString = pictureUrl.slice(22)
+            newString = newString.split(' ').join('_')
+            fs.unlink(`${newString}`, () => {
+            });
+          }
         }
-        else{
+        else if(req.body.picture === 'http://localhost:5000/images/default/deleted-picture.jpg'){
           let newString = pictureUrl.slice(22)
           newString = newString.split(' ').join('_')
           fs.unlink(`${newString}`, () => {
           });
         }
       }
-      else if(req.body.picture === 'http://localhost:5000/images/default/deleted-picture.jpg'){
-        let newString = pictureUrl.slice(22)
-        newString = newString.split(' ').join('_')
-        fs.unlink(`${newString}`, () => {
-        });
-      }
-    }
-    res.status(201).send(updatedPost);
+      res.status(201).send(updatedPost);
+    })
+    .catch((err) => res.status(400).send(err))
   })
   .catch((err) => res.status(400).send(err))
-})
-.catch((err) => res.status(400).send(err))
 };
 
 module.exports.deletePost = (req, res) => {
@@ -91,29 +91,29 @@ module.exports.deletePost = (req, res) => {
     let newString = post.picture.slice(22)
     newString = newString.split(' ').join('_')
     if(post.picture != null){
-    if(post.picture === 'http://localhost:5000/images/default/deleted-picture.jpg'){
+      if(post.picture === 'http://localhost:5000/images/default/deleted-picture.jpg'){
+        PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
+          if (!err) res.status(200).send(post);
+          else res.status(400).send("Delete error :" + err);
+        }); 
+      }
+      else{
+        fs.unlink(`${newString}`, () => {
+          PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
+            if (!err) res.status(200).send(post);
+            else res.status(400).send("Delete error :" + err);
+          }); 
+        });
+      }
+    }
+    else{
       PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
         if (!err) res.status(200).send(post);
         else res.status(400).send("Delete error :" + err);
       }); 
     }
-    else{
-      fs.unlink(`${newString}`, () => {
-        PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
-          if (!err) res.status(200).send(post);
-          else res.status(400).send("Delete error :" + err);
-        }); 
-      });
-    }
-  }
-  else{
-    PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
-      if (!err) res.status(200).send(post);
-      else res.status(400).send("Delete error :" + err);
-    }); 
-  }
-    })
-    .catch((err) => res.status(400).send(err))
+  })
+  .catch((err) => res.status(400).send(err))
 };
 
 module.exports.likePost = async (req, res, next) => {
@@ -138,7 +138,8 @@ module.exports.likePost = async (req, res, next) => {
         res.status(200).send("Like success");
       }
     );
-  } catch {}
+  } 
+  catch {}
 };
 
 module.exports.unlikePost = async (req, res) => {
@@ -163,7 +164,8 @@ module.exports.unlikePost = async (req, res) => {
         res.status(200).send("Unlike success");
       }
     );
-  } catch {}
+  } 
+  catch {}
 };
 
 module.exports.commentPost =  async (req,res) => {
@@ -197,37 +199,37 @@ module.exports.editCommentPost = (req,res)=> {
   if (!ObjectId.isValid(req.params.id)) {
     return res.status(400).send("ID unknown : " + req.params.id);
   }
-    PostModel.findById(
-      req.params.id,
+  PostModel.findById(
+    req.params.id,
+  )
+  .then(docs => {
+    const theComment = docs.comments.find((comment) =>
+    comment._id.equals(req.body.commentId)
     )
-    .then(docs => {
-      const theComment = docs.comments.find((comment) =>
-      comment._id.equals(req.body.commentId)
-      )
-      if(!theComment) return res.status(404).send('comment not found')
-      theComment.text = req.body.text
-      return docs.save((err) => {
-        if(!err) return res.status(200).send(docs)
-        return res.status(500).send(err)
-      })
+    if(!theComment) return res.status(404).send('comment not found')
+    theComment.text = req.body.text
+    return docs.save((err) => {
+      if(!err) return res.status(200).send(docs)
+      return res.status(500).send(err)
     })
-    .catch(err => res.status(400).send(err))
+  })
+  .catch(err => res.status(400).send(err))
 }
 
 module.exports.deleteCommentPost = async (req,res)=> {
   if (!ObjectId.isValid(req.params.id)) {
     return res.status(400).send("ID unknown : " + req.params.id);
   }
-    await PostModel.findByIdAndUpdate(
-      req.params.id,
-      { $pull : {
+  await PostModel.findByIdAndUpdate(
+    req.params.id,
+    { $pull : {
         comments : {
           _id : req.body.commentId
         }
       }
     },
     {new : true}
-    )
-    .then(docs => res.status(200).send(docs))
-    .catch(err => res.status(400).send(err))
-  }
+  )
+  .then(docs => res.status(200).send(docs))
+  .catch(err => res.status(400).send(err))
+}

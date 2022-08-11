@@ -4,7 +4,7 @@
       <br>
       <h1><i class="fa-solid fa-file-user"></i>Mon compte :</h1>
       <br>
-      <div>
+      <div class="load">
         <img :style="picture === 'http://localhost:5000/images/default/default.png' ? 'left: 0px;' : '' " id="picture-profil" :src='picture' alt="" srcset="">
         <i v-if="(picture != 'http://localhost:5000/images/default/default.png')" @click="setDefault()" class="fa-solid fa-xmark default-picture"></i>
       </div>
@@ -54,8 +54,19 @@ export default {
   },
   methods: {
     setDefault(){
-      axios.put(`http://localhost:5000/api/user/${this.connectedId}`)
-      .then(() => window.location.reload())
+      axios.put(`http://localhost:5000/api/user/${this.connectedId}`,{picture : ''})
+      .then((user) => {
+        axios.get('http://localhost:5000/api/post')
+        .then((res) => {
+          let posts = res.data
+          let postedByUser = posts.filter(p => p.posterId === this.connectedId)
+          for (let i = 0; i < postedByUser.length; i++) {
+                axios.put(`http://localhost:5000/api/post/${postedByUser[i]._id}`, {posterProfil : "http://localhost:5000/images/default/default.png"})
+                .then(() => window.location.reload())
+                .catch(err => console.log(err))
+            }
+        })
+      })
       .catch()
     },
     editProfil() {
@@ -152,12 +163,14 @@ html{
 }
 
 #picture-profil{
-  width: 100px;
-  height: 100px;
+  width: 210px;
+  height: 210px;
+  border: 1px  black solid;
   position: relative;
   left: 25px;
-  border-radius: 50%;
   object-fit:cover;
+  border-radius: 50%;
+  margin-bottom: 20px;
 }
 
 #picture-profil-edit{
@@ -209,8 +222,10 @@ html{
 
 .default-picture{
     position: relative;
-    left: -10px;
-    transform: scale(0.6);
-    top: -80px;
+    left: -25px;
+    transform: scale(0.9);
+    top: -195px;
 }
+
+
 </style>

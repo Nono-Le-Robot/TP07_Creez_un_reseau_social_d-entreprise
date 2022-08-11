@@ -1,5 +1,4 @@
 const UserModel = require("../models/user.model");
-const { uploadErrors } = require("../utils/errors.utils");
 
 exports.uploadProfil = async (req, res) => {
     try {
@@ -10,17 +9,12 @@ exports.uploadProfil = async (req, res) => {
             },
             {new:true, upsert : true , setDefaultsOnInsert : true},
             (err,docs) => {
-               console.log(req.file.filename);
-               if (!err) return res.send(docs);
-               else return res.status(500).send({ message: err})
-               
-           }
-       )
-     }catch (err) {
-       return res.status(500).send({ message: err.message})
-     }
+                console.log(req.file.filename);
+                if (!err) return res.send(docs);
+                else return res.status(500).send({ message: err})
+            }
+        )
+    }catch (err) {
+        return res.status(500).send({ message: err.message})
+    }
 }
-
-
-
-

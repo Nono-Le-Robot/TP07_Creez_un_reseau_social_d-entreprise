@@ -12,15 +12,13 @@ const storage = multerPost.diskStorage({
     callback(null, 'images/post');
   },
   filename: (req, file, callback) => {
-    
     let newName = file.originalname
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '');
-newName = newName
+    newName = newName
     .split(' ')
     .join('_')
     .toLowerCase();
-    
     const extension = MIME_TYPES[file.mimetype];
     callback(null, Date.now() + newName);
   }
