@@ -21,7 +21,7 @@
 
 - Pour démarrer les serveurs, ouvrez le fichier ```start-server.bat```
 
-    - Rendez-vous sur l'adresse retournée par le terminal backend (http://localhost:PORT)
+    - Rendez-vous sur l'adresse retournée par le terminal front (http://localhost:PORT)
     
     - Si la Connexion a échouée et que le port retourne :  ```undefined```, vérifiez bien les variables d'environnements retournées par le terminal du serveur backend et verifiez qu'elles sont correctes
         - Exemple : 
