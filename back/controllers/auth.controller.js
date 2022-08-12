@@ -36,7 +36,7 @@ module.exports.signIn = async (req,res) => {
 
 
             function generateAcessToken(data){
-                return jwt.sign({data} ,process.env.TOKEN_SECRET, {expiresIn : '1800s'})
+                return jwt.sign({data} ,process.env.TOKEN_SECRET, {expiresIn : '30d'})
                 // res.cookie("jwt",token,{httpOnly : true,  maxAge: durationTokenLogin})
             }
                 const acessToken = generateAcessToken(user)

@@ -31,7 +31,7 @@ module.exports.requireAuth = (req, res, next) => {
                 res.status(400).json('token not found')
             } 
             else{
-                res.status(200).send(decodedToken.userId)
+                res.status(200).send(decodedToken.data._id)
                 next()
             }
         })

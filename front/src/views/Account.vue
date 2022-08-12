@@ -58,12 +58,12 @@ export default {
       .then((user) => {
         axios.get('http://localhost:5000/api/post')
         .then((res) => {
-          let posts = res.data
+          let posts = res.data.allPosts
           let postedByUser = posts.filter(p => p.posterId === this.connectedId)
           for (let i = 0; i < postedByUser.length; i++) {
                 axios.put(`http://localhost:5000/api/post/${postedByUser[i]._id}`, {posterProfil : "http://localhost:5000/images/default/default.png"})
                 .then(() => window.location.reload())
-                .catch(err => console.log(err))
+                .catch((err) => console.log(err))
             }
         })
       })
@@ -82,7 +82,7 @@ export default {
         .then((updatedUser) => {
           axios.get('http://localhost:5000/api/post')
           .then((res) => {
-            let posts = res.data
+            let posts = res.data.allPosts
             let postedByUser = posts.filter(p => p.posterId === this.connectedId)
             for (let i = 0; i < postedByUser.length; i++) {
                   axios.put(`http://localhost:5000/api/post/${postedByUser[i]._id}`, {posterProfil : updatedUser.data.picture})
@@ -106,11 +106,10 @@ export default {
     }
   },
   mounted() {
-    let token = document.cookie.slice(4);
-    axios.get(`http://localhost:5000/jwtid/${token}`)
-      .then((res) => {
+    axios.get('http://localhost:5000/api/user/me')
+    .then((user) => {
         this.logged = true;
-        axios.get(`http://localhost:5000/api/user/${res.data}`)
+        axios.get(`http://localhost:5000/api/user/${user.data.data._id}`)
         .then((user) => {
           this.firstname = user.data.firstname
           this.lastname = user.data.lastname
@@ -125,9 +124,7 @@ export default {
         })
         .catch();
       })
-      .catch((err) => {
-      document.cookie = "jwt=;max-age=0";
-    });
+    .catch((err) => console.log(err))
   },
 }
 </script>
