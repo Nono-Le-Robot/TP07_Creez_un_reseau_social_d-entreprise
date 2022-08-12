@@ -6,13 +6,18 @@ const fs = require('fs')
 
 module.exports.readPost = (req, res) => {
   PostModel.find().sort({ createdAt : -1 })
-  .then(findPosts => res.status(200).json(findPosts))
+  .then(findPosts => {
+    res.status(200).json({requestById : req.user.data._id , allPosts : findPosts})
+  })
+  
   .catch(error => res.status(404).json({ error }))
 };
 
 module.exports.readOnePost = (req, res) => {
   PostModel.findById(req.params.id)
-  .then(findPosts => res.status(200).json(findPosts))
+  .then(findPosts => {
+    res.status(200).json({requestById : req.user.data._id , post : findPosts})
+  })
   .catch(error => res.status(404).json({ error }))
 };
 
@@ -34,9 +39,11 @@ module.exports.createPost = (req, res) => {
   comments: [],
   picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/post/${req.file.filename}`: "http://localhost:5000/images/default/deleted-picture.jpg",
   date: finalDate
-  });
+  })
   newPost.save()
-  .then((postCreated) => { res.status(201).json(postCreated)})
+  .then((postCreated) => { 
+    res.status(200).json({requestById : req.user.data._id , createdPost : postCreated});
+  })
   .catch(error =>res.status(400).json({ error }))
 }
 
@@ -88,30 +95,42 @@ module.exports.deletePost = (req, res) => {
   }
   PostModel.findById(req.params.id)
   .then((post) =>{
-    let newString = post.picture.slice(22)
-    newString = newString.split(' ').join('_')
-    if(post.picture != null){
-      if(post.picture === 'http://localhost:5000/images/default/deleted-picture.jpg'){
-        PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
-          if (!err) res.status(200).send(post);
-          else res.status(400).send("Delete error :" + err);
-        }); 
+
+    const postedBy = post.posterId
+    const connectedUser = req.user.data._id
+
+    if(postedBy === connectedUser){
+      let newString = post.picture.slice(22)
+      newString = newString.split(' ').join('_')
+      if(post.picture != null){
+        if(post.picture === 'http://localhost:5000/images/default/deleted-picture.jpg'){
+  
+  
+          PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
+            if(!err) res.status(200).json({requestById : req.user.data._id , deletedPost : docs });
+            else res.status(400).send("Delete error :" + err);
+          })
+      
+      
+      
+        }
+        else{
+          fs.unlink(`${newString}`, () => {
+            PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
+              if(!err) res.status(200).json({requestById : req.user.data._id , deletedPost : docs });
+              else res.status(400).send("Delete error :" + err);
+            }) 
+          });
+        }
       }
       else{
-        fs.unlink(`${newString}`, () => {
-          PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
-            if (!err) res.status(200).send(post);
-            else res.status(400).send("Delete error :" + err);
-          }); 
-        });
+        PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
+          if(!err) res.status(200).json({requestById : req.user.data._id , deletedPost : docs });
+          else res.status(400).send("Delete error :" + err);
+        })
       }
     }
-    else{
-      PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
-        if (!err) res.status(200).send(post);
-        else res.status(400).send("Delete error :" + err);
-      }); 
-    }
+    else res.status(400).send('unauthorized request')
   })
   .catch((err) => res.status(400).send(err))
 };
