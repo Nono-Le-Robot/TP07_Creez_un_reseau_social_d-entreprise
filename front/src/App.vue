@@ -1,5 +1,6 @@
 <template>
   <div id="App">
+    
     <div id="englobe-logo">
       <router-link to="/"><img id="logo" src="./assets/logo.png" alt="Photo du logo de groupomania, représentant une planéte en line-art" /></router-link>
     </div>
@@ -21,7 +22,7 @@
   </div>
   <router-view />
 </template>
-
+<script src="https://kit.fontawesome.com/0fa8c4bbfb.js" crossorigin="anonymous"></script>
 <script>
 import axios from "axios";
 export default {
