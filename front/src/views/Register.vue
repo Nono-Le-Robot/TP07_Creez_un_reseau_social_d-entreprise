@@ -3,13 +3,16 @@
     <h1>Inscription</h1>
     <label for="register"></label>
     <form v-on:submit.prevent="onSubmit" action="register">
+
+      <h2><i class="fa-solid fa-user-pen"></i>  Prénom :</h2>
+      <br />
+      <input type="text" autocomplete="off" name="firstname" id="firstname" v-model="firstname" />
+      <br />
       <h2><i class="fa-solid fa-user-pen"></i>   Nom :</h2>
       <br />
       <input type="text" autocomplete="off"  name="lastname" id="lastname" v-model="lastname" />
       <br />
-      <h2><i class="fa-solid fa-user-pen"></i>  Prénom :</h2>
-      <br />
-      <input type="text" autocomplete="off" name="firstname" id="firstname" v-model="firstname" />
+    
       <br>
       <h2><i class="fa-solid fa-at"></i>   Email :</h2>
       <br />

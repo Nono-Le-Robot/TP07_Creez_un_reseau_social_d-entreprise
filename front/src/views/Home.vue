@@ -16,7 +16,6 @@
         <br>
       </form>
     </div>
-    <p id='p-not-connected' v-if="logged === false"> <i class="fa-solid fa-arrow-left-long"></i> Veuillez vous connecter</p>
     <div v-if="logged === true">
       <div v-for="(post,index) in posts" :key="post.id"  id="posts">
         <div class='one-post' >
@@ -286,7 +285,6 @@ export default {
       document.cookie = "jwt=;max-age=0";
       this.logged = false;
       const posts = document.querySelector('#p-not-connected')
-      posts.innerHTML = `<i class="fa-solid fa-arrow-left-long"></i> Veuillez vous connecter`;
     });
   },
 };
@@ -349,9 +347,12 @@ body{
   border-radius: 50%;
   transform: scale(2);
   object-fit: cover;
+  &:hover{
+    cursor: pointer;
+  }
   &:active{
     transform: scale(8.8) translateX(-2px) translateY(12%);
-   position: absolute;
+  position: absolute;
     left: 50%;
   background: rgb(73, 70, 86) ;
   transition: 0.2s;

@@ -13,10 +13,9 @@
         <span class="hamburger hamburger-3"></span>
       </label>
       <router-link title="Social" v-if="logged === true" to="/" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-house-chimney"></i> </router-link>
-      <router-link title="Social" v-else to="/" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-house-chimney"></i> </router-link>
       <router-link title="Mon compte" v-if="logged === true" to="/account" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-user-gear"></i> </router-link>
       <router-link title="Se connecter" v-else to="/auth/login" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-key login-btn"></i> </router-link>
-      <router-link title="Se déconnecter" @click="disconnectUser()" v-if="logged === true" to="/" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-power-off"></i></router-link>
+      <router-link title="Se déconnecter" @click="disconnectUser()" v-if="logged === true" to="/auth/login" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-power-off"></i></router-link>
       <router-link title="S'enregistrer" v-else to="/auth/register" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-user-plus"></i></router-link>
     </nav>
   </div>
@@ -29,7 +28,6 @@ export default {
   methods: {
     disconnectUser() {
       localStorage.removeItem('token')
-      window.location.reload()
       this.logged = false;
     },
   },
@@ -284,6 +282,10 @@ a {
   transform: scale(0.5);
 }
 
+.menu-item{
+    border: 1px black solid;
+}
+
 .menu-item:hover {
   background: #c10000;
   color: #fcfcfc;
@@ -351,6 +353,7 @@ a {
 
 #App > nav > a:nth-child(4){
   background-color: rgb(139, 195, 255);
+
   &:hover{
   transition: 0.2s;
     background-color: rgb(84, 112, 156);
