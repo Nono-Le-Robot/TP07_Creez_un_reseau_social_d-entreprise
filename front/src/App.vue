@@ -22,7 +22,6 @@
   </div>
   <router-view />
 </template>
-<script src="https://kit.fontawesome.com/0fa8c4bbfb.js" crossorigin="anonymous"></script>
 <script>
 import axios from "axios";
 export default {
