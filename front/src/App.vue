@@ -283,7 +283,7 @@ a {
 }
 
 .menu-item{
-    border: 1px black solid;
+    border: 3px black solid;
 }
 
 .menu-item:hover {
@@ -296,11 +296,11 @@ a {
 }
 
 .menu-item:nth-child(4) {
-  transition-duration: 130ms;
+  transition-duration: 400ms;
 }
 
 .menu-item:nth-child(5) {
-  transition-duration: 190ms;
+  transition-duration: 300ms;
 }
 
 .menu-item:nth-child(6) {
@@ -327,18 +327,19 @@ a {
 }
 
 .menu-open:checked ~ .menu-item:nth-child(3) {
-  transition-duration: 160ms;
-  transform: translate3d(114.42548px, 11.48084px, 0);
+  transition-duration: 100ms;
+  transform: translate3d(112.42548px, -6.519159999999999px, 0);
+  
 }
 
 .menu-open:checked ~ .menu-item:nth-child(4) {
-  transition-duration: 240ms;
-  transform: translate3d(77.18543px, 85.2491px, 0);
+  transition-duration: 300ms;
+  transform: translate3d(91.18543px, 81.2491px, 0);
 }
 
 .menu-open:checked ~ .menu-item:nth-child(5) {
-  transition-duration: 320ms;
-  transform: translate3d(0.09158px, 114.99996px, 0);
+  transition-duration: 600ms;
+  transform: translate3d(2.0915800000000004px, 115.99995999999999px, 0);
 }
 
 .menu-open:checked ~ .menu-item:nth-child(6) {
@@ -358,7 +359,7 @@ a {
   transition: 0.2s;
     background-color: rgb(84, 112, 156);
   }
-  transition: 0.2s;
+
 }
 
 #App > nav > a:nth-child(3){
@@ -414,6 +415,7 @@ margin-left: 20px;
   cursor: pointer;
   color: white;
 }
+
 
 
 </style>
