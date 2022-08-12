@@ -55,7 +55,7 @@
             <div class="post-options-btn">
               <i :class="userLikedPosts.includes(post._id) ? 'fa-heart' : 'fa-thumbs-up'" @click="likeRequest(index, post._id)" v-if="post.selected === false"   class="btn-like fa-solid"><span class="bubble-likes">{{post.likers.length}}</span></i>
               <i @click="editPost(index, posts), hideBubble(), post.selected = true, messageEdit = post.message"  v-if="post.posterId === connectedUserId && post.selected === false  || connectedUserId === '62f2ae7fd2fc5c1305443984'&& post.selected === false"  class="fa-solid fa-pen-to-square"></i>
-              <i @click="deletePost(post._id), showBubble()" v-if="post.posterId === connectedUserId && post.selected === false || connectedUserId === '62f2ae7fd2fc5c1305443984'&& post.selected === false" class="fa-solid fa-trash"></i>
+              <i @click="deletePost(post._id), showBubble()" v-if="post.posterId === connectedUserId && post.selected === false  || connectedUserId === '62f2ae7fd2fc5c1305443984'&& post.selected === false" class="fa-solid fa-trash"></i>
               <i @click="sendPost(post._id,index,file), showBubble(), file = [], showOtherBtn(post._id, index), deletePictureChecked = false" v-if="post.selected === true" class='fa-solid fa-check confirm-btn'></i>
               <i @click="post.selected = false, file = [],messageEdit = post.message , getPosts(), showBubble(), showOtherBtn(post._id, index), deletePictureChecked = false" v-if="post.selected === true" class="fa-solid fa-xmark"></i>
             </div>
@@ -77,6 +77,9 @@ export default {
       message: "",
       messageEdit: "",
       posts: [],
+      posterFirstname : "",
+      posterLastname : "",
+      posterProfil : "",
       connectedUserId: "",
       selectedPost: "",
       userLikedPosts: [],
@@ -139,7 +142,6 @@ export default {
     },
     previewFiles(event) {
       this.file = event.target.files[0];
-      console.log(this.file)
     },
     editPost() {
       this.hideOtherBtn()
@@ -174,7 +176,8 @@ export default {
     getPosts() {
       axios.get('http://localhost:5000/api/post')
       .then((posts) => {
-          this.posts = posts.data
+          this.posts = posts.data.allPosts
+          this.updateLike()
       })
       .catch((err) => console.log(err.message))
     },
@@ -197,7 +200,7 @@ export default {
           formData.append('posterProfil', this.posterProfil)
           formData.append('message', this.message)
           formData.append('file', img.files[0])
-          axios.post(`http://localhost:5000/api/post`, formData)
+          axios.post(`http://localhost:5000/api/post`,formData)
           .then(() => {
             window.location.reload()
           })
@@ -205,7 +208,13 @@ export default {
         }
       }
       else {
-        let formData = new FormData()
+        let test = this.message.split(' ').join('')
+        if(test === "") {
+          alert('Vous ne pouvez pas créer un post vide.')
+        }
+        else{
+
+          let formData = new FormData()
         formData.append('posterId', this.connectedUserId)
         formData.append('posterFirstname', this.posterFirstname)
         formData.append('posterLastname', this.posterLastname)
@@ -216,14 +225,15 @@ export default {
           window.location.reload()
         })
         .catch()
+          }
       }
     },
     deletePost(postId) {
       if (window.confirm("Voulez vous vraiment supprimer ce post ? \n\n ⚠️ Cette action est irrévérsible ⚠️")) {
         axios.delete(`http://localhost:5000/api/post/${postId}`)
-        .then((deletedPost) => {
-          deletedPost.data.likers.forEach(userIdLikeToDelete => {
-            axios.patch(`http://localhost:5000/api/post/unlike-post/${postId}`, { id: userIdLikeToDelete })
+      .then((deletedPost) => {
+        deletedPost.data.deletedPost.likers.forEach(userIdLikeToDelete => {
+          axios.patch(`http://localhost:5000/api/post/unlike-post/${postId}`,{ id: userIdLikeToDelete })
           });
           this.getPosts()
         })
@@ -234,7 +244,9 @@ export default {
       const likeBtn = document.querySelectorAll('.btn-like')
       if(likeBtn[index].classList.contains("fa-thumbs-up")){
         axios.patch(`http://localhost:5000/api/post/like-post/${postId}`,{id : this.connectedUserId})
-        .then(() => this.getPosts())
+        .then(() => {
+          this.updateLike()
+          this.getPosts()})
         .catch((err) => console.log(err))
         likeBtn[index].classList.replace('fa-thumbs-up','fa-heart')
       } 
@@ -247,22 +259,21 @@ export default {
     },
   },
   mounted() {
-    let token = document.cookie.slice(4);
-    axios.get(`http://localhost:5000/jwtid/${token}`)
+    axios.get(`http://localhost:5000/api/user/me`)
     .then((user) => {
-      this.connectedUserId = user.data
-      axios.get(`http://localhost:5000/api/user/${user.data}`)
+      this.connectedUserId = user.data.data._id
+      axios.get(`http://localhost:5000/api/user/${user.data.data._id}`)
         .then((result) => {
-          this.userLikedPosts = result.data.likes;
           this.posterFirstname = result.data.firstname
           this.posterLastname = result.data.lastname
           this.posterProfil = result.data.picture
+          this.userLikedPosts = result.data.likes;
         })
         .catch()
       this.logged = true;
       axios.get("http://localhost:5000/api/post/")
       .then((res) => {
-        this.posts = res.data
+        this.posts = res.data.allPosts
         let inputFile = document.querySelector('#picture')
         let fileName = document.querySelector('#file-name')
         inputFile.addEventListener('change', () => {
@@ -331,13 +342,20 @@ body{
 }
 
 #picture-profil-post {
-  transition: 0.5s;
+  transition: 0.2s;
   margin-right: 20px;
   width: 25px;
   height: 25px;
   border-radius: 50%;
-  transform: scale(1.5);
+  transform: scale(2);
   object-fit: cover;
+  &:active{
+    transform: scale(8.8) translateX(-2px) translateY(12%);
+   position: absolute;
+    left: 50%;
+  background: rgb(73, 70, 86) ;
+  transition: 0.2s;
+  }
 }
 
 .user-infos {

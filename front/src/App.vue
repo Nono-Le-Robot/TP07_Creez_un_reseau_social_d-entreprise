@@ -15,7 +15,7 @@
       <router-link title="Social" v-else to="/" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-house-chimney"></i> </router-link>
       <router-link title="Mon compte" v-if="logged === true" to="/account" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-user-gear"></i> </router-link>
       <router-link title="Se connecter" v-else to="/auth/login" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-key login-btn"></i> </router-link>
-      <router-link title="Se déconnecter" @click="disconnectUser()" v-if="logged === true" to="/auth/login" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-power-off"></i></router-link>
+      <router-link title="Se déconnecter" @click="disconnectUser()" v-if="logged === true" to="/" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-power-off"></i></router-link>
       <router-link title="S'enregistrer" v-else to="/auth/register" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-user-plus"></i></router-link>
     </nav>
   </div>
@@ -28,7 +28,8 @@ export default {
   name: "App",
   methods: {
     disconnectUser() {
-      document.cookie = "jwt=;max-age=0";
+      localStorage.removeItem('token')
+      window.location.reload()
       this.logged = false;
     },
   },
@@ -38,20 +39,10 @@ export default {
     } 
   },
   mounted(){
-    const token = document.cookie.slice(4)
-    if(token){
-      axios.get(`http://localhost:5000/jwtid/${token}`)
-      .then((user) => {
-        axios.get(`http://localhost:5000/api/user/${user.data}`)
-        .then((infosUser) => {
-          this.logged=true
-        })
-        .catch()
-      })
-      .catch()
-    }
+    axios.get('http://localhost:5000/api/user/me')
+    .then(() => this.logged=true)
+    .catch((err) => console.log(error))
   }
-
 }
 </script>
 

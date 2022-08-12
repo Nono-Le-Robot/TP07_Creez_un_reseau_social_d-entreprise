@@ -32,10 +32,17 @@ module.exports.signIn = async (req,res) => {
         .then(valid => {
             if(!valid){
                 return res.status(401).json({error :  'Mot de passe incorrect ! '})
+            } 
+
+
+            function generateAcessToken(data){
+                return jwt.sign({data} ,process.env.TOKEN_SECRET, {expiresIn : '30d'})
+                // res.cookie("jwt",token,{httpOnly : true,  maxAge: durationTokenLogin})
             }
-            const token =  jwt.sign({userId : user._id},process.env.TOKEN_SECRET)
-            res.cookie("jwt",token,{httpOnly : true,  maxAge: durationTokenLogin})
-            res.status(200).json({userId : user._id, token})
+                const acessToken = generateAcessToken(user)
+                console.log('acessToken : ' + acessToken)
+                res.status(200).json({userId : user._id, acessToken})
+            
         })
         .catch(error =>  res.status(401).send(error.message))
     })

@@ -32,23 +32,16 @@ export default {
         email: this.email,
         password: this.password,
       })
-      .then(function (data) {
+      .then(function (logged) {
         response.innerHTML = `<p>Connexion réussie</p><br>`
         response.style.color = 'rgb(63, 211, 61)'
-        document.cookie = `jwt=${data.data.token}; domain=localhost; secure; path=/`
-        axios.get(`http://localhost:5000/jwtid/${data.data.token}`)
-        .then(() => {
-          setTimeout(() => {window.location.href = `../`},500)
+        localStorage.setItem('token', logged.data.acessToken)
+        setTimeout(() => {window.location.href = `../`},500)
         })
         .catch(err => {
           response.innerHTML = `<p>La connexion a échouée</p><br>`
           response.style.color = 'rgb(211, 61, 61)'
         })
-      })
-      .catch(function (error) {
-        response.innerHTML = `<p>La connexion a échouée</p><br>`
-        response.style.color = 'rgb(211, 61, 61)'
-      });
     },
   },
 };
