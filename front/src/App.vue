@@ -29,14 +29,13 @@ export default {
     disconnectUser() {
       localStorage.removeItem('token')
       this.logged = false;
+
     },
   },
   data(){
     return{
       logged:false
     } 
-  },
-  methods: {
   },
   watch: {
     '$route' (to, from) {
