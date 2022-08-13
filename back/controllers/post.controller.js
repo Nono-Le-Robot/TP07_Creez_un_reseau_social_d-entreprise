@@ -53,6 +53,9 @@ module.exports.updatePost = (req, res) => {
   }
   PostModel.findById(req.params.id)
   .then((post) => {
+    const postedBy = post.posterId
+    const connectedUser = req.user.data._id
+    if(postedBy === connectedUser || connectedUser === '62f2ae7fd2fc5c1305443984'){
     const updatedRecord = {
     message: req.body.message,
     picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/post/${req.file.filename}`: req.body.picture,
@@ -85,6 +88,7 @@ module.exports.updatePost = (req, res) => {
       res.status(201).send(updatedPost);
     })
     .catch((err) => res.status(400).send(err))
+  }
   })
   .catch((err) => res.status(400).send(err))
 };
@@ -95,24 +99,18 @@ module.exports.deletePost = (req, res) => {
   }
   PostModel.findById(req.params.id)
   .then((post) =>{
-
     const postedBy = post.posterId
     const connectedUser = req.user.data._id
-
-    if(postedBy === connectedUser){
+    if(postedBy === connectedUser || connectedUser === '62f2ae7fd2fc5c1305443984'){
+      console.log('rue')
       let newString = post.picture.slice(22)
       newString = newString.split(' ').join('_')
       if(post.picture != null){
         if(post.picture === 'http://localhost:5000/images/default/deleted-picture.jpg'){
-  
-  
           PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
             if(!err) res.status(200).json({requestById : req.user.data._id , deletedPost : docs });
             else res.status(400).send("Delete error :" + err);
           })
-      
-      
-      
         }
         else{
           fs.unlink(`${newString}`, () => {

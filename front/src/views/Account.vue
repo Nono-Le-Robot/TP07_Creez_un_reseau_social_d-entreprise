@@ -53,22 +53,48 @@ export default {
     };
   },
   methods: {
+
+
+
+
+
     setDefault(){
       axios.put(`http://localhost:5000/api/user/${this.connectedId}`,{picture : ''})
-      .then((user) => {
+      .then(() => {
         axios.get('http://localhost:5000/api/post')
         .then((res) => {
           let posts = res.data.allPosts
           let postedByUser = posts.filter(p => p.posterId === this.connectedId)
+          if(postedByUser.length > 0){
           for (let i = 0; i < postedByUser.length; i++) {
                 axios.put(`http://localhost:5000/api/post/${postedByUser[i]._id}`, {posterProfil : "http://localhost:5000/images/default/default.png"})
                 .then(() => window.location.reload())
-                .catch((err) => console.log(err))
+                .catch((err) => {
+                  console.log(err)
+                })
+            }
+          }
+            else{
+              window.location.reload()
             }
         })
       })
       .catch()
     },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     editProfil() {
       let imgPictureEdit =  document.querySelector("#picture-profil-edit")
       if(imgPictureEdit.files[0]){
@@ -107,9 +133,10 @@ export default {
   },
   mounted() {
     axios.get('http://localhost:5000/api/user/me')
-    .then((user) => {
+    .then((userConnected) => {
+      console.log(userConnected)
         this.logged = true;
-        axios.get(`http://localhost:5000/api/user/${user.data.data._id}`)
+        axios.get(`http://localhost:5000/api/user/${userConnected.data.data._id}`)
         .then((user) => {
           this.firstname = user.data.firstname
           this.lastname = user.data.lastname

@@ -23,22 +23,18 @@ module.exports.checkUser = (req,res,next) => {
     }
 }
 
-module.exports.requireAuth = (req, res, next) => {
-    const token = req.params.id
-    if(token){
-        jwt.verify(token, process.env.TOKEN_SECRET, (err, decodedToken) => {
-            if(err) {
-                res.status(400).json('token not found')
-            } 
-            else{
-                res.status(200).send(decodedToken.data._id)
-                next()
-            }
-        })
+
+module.exports.authenticateToken = (req, res ,next) => {
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+    if(!token) {
+        return res.status(401).send('token not found');
     }
-    else{
-        console.log('token  not found')
-        res.status(404).json('token not found')
-        next()
-    }
+    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+        if(err) {
+            return res.status(401).send('invalid token')
+        }
+        req.user = user;
+        next();
+    });
 }

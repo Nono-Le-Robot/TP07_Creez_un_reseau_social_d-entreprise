@@ -40,7 +40,6 @@ module.exports.signIn = async (req,res) => {
                 // res.cookie("jwt",token,{httpOnly : true,  maxAge: durationTokenLogin})
             }
                 const acessToken = generateAcessToken(user)
-                console.log('acessToken : ' + acessToken)
                 res.status(200).json({userId : user._id, acessToken})
             
         })

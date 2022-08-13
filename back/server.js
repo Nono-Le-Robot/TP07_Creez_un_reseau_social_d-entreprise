@@ -18,7 +18,6 @@ app.use(cookieParser())
 
 //jwt
 app.get('*', checkUser);
-app.get('/jwtid/:id', requireAuth)
 
 //routes
 app.use('/api/user', userRoutes)

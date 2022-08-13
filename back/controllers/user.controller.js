@@ -21,33 +21,31 @@ module.exports.updateUser = (req, res) => {
     const updatedRecord = {
         picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/profil/${req.file.filename}`: "http://localhost:5000/images/default/default.png",
     };
-    UserModel.findById(req.params.id)
-    .then((post) => {
-        UserModel.findByIdAndUpdate(
-        req.params.id,
-        { $set: updatedRecord })
-        .then(() => {
-            let pictureUrl = post.picture
-            if(pictureUrl){
-                if(pictureUrl.includes('default')=== false){
-                    let newString = pictureUrl.slice(22)
-                    console.log(newString)
-                    fs.unlink(`${newString}`, () => {
-                        console.log('delete sucess')
-                        res.status(201)
-                    });
-                }
-            }
-        })
-        .catch()
-    })
-    .catch()
-    if(!ObjectId.isValid(req.params.id))
+    UserModel.findById( req.params.id)
+    .then((user) => {
+        const userToModify = user._id.toString()
+        const connectedUser = req.user.data._id
+        if(userToModify === connectedUser || connectedUser === '62f2ae7fd2fc5c1305443984'){
+            UserModel.findByIdAndUpdate(
+                req.params.id,
+                { $set: updatedRecord })
+                .then(() => {
+                    let pictureUrl = user.picture
+                    if(pictureUrl){
+                        if(pictureUrl.includes('default')=== false){
+                            let newString = pictureUrl.slice(22)
+                            fs.unlink(`${newString}`, () => {
+                            });
+                        }
+                    }
+                })
+                .catch()
+                if(!ObjectId.isValid(req.params.id))
         return res.status(400).send('ID unknown : ' + req.params.id)
         UserModel.findOneAndUpdate(
             {_id : req.params.id},
         {$set:{
-            picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/profil/${req.file.filename}`: "",
+            picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/profil/${req.file.filename}`: "http://localhost:5000/images/default/default.png",
         }},
         {new: true, upsert : true , setDefaultsOnInsert: true},
     )
@@ -55,6 +53,14 @@ module.exports.updateUser = (req, res) => {
         res.status(200).send(user)
     })
     .catch()
+        }
+        else
+        {
+            return res.status(400).send('unauthorized request')
+        }
+    })
+    .catch()
+    
 };
 
 module.exports.deleteUser = async (req, res) => {

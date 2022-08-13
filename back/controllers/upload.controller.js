@@ -9,7 +9,6 @@ exports.uploadProfil = async (req, res) => {
             },
             {new:true, upsert : true , setDefaultsOnInsert : true},
             (err,docs) => {
-                console.log(req.file.filename);
                 if (!err) return res.send(docs);
                 else return res.status(500).send({ message: err})
             }
