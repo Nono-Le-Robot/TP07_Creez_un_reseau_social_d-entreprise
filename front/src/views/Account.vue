@@ -4,10 +4,10 @@
       <br>
       <h1><i class="fa-solid fa-file-user"></i>Mon compte :</h1>
       <br>
-      <div class="load">
+      <span>
         <img :style="picture === 'http://localhost:5000/images/default/default.png' ? 'left: 0px;' : '' " id="picture-profil" :src='picture' alt="" srcset="">
         <i v-if="(picture != 'http://localhost:5000/images/default/default.png')" @click="setDefault()" class="fa-solid fa-xmark default-picture"></i>
-      </div>
+      </span>
       <br>
       <p>Nom : {{ lastname }} </p>
       <br>
@@ -53,11 +53,6 @@ export default {
     };
   },
   methods: {
-
-
-
-
-
     setDefault(){
       axios.put(`http://localhost:5000/api/user/${this.connectedId}`,{picture : ''})
       .then(() => {
@@ -81,20 +76,6 @@ export default {
       })
       .catch()
     },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     editProfil() {
       let imgPictureEdit =  document.querySelector("#picture-profil-edit")
       if(imgPictureEdit.files[0]){
