@@ -22,7 +22,6 @@ module.exports.signUp = async (req,res) => {
 }
 
 module.exports.signIn = async (req,res) => {
-    const durationTokenLogin = 31*24*60*60*1000 // expire in : 31 days
     UserModel.findOne({email : req.body.email})
     .then(user =>{
         if (!user){
@@ -48,7 +47,6 @@ module.exports.signIn = async (req,res) => {
     .catch(error =>  res.status(401).send(error.message))
 }
 
-module.exports.logout = async (req,res) => {
-    res.cookie('jwt', '', {maxAge: 1})  
+module.exports.logout = async (req,res) => { 
     res.status(200).json("user disconnect")
 }

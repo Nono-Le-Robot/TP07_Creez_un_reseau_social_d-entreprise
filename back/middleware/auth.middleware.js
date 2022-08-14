@@ -4,7 +4,7 @@ const userModel = require('../models/user.model')
 module.exports.checkUser = (req,res,next) => {
     const token = req.cookies.jwt
     if(token){
-        jwt.verify(token, process.env.TOKEN_SECRET, async (err, decodedToken) => {
+        jwt.verify(token, "kyQ4fG1W9DgXXjhJb8nA5pFt8FEY6VD0rBF40JlgAKoL2eYkiLTxps2SMXOJ4NTAJ5C0nM", async (err, decodedToken) => {
             if(err) {
                 res.locals.user = null;
                 res.cookie('jwt', '', {maxAge : 1})
@@ -30,7 +30,7 @@ module.exports.authenticateToken = (req, res ,next) => {
     if(!token) {
         return res.status(401).send('token not found');
     }
-    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+    jwt.verify(token, 'kyQ4fG1W9DgXXjhJb8nA5pFt8FEY6VD0rBF40JlgAKoL2eYkiLTxps2SMXOJ4NTAJ5C0nM', (err, user) => {
         if(err) {
             return res.status(401).send('invalid token')
         }

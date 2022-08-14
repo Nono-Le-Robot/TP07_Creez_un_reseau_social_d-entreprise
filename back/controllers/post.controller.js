@@ -102,7 +102,6 @@ module.exports.deletePost = (req, res) => {
     const postedBy = post.posterId
     const connectedUser = req.user.data._id
     if(postedBy === connectedUser || connectedUser === '62f2ae7fd2fc5c1305443984'){
-      console.log('rue')
       let newString = post.picture.slice(22)
       newString = newString.split(' ').join('_')
       if(post.picture != null){

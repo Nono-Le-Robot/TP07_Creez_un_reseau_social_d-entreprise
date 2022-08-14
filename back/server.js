@@ -25,6 +25,6 @@ app.use('/api/post', postRoutes)
 app.use('/images', express.static(path.join(__dirname, 'images')))
 
 //server
-app.listen(process.env.PORT, () => {
-    console.log(`listening on port ${process.env.PORT}`);
+app.listen(5000, () => {
+    console.log(`listening on port 5000`);
 });
