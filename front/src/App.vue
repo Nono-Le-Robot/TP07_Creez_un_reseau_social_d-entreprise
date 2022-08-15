@@ -50,7 +50,7 @@ export default {
   mounted(){
     axios.get('http://localhost:5000/api/user/me')
     .then(() => this.logged=true)
-    .catch((err) => console.log(error))
+    .catch((err) => console.log(err))
   }
 }
 </script>
