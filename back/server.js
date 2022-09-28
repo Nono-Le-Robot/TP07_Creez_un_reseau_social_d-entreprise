@@ -20,9 +20,9 @@ app.use(cookieParser())
 app.get('*', checkUser);
 
 //routes
-app.use('/api/user', userRoutes)
-app.use('/api/post', postRoutes)
-app.use('/images', express.static(path.join(__dirname, 'images')))
+app.use('/portfolio/groupomania/api/user', userRoutes)
+app.use('/portfolio/groupomania/api/post', postRoutes)
+app.use('/portfolio/groupomania/images', express.static(path.join(__dirname, 'images')))
 
 //server
 app.listen(5000, () => {

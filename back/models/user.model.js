@@ -35,7 +35,7 @@ const UserSchema = new mongoose.Schema({
     picture : {
         type : String, 
         trim : true, 
-        default : "http://localhost:5000/images/default/default.png"
+        default : "https://sannier-renaud.fr/back/portfolio/groupomania/images/default/default.png"
     },
     followers : {
         type : [String]

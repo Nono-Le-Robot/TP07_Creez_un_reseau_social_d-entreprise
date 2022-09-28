@@ -5,8 +5,8 @@
       <h1><i class="fa-solid fa-file-user"></i>Mon compte :</h1>
       <br>
       <span>
-        <img :style="picture === 'http://localhost:5000/images/default/default.png' ? 'left: 0px;' : '' " id="picture-profil" :src='picture' alt="" srcset="">
-        <i v-if="(picture != 'http://localhost:5000/images/default/default.png')" @click="setDefault()" class="fa-solid fa-xmark default-picture"></i>
+        <img :style="picture === 'https://sannier-renaud.fr/portfolio/groupomania/images/default/default.png' ? 'left: 0px;' : '' " id="picture-profil" :src='picture' alt="" srcset="">
+        <i v-if="(picture != 'https://sannier-renaud.fr/portfolio/groupomania/images/default/default.png')" @click="setDefault()" class="fa-solid fa-xmark default-picture"></i>
       </span>
       <br>
       <p>Nom : {{ lastname }} </p>
@@ -54,15 +54,15 @@ export default {
   },
   methods: {
     setDefault(){
-      axios.put(`http://localhost:5000/api/user/${this.connectedId}`,{picture : ''})
+      axios.put(`https://sannier-renaud.fr/portfolio/groupomania/api/user/${this.connectedId}`,{picture : ''})
       .then(() => {
-        axios.get('http://localhost:5000/api/post')
+        axios.get('https://sannier-renaud.fr/portfolio/groupomania/api/post')
         .then((res) => {
           let posts = res.data.allPosts
           let postedByUser = posts.filter(p => p.posterId === this.connectedId)
           if(postedByUser.length > 0){
           for (let i = 0; i < postedByUser.length; i++) {
-                axios.put(`http://localhost:5000/api/post/${postedByUser[i]._id}`, {posterProfil : "http://localhost:5000/images/default/default.png"})
+                axios.put(`https://sannier-renaud.fr/portfolio/groupomania/api/post/${postedByUser[i]._id}`, {posterProfil : "https://sannier-renaud.fr/portfolio/groupomania/images/default/default.png"})
                 .then(() => window.location.reload())
                 .catch((err) => {
                   console.log(err)
@@ -85,14 +85,14 @@ export default {
         else{
         let formData = new FormData()
         formData.append('file', imgPictureEdit.files[0])
-        axios.put(`http://localhost:5000/api/user/${this.connectedId}`,formData)
+        axios.put(`https://sannier-renaud.fr/portfolio/groupomania/api/user/${this.connectedId}`,formData)
         .then((updatedUser) => {
-          axios.get('http://localhost:5000/api/post')
+          axios.get('https://sannier-renaud.fr/portfolio/groupomania/api/post')
           .then((res) => {
             let posts = res.data.allPosts
             let postedByUser = posts.filter(p => p.posterId === this.connectedId)
             for (let i = 0; i < postedByUser.length; i++) {
-                  axios.put(`http://localhost:5000/api/post/${postedByUser[i]._id}`, {posterProfil : updatedUser.data.picture})
+                  axios.put(`https://sannier-renaud.fr/portfolio/groupomania/api/post/${postedByUser[i]._id}`, {posterProfil : updatedUser.data.picture})
                   .then()
                   .catch(err => console.log(err))
             }
@@ -113,11 +113,11 @@ export default {
     }
   },
   mounted() {
-    axios.get('http://localhost:5000/api/user/me')
+    axios.get('https://sannier-renaud.fr/portfolio/groupomania/api/user/me')
     .then((userConnected) => {
       console.log(userConnected)
         this.logged = true;
-        axios.get(`http://localhost:5000/api/user/${userConnected.data.data._id}`)
+        axios.get(`https://sannier-renaud.fr/portfolio/groupomania/api/user/${userConnected.data.data._id}`)
         .then((user) => {
           this.firstname = user.data.firstname
           this.lastname = user.data.lastname

@@ -5,7 +5,7 @@ exports.uploadProfil = async (req, res) => {
         UserModel.findByIdAndUpdate(
             req.body.userId,
             {
-                $set : {picture: `${req.protocol}://${req.get("host")}/images/picture/${req.file.filename}`}
+                $set : {picture: `https://${req.get("host")}back/portfolio/groupomania/images/picture/${req.file.filename}`}
             },
             {new:true, upsert : true , setDefaultsOnInsert : true},
             (err,docs) => {

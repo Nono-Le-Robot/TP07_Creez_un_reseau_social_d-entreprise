@@ -28,7 +28,7 @@ export default {
   },
   methods: {
     verifyLogin() {
-      axios.post("http://localhost:5000/api/user/login/", {
+      axios.post("https://sannier-renaud.fr/portfolio/groupomania/api/user/login/", {
         email: this.email,
         password: this.password,
       })
@@ -36,7 +36,7 @@ export default {
         response.innerHTML = `<p>Connexion réussie</p><br>`
         response.style.color = 'rgb(63, 211, 61)'
         localStorage.setItem('token', logged.data.acessToken)
-        setTimeout(() => {window.location.href = `../`},500)
+        setTimeout(() => {window.location.href = `./`},500)
         })
         .catch(err => {
           response.innerHTML = `<p>La connexion a échouée</p><br>`

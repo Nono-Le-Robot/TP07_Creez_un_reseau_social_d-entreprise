@@ -19,7 +19,7 @@ module.exports.getOneUser = async (req,res) => {
 
 module.exports.updateUser = (req, res) => {
     const updatedRecord = {
-        picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/profil/${req.file.filename}`: "http://localhost:5000/images/default/default.png",
+        picture: req.file != null ?`https://${req.get("host")}/back/portfolio/groupomania/images/profil/${req.file.filename}`: "https://sannier-renaud.fr/back/portfolio/groupomania/images/default/default.jpg",
     };
     UserModel.findById( req.params.id)
     .then((user) => {
@@ -45,7 +45,7 @@ module.exports.updateUser = (req, res) => {
         UserModel.findOneAndUpdate(
             {_id : req.params.id},
         {$set:{
-            picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/profil/${req.file.filename}`: "http://localhost:5000/images/default/default.png",
+            picture: req.file != null ?`https://${req.get("host")}/back/portfolio/groupomania/images/profil/${req.file.filename}`: "https://sannier-renaud.fr/back/portfolio/groupomania/images/default/default.png",
         }},
         {new: true, upsert : true , setDefaultsOnInsert: true},
     )

@@ -47,8 +47,8 @@
                 <span class='get-name' id="file-name">{{ file.name }}</span>
               </span>
             </form>
-            <button v-if="post.selected === true && post.picture != 'http://localhost:5000/images/default/deleted-picture.jpg' && deletePictureChecked === false" class="delete-picture-edit" @click="deletePicture(post._id, index), file = []"><i class="fa-solid fa-trash-can"></i> Supprimer la photo</button>
-            <button v-else-if="post.selected === true && post.picture != 'http://localhost:5000/images/default/deleted-picture.jpg' && deletePictureChecked === true " class="delete-picture-edit"><i id="btnDeleteChecked" class="fa-solid fa-check"></i> La photo a bien été supprimée</button>
+            <button v-if="post.selected === true && post.picture != 'https://sannier-renaud.fr/portfolio/groupomania/images/default/deleted-picture.jpg' && deletePictureChecked === false" class="delete-picture-edit" @click="deletePicture(post._id, index), file = []"><i class="fa-solid fa-trash-can"></i> Supprimer la photo</button>
+            <button v-else-if="post.selected === true && post.picture != 'https://sannier-renaud.fr/portfolio/groupomania/images/default/deleted-picture.jpg' && deletePictureChecked === true " class="delete-picture-edit"><i id="btnDeleteChecked" class="fa-solid fa-check"></i> La photo a bien été supprimée</button>
             <br>
             <div v-if="post.selected === true" class="separator2"></div>
             <div class="post-options-btn">
@@ -150,15 +150,15 @@ export default {
       formData.append('posterId', this.connectedUserId)
       formData.append('message', this.messageEdit)
       formData.append('file', file)
-      axios.put(`http://localhost:5000/api/post/${postId}`,formData)
+      axios.put(`https://sannier-renaud.fr/portfolio/groupomania/api/post/${postId}`,formData)
       .then(() => this.getPosts())
       .catch((err) => console.log(err))
     },
     deletePicture(postId, index){
       if(window.confirm('Voulez vous vraiment supprimer cette photo ? \n\n ⚠️ Cette action est irrévérsible ⚠️')){
         this.deletePictureChecked = true;
-        axios.put(`http://localhost:5000/api/post/${postId}`, {
-          picture : 'http://localhost:5000/images/default/deleted-picture.jpg'
+        axios.put(`https://sannier-renaud.fr/portfolio/groupomania/api/post/${postId}`, {
+          picture : 'https://sannier-renaud.fr/portfolio/groupomania/images/default/deleted-picture.jpg'
         })
         .then(() => {
           const imgDeleted = document.querySelectorAll('.post-picture')
@@ -168,12 +168,12 @@ export default {
       }
     },
     getUsers() {
-      axios.get('http://localhost:5000/api/user')
+      axios.get('https://sannier-renaud.fr/portfolio/groupomania/api/user')
       .then()
       .catch((err) => console.log(err))
     },
     getPosts() {
-      axios.get('http://localhost:5000/api/post')
+      axios.get('https://sannier-renaud.fr/portfolio/groupomania/api/post')
       .then((posts) => {
           this.posts = posts.data.allPosts
           this.updateLike()
@@ -181,7 +181,7 @@ export default {
       .catch((err) => console.log(err.message))
     },
     updateLike(){
-      axios.get(`http://localhost:5000/api/user/${this.connectedUserId}`)
+      axios.get(`https://sannier-renaud.fr/portfolio/groupomania/api/user/${this.connectedUserId}`)
       .then((user) => { this.userLikedPosts = user.data.likes })
       .catch()
     },
@@ -199,7 +199,7 @@ export default {
           formData.append('posterProfil', this.posterProfil)
           formData.append('message', this.message)
           formData.append('file', img.files[0])
-          axios.post(`http://localhost:5000/api/post`,formData)
+          axios.post(`https://sannier-renaud.fr/portfolio/groupomania/api/post`,formData)
           .then(() => {
             window.location.reload()
           })
@@ -219,7 +219,7 @@ export default {
         formData.append('posterLastname', this.posterLastname)
         formData.append('posterProfil', this.posterProfil)
         formData.append('message', this.message)
-        axios.post(`http://localhost:5000/api/post`, formData)
+        axios.post(`https://sannier-renaud.fr/portfolio/groupomania/api/post`, formData)
         .then(() => {
           window.location.reload()
         })
@@ -229,10 +229,10 @@ export default {
     },
     deletePost(postId) {
       if (window.confirm("Voulez vous vraiment supprimer ce post ? \n\n ⚠️ Cette action est irrévérsible ⚠️")) {
-        axios.delete(`http://localhost:5000/api/post/${postId}`)
+        axios.delete(`https://sannier-renaud.fr/portfolio/groupomania/api/post/${postId}`)
       .then((deletedPost) => {
         deletedPost.data.deletedPost.likers.forEach(userIdLikeToDelete => {
-          axios.patch(`http://localhost:5000/api/post/unlike-post/${postId}`,{ id: userIdLikeToDelete })
+          axios.patch(`https://sannier-renaud.fr/portfolio/groupomania/api/post/unlike-post/${postId}`,{ id: userIdLikeToDelete })
           });
           this.getPosts()
         })
@@ -242,7 +242,7 @@ export default {
     likeRequest(index, postId) {
       const likeBtn = document.querySelectorAll('.btn-like')
       if(likeBtn[index].classList.contains("fa-thumbs-up")){
-        axios.patch(`http://localhost:5000/api/post/like-post/${postId}`,{id : this.connectedUserId})
+        axios.patch(`https://sannier-renaud.fr/portfolio/groupomania/api/post/like-post/${postId}`,{id : this.connectedUserId})
         .then(() => {
           this.updateLike()
           this.getPosts()})
@@ -250,7 +250,7 @@ export default {
         likeBtn[index].classList.replace('fa-thumbs-up','fa-heart')
       } 
       else if(likeBtn[index].classList.contains("fa-heart")){
-        axios.patch(`http://localhost:5000/api/post/unlike-post/${postId}`,{id : this.connectedUserId})
+        axios.patch(`https://sannier-renaud.fr/portfolio/groupomania/api/post/unlike-post/${postId}`,{id : this.connectedUserId})
         .then(() => this.getPosts())
         .catch((err) => console.log(err))
         likeBtn[index].classList.replace('fa-heart','fa-thumbs-up')
@@ -258,10 +258,10 @@ export default {
     },
   },
   mounted() {
-    axios.get(`http://localhost:5000/api/user/me`)
+    axios.get(`https://sannier-renaud.fr/portfolio/groupomania/api/user/me`)
     .then((user) => {
       this.connectedUserId = user.data.data._id
-      axios.get(`http://localhost:5000/api/user/${user.data.data._id}`)
+      axios.get(`https://sannier-renaud.fr/portfolio/groupomania/api/user/${user.data.data._id}`)
         .then((result) => {
           this.posterFirstname = result.data.firstname
           this.posterLastname = result.data.lastname
@@ -270,7 +270,7 @@ export default {
         })
         .catch()
       this.logged = true;
-      axios.get("http://localhost:5000/api/post/")
+      axios.get("https://sannier-renaud.fr/portfolio/groupomania/api/post/")
       .then((res) => {
         this.posts = res.data.allPosts
         let inputFile = document.querySelector('#picture')

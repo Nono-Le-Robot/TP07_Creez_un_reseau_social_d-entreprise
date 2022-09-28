@@ -37,7 +37,7 @@ module.exports.createPost = (req, res) => {
   likers: [],
   selected : false,
   comments: [],
-  picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/post/${req.file.filename}`: "http://localhost:5000/images/default/deleted-picture.jpg",
+  picture: req.file != null ?`https://${req.get("host")}/back/portfolio/groupomania/images/post/${req.file.filename}`: "https://sannier-renaud.fr/back/portfolio/groupomania/images/default/deleted-picture.jpg",
   date: finalDate
   })
   newPost.save()
@@ -58,7 +58,7 @@ module.exports.updatePost = (req, res) => {
     if(postedBy === connectedUser || connectedUser === '62f2ae7fd2fc5c1305443984'){
     const updatedRecord = {
     message: req.body.message,
-    picture: req.file != null ?`${req.protocol}://${req.get("host")}/images/post/${req.file.filename}`: req.body.picture,
+    picture: req.file != null ?`https://${req.get("host")}/back/portfolio/groupomania/images/post/${req.file.filename}`: req.body.picture,
     posterProfil : req.body.posterProfil
     };
     PostModel.findByIdAndUpdate(
@@ -69,7 +69,7 @@ module.exports.updatePost = (req, res) => {
       let pictureUrl = post.picture
       if(pictureUrl){
         if(req.file){
-          if(pictureUrl === 'http://localhost:5000/images/default/deleted-picture.jpg'){
+          if(pictureUrl === 'https://sannier-renaud.fr/back/portfolio/groupomania/images/default/deleted-picture.jpg'){
           }
           else{
             let newString = pictureUrl.slice(22)
@@ -78,7 +78,7 @@ module.exports.updatePost = (req, res) => {
             });
           }
         }
-        else if(req.body.picture === 'http://localhost:5000/images/default/deleted-picture.jpg'){
+        else if(req.body.picture === 'https://sannier-renaud.fr/back/portfolio/groupomania/images/default/deleted-picture.jpg'){
           let newString = pictureUrl.slice(22)
           newString = newString.split(' ').join('_')
           fs.unlink(`${newString}`, () => {
@@ -105,7 +105,7 @@ module.exports.deletePost = (req, res) => {
       let newString = post.picture.slice(22)
       newString = newString.split(' ').join('_')
       if(post.picture != null){
-        if(post.picture === 'http://localhost:5000/images/default/deleted-picture.jpg'){
+        if(post.picture === 'https://sannier-renaud.fr/back/portfolio/groupomania/images/default/deleted-picture.jpg'){
           PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
             if(!err) res.status(200).json({requestById : req.user.data._id , deletedPost : docs });
             else res.status(400).send("Delete error :" + err);

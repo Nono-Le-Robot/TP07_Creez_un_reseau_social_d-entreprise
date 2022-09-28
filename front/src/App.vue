@@ -12,11 +12,11 @@
         <span class="hamburger hamburger-2"></span>
         <span class="hamburger hamburger-3"></span>
       </label>
-      <router-link  title="Social" v-if="logged === true" to="/" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-house-chimney"></i> </router-link>
-      <router-link  title="Mon compte" v-if="logged === true" to="/account" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-user-gear"></i> </router-link>
-      <router-link title="Se connecter" v-else to="/auth/login" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-key login-btn"></i> </router-link>
-      <router-link title="Se déconnecter" @click="disconnectUser()" v-if="logged === true" to="/auth/login" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-power-off"></i></router-link>
-      <router-link title="S'enregistrer" v-else to="/auth/register" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-user-plus"></i></router-link>
+      <router-link  title="Social" v-if="logged === true" to="/groupomania/" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-house-chimney"></i> </router-link>
+      <router-link  title="Mon compte" v-if="logged === true" to="/groupomania/account" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-user-gear"></i> </router-link>
+      <router-link title="Se connecter" v-else to="/groupomania/login" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-key login-btn"></i> </router-link>
+      <router-link title="Se déconnecter" @click="disconnectUser()" v-if="logged === true" to="/groupomania/login" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-power-off"></i></router-link>
+      <router-link title="S'enregistrer" v-else to="/groupomania/register" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-user-plus"></i></router-link>
     </nav>
   </div>
   <router-view />
@@ -48,7 +48,7 @@ export default {
     }
   },
   mounted(){
-    axios.get('http://localhost:5000/api/user/me')
+    axios.get('https://sannier-renaud.fr/portfolio/groupomania/api/user/me')
     .then(() => this.logged=true)
     .catch((err) => console.log(err))
   }

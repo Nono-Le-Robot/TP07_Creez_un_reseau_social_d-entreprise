@@ -42,7 +42,7 @@ export default {
   },
   methods: {
     sendUserData() {
-      axios.post("http://localhost:5000/api/user/register/", {
+      axios.post("https://sannier-renaud.fr/portfolio/groupomania/api/user/register/", {
           firstname: this.firstname,
           lastname: this.lastname,
           email: this.email,

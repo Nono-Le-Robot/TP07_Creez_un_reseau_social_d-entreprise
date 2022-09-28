@@ -24,7 +24,7 @@ const PostSchema = new mongoose.Schema({
     },
     picture : {
         type : String, 
-        default : "http://localhost:5000/images/default/deleted-picture.jpg"
+        default : "https://sannier-renaud.fr/back/portfolio/groupomania/images/default/deleted-picture.jpg"
     },
     video : {
         type : String,  

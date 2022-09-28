@@ -8,7 +8,7 @@ import Account from '@/views/Account.vue'
 const routes = [
     {
         name : 'Home',
-        path : '/',
+        path : '/groupomania/',
         component: Home,
         meta : {
             title : 'Groupomania | Home'
@@ -16,7 +16,7 @@ const routes = [
     },
     {
         name : 'Login',
-        path : '/auth/login',
+        path : '/groupomania/login',
         component: Login,
         meta : {
             title : 'Groupomania | Connexion'
@@ -24,7 +24,7 @@ const routes = [
     },
     {
         name : 'Register',
-        path : '/auth/register',
+        path : '/groupomania/register',
         component: Register,
         meta : {
             title : 'Groupomania | Inscription'
@@ -32,7 +32,7 @@ const routes = [
     },
     {
         name : 'Account',
-        path : '/account',
+        path : '/groupomania/account',
         component: Account,
         meta : {
             title : 'Groupomania | Mon compte'
@@ -47,10 +47,12 @@ const routes = [
         }
     }
 
+
 ]
 
 const router = createRouter({
     history : createWebHistory(),
+    mode: "hash",
     routes,
 })
 
