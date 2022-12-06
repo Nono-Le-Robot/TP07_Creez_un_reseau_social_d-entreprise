@@ -1,22 +1,73 @@
 <template>
   <div id="App">
-    
     <div id="englobe-logo">
-      <router-link to="/"><img id="logo" src="./assets/logo.png" alt="Photo du logo de groupomania, représentant une planéte en line-art" /></router-link>
+      <router-link to="/"
+        ><img
+          id="logo"
+          src="./assets/logo.png"
+          alt="Photo du logo de groupomania, représentant une planéte en line-art"
+      /></router-link>
     </div>
     <link rel="icon" href="./assets/logo.png" />
     <nav class="menu">
-      <input type="checkbox" href="#" class="menu-open" name="menu-open" id="menu-open" />
+      <input
+        type="checkbox"
+        href="#"
+        class="menu-open"
+        name="menu-open"
+        id="menu-open"
+      />
       <label class="menu-open-button" for="menu-open">
         <span class="hamburger hamburger-1"></span>
         <span class="hamburger hamburger-2"></span>
         <span class="hamburger hamburger-3"></span>
       </label>
-      <router-link  title="Social" v-if="logged === true" to="/groupomania/" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-house-chimney"></i> </router-link>
-      <router-link  title="Mon compte" v-if="logged === true" to="/groupomania/account" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-user-gear"></i> </router-link>
-      <router-link title="Se connecter" v-else to="/groupomania/login" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-key login-btn"></i> </router-link>
-      <router-link title="Se déconnecter" @click="disconnectUser()" v-if="logged === true" to="/groupomania/login" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-power-off"></i></router-link>
-      <router-link title="S'enregistrer" v-else to="/groupomania/register" href="#" class="menu-item"> <i style ='transform: scale(1.5);' class="fa-solid fa-user-plus"></i></router-link>
+      <router-link
+        title="Social"
+        v-if="logged === true"
+        to="/groupomania/"
+        href="#"
+        class="menu-item"
+      >
+        <i style="transform: scale(1.5)" class="fa-solid fa-house-chimney"></i>
+      </router-link>
+      <router-link
+        title="Mon compte"
+        v-if="logged === true"
+        to="/groupomania/account"
+        href="#"
+        class="menu-item"
+      >
+        <i style="transform: scale(1.5)" class="fa-solid fa-user-gear"></i>
+      </router-link>
+      <router-link
+        title="Se connecter"
+        v-else
+        to="/groupomania/login"
+        href="#"
+        class="menu-item"
+      >
+        <i style="transform: scale(1.5)" class="fa-solid fa-key login-btn"></i>
+      </router-link>
+      <router-link
+        title="Se déconnecter"
+        @click="disconnectUser()"
+        v-if="logged === true"
+        to="/groupomania/login"
+        href="#"
+        class="menu-item"
+      >
+        <i style="transform: scale(1.5)" class="fa-solid fa-power-off"></i
+      ></router-link>
+      <router-link
+        title="S'enregistrer"
+        v-else
+        to="/groupomania/register"
+        href="#"
+        class="menu-item"
+      >
+        <i style="transform: scale(1.5)" class="fa-solid fa-user-plus"></i
+      ></router-link>
     </nav>
   </div>
   <router-view />
@@ -27,32 +78,31 @@ export default {
   name: "App",
   methods: {
     disconnectUser() {
-      localStorage.removeItem('token')
+      localStorage.removeItem("token");
       this.logged = false;
-
     },
   },
-  data(){
-    return{
-      logged:false
-    } 
+  data() {
+    return {
+      logged: false,
+    };
   },
   watch: {
-    '$route' (to, from) {
-    const load = document.querySelector('div')
-  load.classList.add('loader-design')
-     setTimeout(() => {
-        load.classList.remove('loader-design')
+    $route(to, from) {
+      const load = document.querySelector("div");
+      load.classList.add("loader-design");
+      setTimeout(() => {
+        load.classList.remove("loader-design");
       }, 100);
-    
-    }
+    },
   },
-  mounted(){
-    axios.get('https://sannier-renaud.fr/portfolio/groupomania/api/user/me')
-    .then(() => this.logged=true)
-    .catch((err) => console.log(err))
-  }
-}
+  mounted() {
+    axios
+      .get("https://sannier-renaud.fr/portfolio/groupomania/api/user/me")
+      .then(() => (this.logged = true))
+      .catch((err) => console.log(err));
+  },
+};
 </script>
 
 <style lang="scss">
@@ -74,69 +124,87 @@ html {
   margin: 0;
   padding: 0;
   background-attachment: fixed;
-  background-image: radial-gradient(circle at 29% 55%,
+  background-image: radial-gradient(
+      circle at 29% 55%,
       rgba(255, 255, 255, 0.09) 0%,
       rgba(255, 255, 255, 0.09) 4%,
       transparent 4%,
       transparent 44%,
       transparent 44%,
-      transparent 100%),
-    radial-gradient(circle at 85% 89%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle at 85% 89%,
       rgba(255, 255, 255, 0.09) 0%,
       rgba(255, 255, 255, 0.09) 51%,
       transparent 51%,
       transparent 52%,
       transparent 52%,
-      transparent 100%),
-    radial-gradient(circle at 6% 90%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle at 6% 90%,
       rgba(255, 255, 255, 0.09) 0%,
       rgba(255, 255, 255, 0.09) 53%,
       transparent 53%,
       transparent 64%,
       transparent 64%,
-      transparent 100%),
-    radial-gradient(circle at 35% 75%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle at 35% 75%,
       rgba(255, 255, 255, 0.09) 0%,
       rgba(255, 255, 255, 0.09) 6%,
       transparent 6%,
       transparent 98%,
       transparent 98%,
-      transparent 100%),
-    radial-gradient(circle at 56% 75%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle at 56% 75%,
       rgba(255, 255, 255, 0.09) 0%,
       rgba(255, 255, 255, 0.09) 16%,
       transparent 16%,
       transparent 23%,
       transparent 23%,
-      transparent 100%),
-    radial-gradient(circle at 42% 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle at 42% 0%,
       rgba(255, 255, 255, 0.09) 0%,
       rgba(255, 255, 255, 0.09) 3%,
       transparent 3%,
       transparent 26%,
       transparent 26%,
-      transparent 100%),
-    radial-gradient(circle at 29% 28%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle at 29% 28%,
       rgba(255, 255, 255, 0.09) 0%,
       rgba(255, 255, 255, 0.09) 51%,
       transparent 51%,
       transparent 75%,
       transparent 75%,
-      transparent 100%),
-    radial-gradient(circle at 77% 21%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle at 77% 21%,
       rgba(255, 255, 255, 0.09) 0%,
       rgba(255, 255, 255, 0.09) 35%,
       transparent 35%,
       transparent 55%,
       transparent 55%,
-      transparent 100%),
-    radial-gradient(circle at 65% 91%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle at 65% 91%,
       rgba(255, 255, 255, 0.09) 0%,
       rgba(255, 255, 255, 0.09) 46%,
       transparent 46%,
       transparent 76%,
       transparent 76%,
-      transparent 100%),
+      transparent 100%
+    ),
     linear-gradient(45deg, rgb(253, 45, 1), rgb(245, 247, 73));
   background-repeat: no-repeat;
   height: 900px;
@@ -149,7 +217,7 @@ html {
   transform: scale(0.4);
 }
 
-#englobe-logo{
+#englobe-logo {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -178,15 +246,16 @@ a {
   color: rgb(121, 20, 204);
 }
 
-.fa-arrow-right-to-bracket{
+.fa-arrow-right-to-bracket {
   font-weight: 800;
   font-size: 25px;
   margin-left: 5px;
   margin-top: 28px;
 }
 
-#btn-new-post, #send-modified-profil{
-      transition: 0.5s;
+#btn-new-post,
+#send-modified-profil {
+  transition: 0.5s;
   color: rgb(255, 255, 255);
   background-color: rgb(20, 45, 79);
   border: solid 1px black;
@@ -194,7 +263,7 @@ a {
   font-size: 15px;
   padding: 10px 20px;
   border-radius: 30px;
-  &:hover{
+  &:hover {
     cursor: pointer;
     transition: 0.5s;
     background-color: rgb(105, 166, 239);
@@ -208,7 +277,8 @@ a {
   color: inherit;
 }
 
-.menu-item, .menu-open-button {
+.menu-item,
+.menu-open-button {
   transition: 1s;
   background: #a243fc;
   color: white;
@@ -223,9 +293,9 @@ a {
   line-height: 80px;
   transform: translate3d(0, 0, 0);
   transition: transform ease-out 200ms;
-  &:hover{
+  &:hover {
     transition: 1s;
-      background: #b464ff;
+    background: #b464ff;
   }
   transition: 1s;
 }
@@ -234,7 +304,7 @@ a {
   display: none;
 }
 
-.menu-open-button{
+.menu-open-button {
   border: 3px rgb(0, 0, 0) solid;
 }
 
@@ -277,8 +347,7 @@ a {
 }
 
 .menu {
-  
-  position:fixed;
+  position: fixed;
   color: #fcfcfc;
   left: 38px;
   top: -55px;
@@ -293,8 +362,8 @@ a {
   transform: scale(0.5);
 }
 
-.menu-item{
-    border: 3px black solid;
+.menu-item {
+  border: 3px black solid;
 }
 
 .menu-item:hover {
@@ -340,7 +409,6 @@ a {
 .menu-open:checked ~ .menu-item:nth-child(3) {
   transition-duration: 100ms;
   transform: translate3d(112.42548px, -6.519159999999999px, 0);
-  
 }
 
 .menu-open:checked ~ .menu-item:nth-child(4) {
@@ -363,55 +431,54 @@ a {
   transform: translate3d(-114.40705px, 11.66307px, 0);
 }
 
-#App > nav > a:nth-child(4){
+#App > nav > a:nth-child(4) {
   background-color: rgb(139, 195, 255);
 
-  &:hover{
-  transition: 0.2s;
+  &:hover {
+    transition: 0.2s;
     background-color: rgb(84, 112, 156);
   }
-
 }
 
-#App > nav > a:nth-child(3){
+#App > nav > a:nth-child(3) {
   background-color: rgb(115, 255, 141);
-    &:hover{
-  transition: 0.2s;
-      background-color: rgb(70, 154, 86);
+  &:hover {
+    transition: 0.2s;
+    background-color: rgb(70, 154, 86);
   }
   transition: 0.2s;
 }
 
-#App > nav > a:nth-child(5){
+#App > nav > a:nth-child(5) {
   background-color: rgb(251, 193, 59);
-      &:hover{
-  transition: 0.2s;
-  background-color: rgb(183, 104, 0);
+  &:hover {
+    transition: 0.2s;
+    background-color: rgb(183, 104, 0);
   }
 }
 
-#App > nav > label{
+#App > nav > label {
   transform: scale(1.3);
 }
 
-.fa-house-chimney  {
+.fa-house-chimney {
   margin-left: 8px;
 }
 
-.fa-power-off{
-margin-left: 10px;
-padding-top: 10px;
+.fa-power-off {
+  margin-left: 10px;
+  padding-top: 10px;
 }
 
-.fa-user-plus{
-margin-left: 12px;
+.fa-user-plus {
+  margin-left: 12px;
 }
 
-.fa-user-gear{
-margin-left: 20px;
+.fa-user-gear {
+  margin-left: 20px;
 }
 
-.login-btn{
+.login-btn {
   font-weight: 800;
   font-size: 23px;
   margin-left: 14px;
@@ -427,9 +494,7 @@ margin-left: 20px;
   color: white;
 }
 
-
-.loader-design{
+.loader-design {
   visibility: hidden;
 }
-
 </style>

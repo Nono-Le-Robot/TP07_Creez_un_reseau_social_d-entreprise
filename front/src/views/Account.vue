@@ -1,38 +1,72 @@
 <template>
   <div>
     <div id="userInfos">
-      <br>
+      <br />
       <h1><i class="fa-solid fa-file-user"></i>Mon compte :</h1>
-      <br>
+      <br />
       <span>
-        <img :style="picture === 'https://sannier-renaud.fr/portfolio/groupomania/images/default/default.png' ? 'left: 0px;' : '' " id="picture-profil" :src='picture' alt="" srcset="">
-        <i v-if="(picture != 'https://sannier-renaud.fr/portfolio/groupomania/images/default/default.png')" @click="setDefault()" class="fa-solid fa-xmark default-picture"></i>
+        <img
+          :style="
+            picture ===
+            'https://sannier-renaud.fr/portfolio/groupomania/images/default/default.png'
+              ? 'left: 0px;'
+              : ''
+          "
+          id="picture-profil"
+          :src="picture"
+          alt=""
+          srcset=""
+        />
+        <i
+          v-if="
+            picture !=
+            'https://sannier-renaud.fr/portfolio/groupomania/images/default/default.png'
+          "
+          @click="setDefault()"
+          class="fa-solid fa-xmark default-picture"
+        ></i>
       </span>
-      <br>
-      <p>Nom : {{ lastname }} </p>
-      <br>
-      <p>Prénom : {{ firstname }} </p>
-      <br>
-      <p>Email : {{ email }} </p>
-      <br>
-      <br>
+      <br />
+      <p>Nom : {{ lastname }}</p>
+      <br />
+      <p>Prénom : {{ firstname }}</p>
+      <br />
+      <p>Email : {{ email }}</p>
+      <br />
+      <br />
       <div class="separator"></div>
-      <br>
-      <br>
-      <form id="newPost" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="newPost" >
-        <input class="input-file-new-post" type="file" name="picture-profil-edit" id="picture-profil-edit"/>
-        <label class="input-file-design" for="picture-profil-edit"><i class="fa-solid fa-arrows-rotate"></i> Changer ma photo de profil</label>
-        <br>
-        <br>
-        <br>   
+      <br />
+      <br />
+      <form
+        id="newPost"
+        v-if="logged === true"
+        enctype="multipart/form-data"
+        v-on:submit.prevent="onSubmit"
+        action="newPost"
+      >
+        <input
+          class="input-file-new-post"
+          type="file"
+          name="picture-profil-edit"
+          id="picture-profil-edit"
+        />
+        <label class="input-file-design" for="picture-profil-edit"
+          ><i class="fa-solid fa-arrows-rotate"></i> Changer ma photo de
+          profil</label
+        >
+        <br />
+        <br />
+        <br />
         <span>
-          <p style="font-size:10px">(format : png,jpg,gif)</p>
+          <p style="font-size: 10px">(format : png,jpg,gif)</p>
           <strong id="new-file-name">Nom du fichier : </strong>
           <span id="file-name">Aucun</span>
-          <br>
+          <br />
         </span>
-        <br>
-        <button id="send-modified-profil" v-on:click="editProfil()"><i class="fa-solid fa-check"></i> Valider</button>
+        <br />
+        <button id="send-modified-profil" v-on:click="editProfil()">
+          <i class="fa-solid fa-check"></i> Valider
+        </button>
       </form>
     </div>
     <br />
@@ -45,96 +79,124 @@ export default {
   data() {
     return {
       logged: false,
-      firstname : '',
-      lastname : '',
-      email : '',
-      picture : '',
-      connectedId: ''
+      firstname: "",
+      lastname: "",
+      email: "",
+      picture: "",
+      connectedId: "",
     };
   },
   methods: {
-    setDefault(){
-      axios.put(`https://sannier-renaud.fr/portfolio/groupomania/api/user/${this.connectedId}`,{picture : ''})
-      .then(() => {
-        axios.get('https://sannier-renaud.fr/portfolio/groupomania/api/post')
-        .then((res) => {
-          let posts = res.data.allPosts
-          let postedByUser = posts.filter(p => p.posterId === this.connectedId)
-          if(postedByUser.length > 0){
-          for (let i = 0; i < postedByUser.length; i++) {
-                axios.put(`https://sannier-renaud.fr/portfolio/groupomania/api/post/${postedByUser[i]._id}`, {posterProfil : "https://sannier-renaud.fr/portfolio/groupomania/images/default/default.png"})
-                .then(() => window.location.reload())
-                .catch((err) => {
-                  console.log(err)
-                })
-            }
-          }
-            else{
-              window.location.reload()
-            }
+    setDefault() {
+      axios
+        .put(
+          `https://sannier-renaud.fr/portfolio/groupomania/api/user/${this.connectedId}`,
+          { picture: "" }
+        )
+        .then(() => {
+          axios
+            .get("https://sannier-renaud.fr/portfolio/groupomania/api/post")
+            .then((res) => {
+              let posts = res.data.allPosts;
+              let postedByUser = posts.filter(
+                (p) => p.posterId === this.connectedId
+              );
+              if (postedByUser.length > 0) {
+                for (let i = 0; i < postedByUser.length; i++) {
+                  axios
+                    .put(
+                      `https://sannier-renaud.fr/portfolio/groupomania/api/post/${postedByUser[i]._id}`,
+                      {
+                        posterProfil:
+                          "https://sannier-renaud.fr/portfolio/groupomania/images/default/default.png",
+                      }
+                    )
+                    .then(() => window.location.reload())
+                    .catch((err) => {
+                      console.log(err);
+                    });
+                }
+              } else {
+                window.location.reload();
+              }
+            });
         })
-      })
-      .catch()
+        .catch();
     },
     editProfil() {
-      let imgPictureEdit =  document.querySelector("#picture-profil-edit")
-      if(imgPictureEdit.files[0]){
-        if(imgPictureEdit.files[0].name.includes('"')){
-          alert('Nom de fichier incorrect, supprimer les accents ou caractères spéciaux')
+      let imgPictureEdit = document.querySelector("#picture-profil-edit");
+      if (imgPictureEdit.files[0]) {
+        if (imgPictureEdit.files[0].name.includes('"')) {
+          alert(
+            "Nom de fichier incorrect, supprimer les accents ou caractères spéciaux"
+          );
+        } else {
+          let formData = new FormData();
+          formData.append("file", imgPictureEdit.files[0]);
+          axios
+            .put(
+              `https://sannier-renaud.fr/portfolio/groupomania/api/user/${this.connectedId}`,
+              formData
+            )
+            .then((updatedUser) => {
+              axios
+                .get("https://sannier-renaud.fr/portfolio/groupomania/api/post")
+                .then((res) => {
+                  let posts = res.data.allPosts;
+                  let postedByUser = posts.filter(
+                    (p) => p.posterId === this.connectedId
+                  );
+                  for (let i = 0; i < postedByUser.length; i++) {
+                    axios
+                      .put(
+                        `https://sannier-renaud.fr/portfolio/groupomania/api/post/${postedByUser[i]._id}`,
+                        { posterProfil: updatedUser.data.picture }
+                      )
+                      .then()
+                      .catch((err) => console.log(err));
+                  }
+                  window.location.reload();
+                })
+                .catch((err) => console.log(err));
+            })
+            .catch();
         }
-        else{
-        let formData = new FormData()
-        formData.append('file', imgPictureEdit.files[0])
-        axios.put(`https://sannier-renaud.fr/portfolio/groupomania/api/user/${this.connectedId}`,formData)
-        .then((updatedUser) => {
-          axios.get('https://sannier-renaud.fr/portfolio/groupomania/api/post')
-          .then((res) => {
-            let posts = res.data.allPosts
-            let postedByUser = posts.filter(p => p.posterId === this.connectedId)
-            for (let i = 0; i < postedByUser.length; i++) {
-                  axios.put(`https://sannier-renaud.fr/portfolio/groupomania/api/post/${postedByUser[i]._id}`, {posterProfil : updatedUser.data.picture})
-                  .then()
-                  .catch(err => console.log(err))
-            }
-            window.location.reload()
-          })
-          .catch(err => console.log(err))
-        })
-        .catch()
+      } else {
+        alert("Aucun fichier chargé");
       }
-    }
-    else{
-      alert('Aucun fichier chargé')
-      }         
     },
     disconnectUser() {
       document.cookie = "jwt=;max-age=0";
       this.logged = false;
-    }
+    },
   },
   mounted() {
-    axios.get('https://sannier-renaud.fr/portfolio/groupomania/api/user/me')
-    .then((userConnected) => {
-      console.log(userConnected)
+    axios
+      .get("https://sannier-renaud.fr/portfolio/groupomania/api/user/me")
+      .then((userConnected) => {
+        console.log(userConnected);
         this.logged = true;
-        axios.get(`https://sannier-renaud.fr/portfolio/groupomania/api/user/${userConnected.data.data._id}`)
-        .then((user) => {
-          this.firstname = user.data.firstname
-          this.lastname = user.data.lastname
-          this.email = user.data.email
-          this.picture = user.data.picture
-          this.connectedId = user.data._id
-          let inputFile = document.querySelector('#picture-profil-edit')
-          let fileName = document.querySelector('#file-name')
-          inputFile.addEventListener('change', () => {
-            fileName.textContent = inputFile.files[0].name
+        axios
+          .get(
+            `https://sannier-renaud.fr/portfolio/groupomania/api/user/${userConnected.data.data._id}`
+          )
+          .then((user) => {
+            this.firstname = user.data.firstname;
+            this.lastname = user.data.lastname;
+            this.email = user.data.email;
+            this.picture = user.data.picture;
+            this.connectedId = user.data._id;
+            let inputFile = document.querySelector("#picture-profil-edit");
+            let fileName = document.querySelector("#file-name");
+            inputFile.addEventListener("change", () => {
+              fileName.textContent = inputFile.files[0].name;
+            });
           })
-        })
-        .catch();
+          .catch();
       })
-    .catch((err) => console.log(err))
+      .catch((err) => console.log(err));
   },
-}
+};
 </script>
 
 <style lang="scss">
@@ -163,26 +225,26 @@ export default {
   margin-right: auto;
 }
 
-html{
+html {
   height: 700px;
 }
 
-#picture-profil{
+#picture-profil {
   width: 210px;
   height: 210px;
-  border: 1px  black solid;
+  border: 1px black solid;
   position: relative;
   left: 25px;
-  object-fit:cover;
+  object-fit: cover;
   border-radius: 50%;
   margin-bottom: 20px;
 }
 
-#picture-profil-edit{
+#picture-profil-edit {
   display: none;
 }
 
-#newPost > label{
+#newPost > label {
   transition: 0.5s;
   color: black;
   background-color: rgb(105, 161, 239);
@@ -191,32 +253,32 @@ html{
   font-size: 15px;
   padding: 10px 20px;
   border-radius: 8px;
-  &:hover{
+  &:hover {
     cursor: pointer;
     transition: 0.5s;
     background-color: rgb(20, 51, 79);
     color: rgb(255, 255, 255);
     transform: scale(1.03);
     box-shadow: 1px 1px 1px black;
-    }
+  }
 }
 
-#file-name{
+#file-name {
   font-size: 15px;
   font-weight: bold;
 }
 
-#new-file-name{
+#new-file-name {
   font-size: 15px;
 }
 
-#send-modified-profil{
+#send-modified-profil {
   background-color: rgb(105, 161, 239);
   color: black;
   margin-top: 3px;
   margin-bottom: 10px;
   border-radius: 4px;
-  &:hover{
+  &:hover {
     transition: 0.5s;
     background-color: rgb(20, 51, 79);
     color: white;
@@ -225,12 +287,10 @@ html{
   border-radius: 8px;
 }
 
-.default-picture{
-    position: relative;
-    left: -25px;
-    transform: scale(0.9);
-    top: -195px;
+.default-picture {
+  position: relative;
+  left: -25px;
+  transform: scale(0.9);
+  top: -195px;
 }
-
-
 </style>

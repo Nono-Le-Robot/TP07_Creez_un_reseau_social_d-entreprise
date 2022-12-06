@@ -3,26 +3,39 @@
     <h1>Inscription</h1>
     <label for="register"></label>
     <form v-on:submit.prevent="onSubmit" action="register">
+      <h2><i class="fa-solid fa-user-pen"></i> Prénom :</h2>
+      <br />
+      <input
+        type="text"
+        autocomplete="off"
+        name="firstname"
+        id="firstname"
+        v-model="firstname"
+      />
+      <br />
+      <h2><i class="fa-solid fa-user-pen"></i> Nom :</h2>
+      <br />
+      <input
+        type="text"
+        autocomplete="off"
+        name="lastname"
+        id="lastname"
+        v-model="lastname"
+      />
+      <br />
 
-      <h2><i class="fa-solid fa-user-pen"></i>  Prénom :</h2>
       <br />
-      <input type="text" autocomplete="off" name="firstname" id="firstname" v-model="firstname" />
+      <h2><i class="fa-solid fa-at"></i> Email :</h2>
       <br />
-      <h2><i class="fa-solid fa-user-pen"></i>   Nom :</h2>
+      <input type="email" name="email" id="email" v-model="email" />
       <br />
-      <input type="text" autocomplete="off"  name="lastname" id="lastname" v-model="lastname" />
-      <br />
-    
-      <br>
-      <h2><i class="fa-solid fa-at"></i>   Email :</h2>
-      <br />
-      <input type="email"  name="email" id="email" v-model="email" />
-      <br />
-      <h2><i class="fa-solid fa-key"></i>   Mot de passe :</h2>
+      <h2><i class="fa-solid fa-key"></i> Mot de passe :</h2>
       <br />
       <input type="password" name="password" id="password" v-model="password" />
       <br />
-      <button type="submit" v-on:click="sendUserData()"><i class="fa-solid fa-user-plus"></i>S'inscrire</button>
+      <button type="submit" v-on:click="sendUserData()">
+        <i class="fa-solid fa-user-plus"></i>S'inscrire
+      </button>
       <div id="response"></div>
     </form>
   </div>
@@ -42,12 +55,16 @@ export default {
   },
   methods: {
     sendUserData() {
-      axios.post("https://sannier-renaud.fr/portfolio/groupomania/api/user/register/", {
-          firstname: this.firstname,
-          lastname: this.lastname,
-          email: this.email,
-          password: this.password,
-        })
+      axios
+        .post(
+          "https://sannier-renaud.fr/portfolio/groupomania/api/user/register/",
+          {
+            firstname: this.firstname,
+            lastname: this.lastname,
+            email: this.email,
+            password: this.password,
+          }
+        )
         .then(function (data) {
           response.innerHTML = `<p>Création réussie !<br>  redirection dans 3 secondes...</p><br>`;
           response.style.color = "rgb(63, 211, 61)";
@@ -63,7 +80,8 @@ export default {
           }, 1000);
         })
         .catch(function (error) {
-          response.innerHTML ="<p>Données invalide(s) et/ou email déjà enregistré.</p><br>";
+          response.innerHTML =
+            "<p>Données invalide(s) et/ou email déjà enregistré.</p><br>";
           response.style.color = "rgb(211, 61, 61)";
         });
     },
@@ -72,8 +90,8 @@ export default {
 </script>
 
 <style lang="scss">
-#card{
-  background-color: #4E5566;
+#card {
+  background-color: #4e5566;
   color: rgb(255, 255, 255);
   width: 500px;
   margin-left: auto;
@@ -83,47 +101,47 @@ export default {
   margin-top: 0;
 }
 
-h1{
+h1 {
   font-weight: bold;
   margin-bottom: 10px;
   position: relative;
   top: -20px;
 }
 
-h2{
+h2 {
   font-weight: bold;
 }
 
-input{
+input {
   margin-bottom: 40px;
   border-radius: 5px;
   height: 30px;
   width: 250px;
   padding: 0px 10px;
   font-weight: 600;
-  &:focus{
+  &:focus {
     outline: none;
   }
 }
 
-button{
+button {
   border-radius: 4px;
   padding: 10px 15px;
   font-size: 20px;
   border: 1px solid black;
   background-color: #6f85ba;
   color: black;
-  &:hover{
+  &:hover {
     transition: 0.5s;
     transform: scale(1.03);
-    background-color:rgb(39, 57, 111);
+    background-color: rgb(39, 57, 111);
     color: white;
     cursor: pointer;
   }
   transition: 0.5s;
 }
 
-#response{
+#response {
   padding-bottom: 10px;
   padding-top: 20px;
   font-size: 20px;
@@ -133,20 +151,19 @@ button{
   margin-right: auto;
 }
 
-.fa-user-plus{
-    
-    transform: scale(0.8);
+.fa-user-plus {
+  transform: scale(0.8);
 }
 
-.fa-solid{
-margin-right: 5px;
+.fa-solid {
+  margin-right: 5px;
 }
 
-#card > form > button > i{
+#card > form > button > i {
   margin-left: 0px;
 }
 
-.fa-key{
+.fa-key {
   margin-top: 0;
 }
 </style>

@@ -1,62 +1,195 @@
 <template>
   <div>
     <div id="createnew-post">
-      <form id="new-post" v-if="logged === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="new-post">
-        <br>
-        <input type="text" maxlength="300" name="message" id="message-input" placeholder="Que souhaitez vous partager ?" v-model="message" autocomplete="off" />
-        <br>
-        <label id="design-input-file" for="picture"> <i class="fa-solid fa-file-arrow-up"></i> Choisir un fichier...</label>
-        <input class="input-file-new-post" type="file" name="picture" id="picture" />
-        <p style="font-size:12px; margin-bottom: 20px;">(format : png,jpg,gif)</p>
+      <form
+        id="new-post"
+        v-if="logged === true"
+        enctype="multipart/form-data"
+        v-on:submit.prevent="onSubmit"
+        action="new-post"
+      >
+        <br />
+        <input
+          type="text"
+          maxlength="300"
+          name="message"
+          id="message-input"
+          placeholder="Que souhaitez vous partager ?"
+          v-model="message"
+          autocomplete="off"
+        />
+        <br />
+        <label id="design-input-file" for="picture">
+          <i class="fa-solid fa-file-arrow-up"></i> Choisir un fichier...</label
+        >
+        <input
+          class="input-file-new-post"
+          type="file"
+          name="picture"
+          id="picture"
+        />
+        <p style="font-size: 12px; margin-bottom: 20px">
+          (format : png,jpg,gif)
+        </p>
         <span>
           <strong id="new-file-name">Nom du fichier : </strong>
           <span id="file-name">Aucun</span>
         </span>
-        <button id="btn-new-post" @click="createPost()"><i class="fa-solid fa-paper-plane"></i> Envoyer</button>
-        <br>
+        <button id="btn-new-post" @click="createPost()">
+          <i class="fa-solid fa-paper-plane"></i> Envoyer
+        </button>
+        <br />
       </form>
     </div>
     <div v-if="logged === true">
-      <div v-for="(post,index) in posts" :key="post.id"  id="posts">
-        <div class='one-post' >
-          <br>
-          <div class='user-infos load'>
-            <img id='picture-profil-post' :src="post.posterProfil" alt="" srcset="">
-            <p>{{ post.posterFirstname }} {{ post.posterLastname }} : </p>
+      <div v-for="(post, index) in posts" :key="post.id" id="posts">
+        <div class="one-post">
+          <br />
+          <div class="user-infos load">
+            <img
+              id="picture-profil-post"
+              :src="post.posterProfil"
+              alt=""
+              srcset=""
+            />
+            <p>{{ post.posterFirstname }} {{ post.posterLastname }} :</p>
           </div>
-          <br>
-          <p class="message-post"> {{ post.message }} </p>
-          <br>
-          <img class="post-picture" :src="post.picture" alt="">
+          <br />
+          <p class="message-post">{{ post.message }}</p>
+          <br />
+          <img class="post-picture" :src="post.picture" alt="" />
           <div class="separator"></div>
-          <br>
+          <br />
           <p class="post-id" hidden>{{ post._id }}</p>
           <div class="post-footer">
-            <form  id="editPost" v-if="post.selected === true" enctype="multipart/form-data" v-on:submit.prevent="onSubmit" action="editPost">
+            <form
+              id="editPost"
+              v-if="post.selected === true"
+              enctype="multipart/form-data"
+              v-on:submit.prevent="onSubmit"
+              action="editPost"
+            >
               <span class="new-file-input">
                 <div class="inputs-user">
                   <p class="p-modify">que voulez vous modifier ?</p>
-                  <input type="text" name="message-edit" class="message-input-edit" autocomplete="off" v-model="messageEdit"/>
+                  <input
+                    type="text"
+                    name="message-edit"
+                    class="message-input-edit"
+                    autocomplete="off"
+                    v-model="messageEdit"
+                  />
                   <button class="new-design-edit">
-                    <p> <i class="fa-solid fa-file-arrow-up"></i>  Choisir un fichier...</p>
-                    <input @change="previewFiles" id="picture-edit" type="file" name="picture-edit" class="input-file-new-post picture-edit-select" />
+                    <p>
+                      <i class="fa-solid fa-file-arrow-up"></i> Choisir un
+                      fichier...
+                    </p>
+                    <input
+                      @change="previewFiles"
+                      id="picture-edit"
+                      type="file"
+                      name="picture-edit"
+                      class="input-file-new-post picture-edit-select"
+                    />
                   </button>
-                  <p class='supported-formats' style="font-size:12px; margin-bottom:20px;">(format : png,jpg,gif)</p>
+                  <p
+                    class="supported-formats"
+                    style="font-size: 12px; margin-bottom: 20px"
+                  >
+                    (format : png,jpg,gif)
+                  </p>
                 </div>
                 <strong id="new-file-name">Nom du fichier : </strong>
-                <span class='get-name' id="file-name">{{ file.name }}</span>
+                <span class="get-name" id="file-name">{{ file.name }}</span>
               </span>
             </form>
-            <button v-if="post.selected === true && post.picture != 'https://sannier-renaud.fr/portfolio/groupomania/images/default/deleted-picture.jpg' && deletePictureChecked === false" class="delete-picture-edit" @click="deletePicture(post._id, index), file = []"><i class="fa-solid fa-trash-can"></i> Supprimer la photo</button>
-            <button v-else-if="post.selected === true && post.picture != 'https://sannier-renaud.fr/portfolio/groupomania/images/default/deleted-picture.jpg' && deletePictureChecked === true " class="delete-picture-edit"><i id="btnDeleteChecked" class="fa-solid fa-check"></i> La photo a bien été supprimée</button>
-            <br>
+            <button
+              v-if="
+                post.selected === true &&
+                post.picture !=
+                  'https://sannier-renaud.fr/portfolio/groupomania/images/default/deleted-picture.jpg' &&
+                deletePictureChecked === false
+              "
+              class="delete-picture-edit"
+              @click="deletePicture(post._id, index), (file = [])"
+            >
+              <i class="fa-solid fa-trash-can"></i> Supprimer la photo
+            </button>
+            <button
+              v-else-if="
+                post.selected === true &&
+                post.picture !=
+                  'https://sannier-renaud.fr/portfolio/groupomania/images/default/deleted-picture.jpg' &&
+                deletePictureChecked === true
+              "
+              class="delete-picture-edit"
+            >
+              <i id="btnDeleteChecked" class="fa-solid fa-check"></i> La photo a
+              bien été supprimée
+            </button>
+            <br />
             <div v-if="post.selected === true" class="separator2"></div>
             <div class="post-options-btn">
-              <i :class="userLikedPosts.includes(post._id) ? 'fa-heart' : 'fa-thumbs-up'" @click="likeRequest(index, post._id)" v-if="post.selected === false"   class="btn-like fa-solid"><span class="bubble-likes">{{post.likers.length}}</span></i>
-              <i @click="editPost(index, posts), hideBubble(), post.selected = true, messageEdit = post.message"  v-if="post.posterId === connectedUserId && post.selected === false  || connectedUserId === '62f2ae7fd2fc5c1305443984'&& post.selected === false"  class="fa-solid fa-pen-to-square"></i>
-              <i @click="deletePost(post._id), showBubble()" v-if="post.posterId === connectedUserId && post.selected === false  || connectedUserId === '62f2ae7fd2fc5c1305443984'&& post.selected === false" class="fa-solid fa-trash"></i>
-              <i @click="sendPost(post._id,index,file), showBubble(), file = [], showOtherBtn(post._id, index), deletePictureChecked = false" v-if="post.selected === true" class='fa-solid fa-check confirm-btn'></i>
-              <i @click="post.selected = false, file = [],messageEdit = post.message , getPosts(), showBubble(), showOtherBtn(post._id, index), deletePictureChecked = false" v-if="post.selected === true" class="fa-solid fa-xmark"></i>
+              <i
+                :class="
+                  userLikedPosts.includes(post._id)
+                    ? 'fa-heart'
+                    : 'fa-thumbs-up'
+                "
+                @click="likeRequest(index, post._id)"
+                v-if="post.selected === false"
+                class="btn-like fa-solid"
+                ><span class="bubble-likes">{{ post.likers.length }}</span></i
+              >
+              <i
+                @click="
+                  editPost(index, posts),
+                    hideBubble(),
+                    (post.selected = true),
+                    (messageEdit = post.message)
+                "
+                v-if="
+                  (post.posterId === connectedUserId &&
+                    post.selected === false) ||
+                  (connectedUserId === '62f2ae7fd2fc5c1305443984' &&
+                    post.selected === false)
+                "
+                class="fa-solid fa-pen-to-square"
+              ></i>
+              <i
+                @click="deletePost(post._id), showBubble()"
+                v-if="
+                  (post.posterId === connectedUserId &&
+                    post.selected === false) ||
+                  (connectedUserId === '62f2ae7fd2fc5c1305443984' &&
+                    post.selected === false)
+                "
+                class="fa-solid fa-trash"
+              ></i>
+              <i
+                @click="
+                  sendPost(post._id, index, file),
+                    showBubble(),
+                    (file = []),
+                    showOtherBtn(post._id, index),
+                    (deletePictureChecked = false)
+                "
+                v-if="post.selected === true"
+                class="fa-solid fa-check confirm-btn"
+              ></i>
+              <i
+                @click="
+                  (post.selected = false),
+                    (file = []),
+                    (messageEdit = post.message),
+                    getPosts(),
+                    showBubble(),
+                    showOtherBtn(post._id, index),
+                    (deletePictureChecked = false)
+                "
+                v-if="post.selected === true"
+                class="fa-solid fa-xmark"
+              ></i>
             </div>
             <p class="date-post">posté le : {{ post.date }}</p>
           </div>
@@ -71,221 +204,280 @@ import axios from "axios";
 export default {
   data() {
     return {
-      deletePictureChecked : false,
+      deletePictureChecked: false,
       logged: false,
       message: "",
       messageEdit: "",
       posts: [],
-      posterFirstname : "",
-      posterLastname : "",
-      posterProfil : "",
+      posterFirstname: "",
+      posterLastname: "",
+      posterProfil: "",
       connectedUserId: "",
       selectedPost: "",
       userLikedPosts: [],
-      file : [],
+      file: [],
     };
   },
   methods: {
-    hideOtherBtn(){
-      const likeBtn = document.querySelectorAll('.btn-like')
-      const editBtn = document.querySelectorAll('.fa-pen-to-square')
-      const deleteBtn = document.querySelectorAll('.fa-trash')
-      for(let n = 0; n < likeBtn.length; n++){
-        likeBtn[n].classList.add('hidden')
+    hideOtherBtn() {
+      const likeBtn = document.querySelectorAll(".btn-like");
+      const editBtn = document.querySelectorAll(".fa-pen-to-square");
+      const deleteBtn = document.querySelectorAll(".fa-trash");
+      for (let n = 0; n < likeBtn.length; n++) {
+        likeBtn[n].classList.add("hidden");
       }
-      for(let n = 0; n < editBtn.length; n++){
-        editBtn[n].classList.add('hidden')
+      for (let n = 0; n < editBtn.length; n++) {
+        editBtn[n].classList.add("hidden");
       }
-      for(let n = 0; n < deleteBtn.length; n++){
-        deleteBtn[n].classList.add('hidden')
+      for (let n = 0; n < deleteBtn.length; n++) {
+        deleteBtn[n].classList.add("hidden");
       }
-      this.hideBubble()
+      this.hideBubble();
     },
-    showOtherBtn(postId, index){
-      const imgDeleted = document.querySelectorAll('.post-picture')
-      imgDeleted[index].classList.remove('deleted-picture')    
-      const likeBtn = document.querySelectorAll('.btn-like')
-      const editBtn = document.querySelectorAll('.fa-pen-to-square')
-      const deleteBtn = document.querySelectorAll('.fa-trash')
-      for(let n = 0; n < likeBtn.length; n++){
-        likeBtn[n].classList.remove('hidden')
+    showOtherBtn(postId, index) {
+      const imgDeleted = document.querySelectorAll(".post-picture");
+      imgDeleted[index].classList.remove("deleted-picture");
+      const likeBtn = document.querySelectorAll(".btn-like");
+      const editBtn = document.querySelectorAll(".fa-pen-to-square");
+      const deleteBtn = document.querySelectorAll(".fa-trash");
+      for (let n = 0; n < likeBtn.length; n++) {
+        likeBtn[n].classList.remove("hidden");
       }
-      for(let n = 0; n < editBtn.length; n++){
-        editBtn[n].classList.remove('hidden')
+      for (let n = 0; n < editBtn.length; n++) {
+        editBtn[n].classList.remove("hidden");
       }
-      for(let n = 0; n < deleteBtn.length; n++){
-        deleteBtn[n].classList.remove('hidden')
+      for (let n = 0; n < deleteBtn.length; n++) {
+        deleteBtn[n].classList.remove("hidden");
       }
-      this.showBubble()
-      this.updateLike()
+      this.showBubble();
+      this.updateLike();
     },
-    hideBubble(){
-      const likeBubbleOwnPost = document.querySelectorAll('.design-like-number')
-      const likeBubble = document.querySelectorAll('.design-like-number-own-post')
-      for(let n = 0; n < likeBubbleOwnPost.length; n++){
-        likeBubbleOwnPost[n].classList.add('hidden')
+    hideBubble() {
+      const likeBubbleOwnPost = document.querySelectorAll(
+        ".design-like-number"
+      );
+      const likeBubble = document.querySelectorAll(
+        ".design-like-number-own-post"
+      );
+      for (let n = 0; n < likeBubbleOwnPost.length; n++) {
+        likeBubbleOwnPost[n].classList.add("hidden");
       }
-      for(let n = 0; n < likeBubble.length; n++){
-        likeBubble[n].classList.add('hidden')
+      for (let n = 0; n < likeBubble.length; n++) {
+        likeBubble[n].classList.add("hidden");
       }
     },
-    showBubble(){
-      const likeBubbleOwnPost = document.querySelectorAll('.design-like-number')
-      const likeBubble = document.querySelectorAll('.design-like-number-own-post')
-      for(let n = 0; n < likeBubbleOwnPost.length; n++){
-        likeBubbleOwnPost[n].classList.remove('hidden')
+    showBubble() {
+      const likeBubbleOwnPost = document.querySelectorAll(
+        ".design-like-number"
+      );
+      const likeBubble = document.querySelectorAll(
+        ".design-like-number-own-post"
+      );
+      for (let n = 0; n < likeBubbleOwnPost.length; n++) {
+        likeBubbleOwnPost[n].classList.remove("hidden");
       }
-      for(let n = 0; n < likeBubble.length; n++){
-        likeBubble[n].classList.remove('hidden')
+      for (let n = 0; n < likeBubble.length; n++) {
+        likeBubble[n].classList.remove("hidden");
       }
     },
     previewFiles(event) {
       this.file = event.target.files[0];
     },
     editPost() {
-      this.hideOtherBtn()
+      this.hideOtherBtn();
     },
-    sendPost(postId,index, file){
-      let formData = new FormData()
-      formData.append('posterId', this.connectedUserId)
-      formData.append('message', this.messageEdit)
-      formData.append('file', file)
-      axios.put(`https://sannier-renaud.fr/portfolio/groupomania/api/post/${postId}`,formData)
-      .then(() => this.getPosts())
-      .catch((err) => console.log(err))
+    sendPost(postId, index, file) {
+      let formData = new FormData();
+      formData.append("posterId", this.connectedUserId);
+      formData.append("message", this.messageEdit);
+      formData.append("file", file);
+      axios
+        .put(
+          `https://sannier-renaud.fr/portfolio/groupomania/api/post/${postId}`,
+          formData
+        )
+        .then(() => this.getPosts())
+        .catch((err) => console.log(err));
     },
-    deletePicture(postId, index){
-      if(window.confirm('Voulez vous vraiment supprimer cette photo ? \n\n ⚠️ Cette action est irrévérsible ⚠️')){
+    deletePicture(postId, index) {
+      if (
+        window.confirm(
+          "Voulez vous vraiment supprimer cette photo ? \n\n ⚠️ Cette action est irrévérsible ⚠️"
+        )
+      ) {
         this.deletePictureChecked = true;
-        axios.put(`https://sannier-renaud.fr/portfolio/groupomania/api/post/${postId}`, {
-          picture : 'https://sannier-renaud.fr/portfolio/groupomania/images/default/deleted-picture.jpg'
-        })
-        .then(() => {
-          const imgDeleted = document.querySelectorAll('.post-picture')
-          imgDeleted[index].classList.add('deleted-picture')
-        })
-        .catch()
+        axios
+          .put(
+            `https://sannier-renaud.fr/portfolio/groupomania/api/post/${postId}`,
+            {
+              picture:
+                "https://sannier-renaud.fr/portfolio/groupomania/images/default/deleted-picture.jpg",
+            }
+          )
+          .then(() => {
+            const imgDeleted = document.querySelectorAll(".post-picture");
+            imgDeleted[index].classList.add("deleted-picture");
+          })
+          .catch();
       }
     },
     getUsers() {
-      axios.get('https://sannier-renaud.fr/portfolio/groupomania/api/user')
-      .then()
-      .catch((err) => console.log(err))
+      axios
+        .get("https://sannier-renaud.fr/portfolio/groupomania/api/user")
+        .then()
+        .catch((err) => console.log(err));
     },
     getPosts() {
-      axios.get('https://sannier-renaud.fr/portfolio/groupomania/api/post')
-      .then((posts) => {
-          this.posts = posts.data.allPosts
-          this.updateLike()
-      })
-      .catch((err) => console.log(err.message))
+      axios
+        .get("https://sannier-renaud.fr/portfolio/groupomania/api/post")
+        .then((posts) => {
+          this.posts = posts.data.allPosts;
+          this.updateLike();
+        })
+        .catch((err) => console.log(err.message));
     },
-    updateLike(){
-      axios.get(`https://sannier-renaud.fr/portfolio/groupomania/api/user/${this.connectedUserId}`)
-      .then((user) => { this.userLikedPosts = user.data.likes })
-      .catch()
+    updateLike() {
+      axios
+        .get(
+          `https://sannier-renaud.fr/portfolio/groupomania/api/user/${this.connectedUserId}`
+        )
+        .then((user) => {
+          this.userLikedPosts = user.data.likes;
+        })
+        .catch();
     },
     createPost() {
-      const img = document.getElementById('picture')
+      const img = document.getElementById("picture");
       if (img.files[0]) {
         if (img.files[0].name.includes('"')) {
-          alert('Nom de fichier incorrect, supprimer les accents ou caractères spéciaux')
+          alert(
+            "Nom de fichier incorrect, supprimer les accents ou caractères spéciaux"
+          );
+        } else {
+          let formData = new FormData();
+          formData.append("posterId", this.connectedUserId);
+          formData.append("posterFirstname", this.posterFirstname);
+          formData.append("posterLastname", this.posterLastname);
+          formData.append("posterProfil", this.posterProfil);
+          formData.append("message", this.message);
+          formData.append("file", img.files[0]);
+          axios
+            .post(
+              `https://sannier-renaud.fr/portfolio/groupomania/api/post`,
+              formData
+            )
+            .then(() => {
+              window.location.reload();
+            })
+            .catch();
         }
-        else {
-          let formData = new FormData()
-          formData.append('posterId', this.connectedUserId)
-          formData.append('posterFirstname', this.posterFirstname)
-          formData.append('posterLastname', this.posterLastname)
-          formData.append('posterProfil', this.posterProfil)
-          formData.append('message', this.message)
-          formData.append('file', img.files[0])
-          axios.post(`https://sannier-renaud.fr/portfolio/groupomania/api/post`,formData)
-          .then(() => {
-            window.location.reload()
-          })
-          .catch()
+      } else {
+        let test = this.message.split(" ").join("");
+        if (test === "") {
+          alert("Vous ne pouvez pas créer un post vide.");
+        } else {
+          let formData = new FormData();
+          formData.append("posterId", this.connectedUserId);
+          formData.append("posterFirstname", this.posterFirstname);
+          formData.append("posterLastname", this.posterLastname);
+          formData.append("posterProfil", this.posterProfil);
+          formData.append("message", this.message);
+          axios
+            .post(
+              `https://sannier-renaud.fr/portfolio/groupomania/api/post`,
+              formData
+            )
+            .then(() => {
+              window.location.reload();
+            })
+            .catch();
         }
-      }
-      else {
-        let test = this.message.split(' ').join('')
-        if(test === "") {
-          alert('Vous ne pouvez pas créer un post vide.')
-        }
-        else{
-
-          let formData = new FormData()
-        formData.append('posterId', this.connectedUserId)
-        formData.append('posterFirstname', this.posterFirstname)
-        formData.append('posterLastname', this.posterLastname)
-        formData.append('posterProfil', this.posterProfil)
-        formData.append('message', this.message)
-        axios.post(`https://sannier-renaud.fr/portfolio/groupomania/api/post`, formData)
-        .then(() => {
-          window.location.reload()
-        })
-        .catch()
-          }
       }
     },
     deletePost(postId) {
-      if (window.confirm("Voulez vous vraiment supprimer ce post ? \n\n ⚠️ Cette action est irrévérsible ⚠️")) {
-        axios.delete(`https://sannier-renaud.fr/portfolio/groupomania/api/post/${postId}`)
-      .then((deletedPost) => {
-        deletedPost.data.deletedPost.likers.forEach(userIdLikeToDelete => {
-          axios.patch(`https://sannier-renaud.fr/portfolio/groupomania/api/post/unlike-post/${postId}`,{ id: userIdLikeToDelete })
-          });
-          this.getPosts()
-        })
-        .catch((err) => console.log(err))
+      if (
+        window.confirm(
+          "Voulez vous vraiment supprimer ce post ? \n\n ⚠️ Cette action est irrévérsible ⚠️"
+        )
+      ) {
+        axios
+          .delete(
+            `https://sannier-renaud.fr/portfolio/groupomania/api/post/${postId}`
+          )
+          .then((deletedPost) => {
+            deletedPost.data.deletedPost.likers.forEach(
+              (userIdLikeToDelete) => {
+                axios.patch(
+                  `https://sannier-renaud.fr/portfolio/groupomania/api/post/unlike-post/${postId}`,
+                  { id: userIdLikeToDelete }
+                );
+              }
+            );
+            this.getPosts();
+          })
+          .catch((err) => console.log(err));
       }
     },
     likeRequest(index, postId) {
-      const likeBtn = document.querySelectorAll('.btn-like')
-      if(likeBtn[index].classList.contains("fa-thumbs-up")){
-        axios.patch(`https://sannier-renaud.fr/portfolio/groupomania/api/post/like-post/${postId}`,{id : this.connectedUserId})
-        .then(() => {
-          this.updateLike()
-          this.getPosts()})
-        .catch((err) => console.log(err))
-        likeBtn[index].classList.replace('fa-thumbs-up','fa-heart')
-      } 
-      else if(likeBtn[index].classList.contains("fa-heart")){
-        axios.patch(`https://sannier-renaud.fr/portfolio/groupomania/api/post/unlike-post/${postId}`,{id : this.connectedUserId})
-        .then(() => this.getPosts())
-        .catch((err) => console.log(err))
-        likeBtn[index].classList.replace('fa-heart','fa-thumbs-up')
-      } 
+      const likeBtn = document.querySelectorAll(".btn-like");
+      if (likeBtn[index].classList.contains("fa-thumbs-up")) {
+        axios
+          .patch(
+            `https://sannier-renaud.fr/portfolio/groupomania/api/post/like-post/${postId}`,
+            { id: this.connectedUserId }
+          )
+          .then(() => {
+            this.updateLike();
+            this.getPosts();
+          })
+          .catch((err) => console.log(err));
+        likeBtn[index].classList.replace("fa-thumbs-up", "fa-heart");
+      } else if (likeBtn[index].classList.contains("fa-heart")) {
+        axios
+          .patch(
+            `https://sannier-renaud.fr/portfolio/groupomania/api/post/unlike-post/${postId}`,
+            { id: this.connectedUserId }
+          )
+          .then(() => this.getPosts())
+          .catch((err) => console.log(err));
+        likeBtn[index].classList.replace("fa-heart", "fa-thumbs-up");
+      }
     },
   },
   mounted() {
-    axios.get(`https://sannier-renaud.fr/portfolio/groupomania/api/user/me`)
-    .then((user) => {
-      this.connectedUserId = user.data.data._id
-      axios.get(`https://sannier-renaud.fr/portfolio/groupomania/api/user/${user.data.data._id}`)
-        .then((result) => {
-          this.posterFirstname = result.data.firstname
-          this.posterLastname = result.data.lastname
-          this.posterProfil = result.data.picture
-          this.userLikedPosts = result.data.likes;
-        })
-        .catch()
-      this.logged = true;
-      axios.get("https://sannier-renaud.fr/portfolio/groupomania/api/post/")
-      .then((res) => {
-        this.posts = res.data.allPosts
-        let inputFile = document.querySelector('#picture')
-        let fileName = document.querySelector('#file-name')
-        inputFile.addEventListener('change', () => {
-          fileName.textContent = inputFile.files[0].name
-        })
+    axios
+      .get(`https://sannier-renaud.fr/portfolio/groupomania/api/user/me`)
+      .then((user) => {
+        this.connectedUserId = user.data.data._id;
+        axios
+          .get(
+            `https://sannier-renaud.fr/portfolio/groupomania/api/user/${user.data.data._id}`
+          )
+          .then((result) => {
+            this.posterFirstname = result.data.firstname;
+            this.posterLastname = result.data.lastname;
+            this.posterProfil = result.data.picture;
+            this.userLikedPosts = result.data.likes;
+          })
+          .catch();
+        this.logged = true;
+        axios
+          .get("https://sannier-renaud.fr/portfolio/groupomania/api/post/")
+          .then((res) => {
+            this.posts = res.data.allPosts;
+            let inputFile = document.querySelector("#picture");
+            let fileName = document.querySelector("#file-name");
+            inputFile.addEventListener("change", () => {
+              fileName.textContent = inputFile.files[0].name;
+            });
+          })
+          .catch();
       })
-      .catch();
-    })
-    .catch((err) => {
-      document.cookie = "jwt=;max-age=0";
-      this.logged = false;
-      const posts = document.querySelector('#p-not-connected')
-    });
+      .catch((err) => {
+        document.cookie = "jwt=;max-age=0";
+        this.logged = false;
+        const posts = document.querySelector("#p-not-connected");
+      });
   },
 };
 </script>
@@ -331,11 +523,12 @@ export default {
   margin-right: auto;
 }
 
-body{
+body {
   padding-bottom: 10px;
 }
 
-.test, .test2 {
+.test,
+.test2 {
   margin-top: 20px;
 }
 
@@ -347,15 +540,15 @@ body{
   border-radius: 50%;
   transform: scale(2);
   object-fit: cover;
-  &:hover{
+  &:hover {
     cursor: pointer;
   }
-  &:active{
+  &:active {
     transform: scale(8.8) translateX(-2px) translateY(12%);
-  position: absolute;
+    position: absolute;
     left: 50%;
-  background: rgb(73, 70, 86) ;
-  transition: 0.2s;
+    background: rgb(73, 70, 86);
+    transition: 0.2s;
   }
 }
 
@@ -380,8 +573,8 @@ body{
     transition: 0.2s ease-in-out;
   }
 }
-#message-input{
-  width:50%;
+#message-input {
+  width: 50%;
   margin-bottom: 20px;
   height: 20px;
   border-radius: 4px;
@@ -389,35 +582,35 @@ body{
   box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.447);
   transform: scale(1.1);
   border: none;
-  &:focus{
-    outline:  none;
+  &:focus {
+    outline: none;
   }
 }
 
 .message-input-edit {
-  width:50%;
+  width: 50%;
   height: 20px;
   border-radius: 4px;
   text-align: center;
   box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.447);
   transform: scale(1.1);
   border: none;
-  &:focus{
-        outline:  none;
+  &:focus {
+    outline: none;
   }
 }
 
 .message-input-edit {
   margin-bottom: 20px;
-  width:400px;
+  width: 400px;
   height: 20px;
   border-radius: 4px;
   text-align: center;
   box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.447);
   transform: scale(1.1);
   border: none;
-  &:focus{
-        outline:  none;
+  &:focus {
+    outline: none;
   }
 }
 
@@ -522,7 +715,8 @@ body{
   top: -20px;
 }
 
-.hidden-input,.picture-edit-select{
+.hidden-input,
+.picture-edit-select {
   position: relative;
   top: -25px;
   left: -15px;
@@ -557,10 +751,9 @@ body{
   word-wrap: break-word;
   width: 85%;
   line-height: 40px;
-
 }
 
-#top-nav>nav>a:nth-child(3) {
+#top-nav > nav > a:nth-child(3) {
   margin-right: 25px;
 }
 
@@ -651,7 +844,7 @@ label#design-input-file {
   }
 }
 
-#btn-new-post{
+#btn-new-post {
   margin-top: 20px;
   transition: 0.5s;
   color: rgb(0, 0, 0);
@@ -673,7 +866,7 @@ label#design-input-file {
   }
 }
 
-.post-footer{
+.post-footer {
   display: flex;
   justify-content: space-evenly;
   flex-direction: column;
@@ -681,63 +874,61 @@ label#design-input-file {
   width: 80%;
 }
 
-.design-like-number-own-post{
-  position: relative; 
-  top:-63px; 
-  left:-37px;
+.design-like-number-own-post {
+  position: relative;
+  top: -63px;
+  left: -37px;
   font-weight: bold;
   box-shadow: 1px 1px 2px rgba(18, 14, 14, 0.291);
-  background:rgb(251, 255, 201);
+  background: rgb(251, 255, 201);
   color: rgb(0, 0, 0);
   padding: 1px 4px;
   font-size: 13px;
   border-radius: 100px;
 }
 
-.design-like-number{
-  position: relative; 
-  top:-63px; 
-  left:13px;
+.design-like-number {
+  position: relative;
+  top: -63px;
+  left: 13px;
   font-weight: bold;
   box-shadow: 1px 1px 2px rgba(18, 14, 14, 0.291);
-  background:rgb(251, 255, 201);
+  background: rgb(251, 255, 201);
   color: rgb(0, 0, 0);
   padding: 1px 4px;
   font-size: 13px;
   border-radius: 100px;
 }
 
-.deleted-picture{
+.deleted-picture {
   transition: 0.5s;
   opacity: 0.4;
   filter: grayscale(2);
-
 }
 
-.p-modify{
+.p-modify {
   margin-bottom: 20px;
-  
 }
 
-.picture-edit-select{
+.picture-edit-select {
   padding: 0;
 }
 
-#p-not-connected{
+#p-not-connected {
   font-size: 30px;
   font-weight: bold;
   position: absolute;
   top: 150px;
   left: 50px;
 }
-.fa-arrow-left-long{
+.fa-arrow-left-long {
   transform: rotate(45deg);
   position: fixed;
   top: 100px;
   left: 100px;
 }
 
-.separator{
+.separator {
   width: 80%;
   height: 1px;
   background-color: rgba(0, 0, 0, 0.198);
@@ -745,7 +936,7 @@ label#design-input-file {
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.227);
 }
 
-.separator2{
+.separator2 {
   width: 100%;
   height: 1px;
   background-color: rgba(0, 0, 0, 0.198);
@@ -753,7 +944,7 @@ label#design-input-file {
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.227);
 }
 
-.bubble-likes{
+.bubble-likes {
   position: relative;
   top: -34px;
   left: 18px;
@@ -767,7 +958,8 @@ label#design-input-file {
   color: black;
 }
 
-#posts > div > div.post-footer > div > i.fa-heart.btn-like.fa-solid, #posts > div > div.post-footer > div > i.fa-thumbs-up.btn-like.fa-solid{
+#posts > div > div.post-footer > div > i.fa-heart.btn-like.fa-solid,
+#posts > div > div.post-footer > div > i.fa-thumbs-up.btn-like.fa-solid {
   height: 20px;
 }
 </style>

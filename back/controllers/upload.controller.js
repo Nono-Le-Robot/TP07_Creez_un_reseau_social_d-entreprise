@@ -1,19 +1,23 @@
 const UserModel = require("../models/user.model");
 
 exports.uploadProfil = async (req, res) => {
-    try {
-        UserModel.findByIdAndUpdate(
-            req.body.userId,
-            {
-                $set : {picture: `https://${req.get("host")}back/portfolio/groupomania/images/picture/${req.file.filename}`}
-            },
-            {new:true, upsert : true , setDefaultsOnInsert : true},
-            (err,docs) => {
-                if (!err) return res.send(docs);
-                else return res.status(500).send({ message: err})
-            }
-        )
-    }catch (err) {
-        return res.status(500).send({ message: err.message})
-    }
-}
+  try {
+    UserModel.findByIdAndUpdate(
+      req.body.userId,
+      {
+        $set: {
+          picture: `https://${req.get(
+            "host"
+          )}/portfolio/groupomania/images/picture/${req.file.filename}`,
+        },
+      },
+      { new: true, upsert: true, setDefaultsOnInsert: true },
+      (err, docs) => {
+        if (!err) return res.send(docs);
+        else return res.status(500).send({ message: err });
+      }
+    );
+  } catch (err) {
+    return res.status(500).send({ message: err.message });
+  }
+};
